@@ -16,11 +16,15 @@ SOURCES += main.cpp\
         cmainwindow.cpp \
     cmapeditor.cpp \
     cimagestorage.cpp \
-    cpart.cpp
+    cpart.cpp \
+    ctile.cpp \
+    ctilessequence.cpp
 
 HEADERS  += cmainwindow.h \
     cmapeditor.h \
     cimagestorage.h \
-    cpart.h
+    cpart.h \
+    ctile.h \
+    ctilessequence.h
 
 FORMS    += cmainwindow.ui

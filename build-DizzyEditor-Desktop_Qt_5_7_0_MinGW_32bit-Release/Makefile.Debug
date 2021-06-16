@@ -47,22 +47,30 @@ SOURCES       = ../DizzyEditor/main.cpp \
 		../DizzyEditor/cmainwindow.cpp \
 		../DizzyEditor/cmapeditor.cpp \
 		../DizzyEditor/cimagestorage.cpp \
-		../DizzyEditor/cpart.cpp debug/moc_cmainwindow.cpp
+		../DizzyEditor/cpart.cpp \
+		../DizzyEditor/ctile.cpp \
+		../DizzyEditor/ctilessequence.cpp debug/moc_cmainwindow.cpp
 OBJECTS       = debug/main.o \
 		debug/cmainwindow.o \
 		debug/cmapeditor.o \
 		debug/cimagestorage.o \
 		debug/cpart.o \
+		debug/ctile.o \
+		debug/ctilessequence.o \
 		debug/moc_cmainwindow.o
 
 DIST          =  ../DizzyEditor/cmainwindow.h \
 		../DizzyEditor/cmapeditor.h \
 		../DizzyEditor/cimagestorage.h \
-		../DizzyEditor/cpart.h ../DizzyEditor/main.cpp \
+		../DizzyEditor/cpart.h \
+		../DizzyEditor/ctile.h \
+		../DizzyEditor/ctilessequence.h ../DizzyEditor/main.cpp \
 		../DizzyEditor/cmainwindow.cpp \
 		../DizzyEditor/cmapeditor.cpp \
 		../DizzyEditor/cimagestorage.cpp \
-		../DizzyEditor/cpart.cpp
+		../DizzyEditor/cpart.cpp \
+		../DizzyEditor/ctile.cpp \
+		../DizzyEditor/ctilessequence.cpp
 QMAKE_TARGET  = DizzyEditor
 DESTDIR        = debug/ #avoid trailing-slash linebreak
 TARGET         = DizzyEditor.exe
@@ -85,7 +93,7 @@ dist:
 	$(ZIP) DizzyEditor.zip $(SOURCES) $(DIST) ../DizzyEditor/DizzyEditor.pro E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/spec_pre.prf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/qdevice.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/device_config.prf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/common/angle.conf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/qconfig.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dcore.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dcore_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dextras.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dextras_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dinput.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dinput_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dlogic.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dlogic_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquick.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquick_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickextras.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickextras_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickinput.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickinput_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickrender.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3dquickrender_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3drender.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_3drender_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_axbase.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_axbase_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_axcontainer.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_axcontainer_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_axserver.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_axserver_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_bluetooth.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_bluetooth_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_bootstrap_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_clucene_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_concurrent.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_concurrent_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_core.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_core_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_dbus.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_dbus_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_designer.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_designer_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_designercomponents_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_gamepad.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_gamepad_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_gui.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_gui_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_help.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_help_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_location.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_location_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_multimedia.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_multimedia_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_multimediawidgets.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_multimediawidgets_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_network.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_network_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_nfc.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_nfc_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_opengl.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_opengl_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_openglextensions.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_openglextensions_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_packetprotocol_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_platformsupport_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_positioning.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_positioning_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_printsupport.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_printsupport_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_purchasing.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_purchasing_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_qml.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_qml_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_qmldebug_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_qmldevtools_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_qmltest.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_qmltest_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_qtmultimediaquicktools_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_quick.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_quick_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_quickcontrols2.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_quickcontrols2_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_quickparticles_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_quicktemplates2_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_quickwidgets.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_quickwidgets_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_script.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_script_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_scripttools.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_scripttools_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_scxml.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_scxml_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_sensors.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_sensors_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_serialbus.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_serialbus_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_serialport.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_serialport_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_sql.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_sql_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_svg.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_svg_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_testlib.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_testlib_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_uiplugin.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_uitools.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_uitools_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_webchannel.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_webchannel_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_websockets.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_websockets_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_widgets.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_widgets_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_winextras.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_winextras_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_xml.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_xml_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_xmlpatterns.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/modules/qt_lib_xmlpatterns_private.pri E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/qt_functions.prf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/qt_config.prf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/win32/qt_config.prf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/win32-g++/qmake.conf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/spec_post.prf .qmake.stash E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/exclusive_builds.prf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/default_pre.prf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/win32/default_pre.prf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/resolve_config.prf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/exclusive_builds_post.prf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/default_post.prf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/build_pass.prf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/win32/rtti.prf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/precompile_header.prf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/warn_on.prf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/qt.prf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/resources.prf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/moc.prf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/win32/opengl.prf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/uic.prf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/file_copies.prf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/win32/windows.prf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/testcase_targets.prf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/exceptions.prf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/yacc.prf E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/lex.prf ../DizzyEditor/DizzyEditor.pro E:/Lang/Qt5.7.0/5.7/mingw53_32/lib/qtmaind.prl E:/Lang/Qt5.7.0/5.7/mingw53_32/lib/Qt5Widgetsd.prl E:/Lang/Qt5.7.0/5.7/mingw53_32/lib/Qt5Guid.prl E:/Lang/Qt5.7.0/5.7/mingw53_32/lib/Qt5Cored.prl  NO_PCH_SOURCES RESOURCES HEADERS SOURCES OBJECTIVE_SOURCES FORMS YACCSOURCES YACCSOURCES LEXSOURCES 
 
 clean: compiler_clean 
-	-$(DEL_FILE) debug/main.o debug/cmainwindow.o debug/cmapeditor.o debug/cimagestorage.o debug/cpart.o debug/moc_cmainwindow.o
+	-$(DEL_FILE) debug/main.o debug/cmainwindow.o debug/cmapeditor.o debug/cimagestorage.o debug/cpart.o debug/ctile.o debug/ctilessequence.o debug/moc_cmainwindow.o
 
 distclean: clean 
 	-$(DEL_FILE) .qmake.stash
@@ -555,7 +563,7 @@ debug/moc_cmainwindow.cpp: E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QMai
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qtwidgetsversion.h \
 		../DizzyEditor/cmainwindow.h \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/bin/moc.exe
-	'E:\Lang\Qt5.7.0\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IE:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/win32-g++ -ID:/Working/FromQt/DizzyEditor -IE:/Lang/Qt5.7.0/5.7/mingw53_32/include -IE:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets -IE:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtGui -IE:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtANGLE -IE:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtCore -I. -Ie:/lang/Qt5.7.0/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -Ie:/lang/Qt5.7.0/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -Ie:/lang/Qt5.7.0/Tools/mingw530_32/i686-w64-mingw32/include -Ie:/lang/Qt5.7.0/Tools/mingw530_32/i686-w64-mingw32/include/c++ -Ie:/lang/Qt5.7.0/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -Ie:/lang/Qt5.7.0/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ../DizzyEditor/cmainwindow.h -o debug/moc_cmainwindow.cpp
+	'E:\Lang\Qt5.7.0\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IE:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/win32-g++ -ID:/Working/FromQt/DizzyEditor/DizzyEditor -IE:/Lang/Qt5.7.0/5.7/mingw53_32/include -IE:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets -IE:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtGui -IE:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtANGLE -IE:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtCore -I. -Ie:/lang/Qt5.7.0/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -Ie:/lang/Qt5.7.0/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -Ie:/lang/Qt5.7.0/Tools/mingw530_32/i686-w64-mingw32/include -Ie:/lang/Qt5.7.0/Tools/mingw530_32/i686-w64-mingw32/include/c++ -Ie:/lang/Qt5.7.0/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -Ie:/lang/Qt5.7.0/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ../DizzyEditor/cmainwindow.h -o debug/moc_cmainwindow.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -1009,7 +1017,9 @@ ui_cmainwindow.h: ../DizzyEditor/cmainwindow.ui \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qtoolbox.h \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qtoolbutton.h \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qtwidgetsversion.h \
-		../DizzyEditor/cpart.h
+		../DizzyEditor/cpart.h \
+		../DizzyEditor/ctilessequence.h \
+		../DizzyEditor/ctile.h
 	'E:\Lang\Qt5.7.0\5.7\mingw53_32\bin\uic.exe' ../DizzyEditor/cmainwindow.ui -o ui_cmainwindow.h
 
 compiler_yacc_decl_make_all:
@@ -1921,7 +1931,7 @@ debug/cmainwindow.o: ../DizzyEditor/cmainwindow.cpp ../DizzyEditor/cmainwindow.h
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qtoolbox.h \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qtoolbutton.h \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qtwidgetsversion.h \
-		ui_cmainwindow.h \
+		../DizzyEditor/ui_cmainwindow.h \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QAction \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QApplication \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QButtonGroup \
@@ -1933,7 +1943,9 @@ debug/cmainwindow.o: ../DizzyEditor/cmainwindow.cpp ../DizzyEditor/cmainwindow.h
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QScrollArea \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QStatusBar \
 		../DizzyEditor/cmapeditor.h \
-		../DizzyEditor/cpart.h
+		../DizzyEditor/cpart.h \
+		../DizzyEditor/ctilessequence.h \
+		../DizzyEditor/ctile.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/cmainwindow.o ../DizzyEditor/cmainwindow.cpp
 
 debug/cmapeditor.o: ../DizzyEditor/cmapeditor.cpp ../DizzyEditor/cmapeditor.h \
@@ -2382,6 +2394,8 @@ debug/cmapeditor.o: ../DizzyEditor/cmapeditor.cpp ../DizzyEditor/cmapeditor.h \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qtoolbutton.h \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qtwidgetsversion.h \
 		../DizzyEditor/cpart.h \
+		../DizzyEditor/ctilessequence.h \
+		../DizzyEditor/ctile.h \
 		../DizzyEditor/cimagestorage.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/cmapeditor.o ../DizzyEditor/cmapeditor.cpp
 
@@ -2832,8 +2846,17 @@ debug/cimagestorage.o: ../DizzyEditor/cimagestorage.cpp ../DizzyEditor/cimagesto
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qtwidgetsversion.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/cimagestorage.o ../DizzyEditor/cimagestorage.cpp
 
-debug/cpart.o: ../DizzyEditor/cpart.cpp ../DizzyEditor/cpart.h
+debug/cpart.o: ../DizzyEditor/cpart.cpp ../DizzyEditor/cpart.h \
+		../DizzyEditor/ctilessequence.h \
+		../DizzyEditor/ctile.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/cpart.o ../DizzyEditor/cpart.cpp
+
+debug/ctile.o: ../DizzyEditor/ctile.cpp ../DizzyEditor/ctile.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/ctile.o ../DizzyEditor/ctile.cpp
+
+debug/ctilessequence.o: ../DizzyEditor/ctilessequence.cpp ../DizzyEditor/ctilessequence.h \
+		../DizzyEditor/ctile.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/ctilessequence.o ../DizzyEditor/ctilessequence.cpp
 
 debug/moc_cmainwindow.o: debug/moc_cmainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/moc_cmainwindow.o debug/moc_cmainwindow.cpp

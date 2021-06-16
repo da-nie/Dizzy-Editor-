@@ -61,6 +61,8 @@ class CMainWindow:public QMainWindow
   void UpdateTilesImage(void);//обновить картинку списка тайлов
   void mousePressEvent(QMouseEvent *qMouseEvent_Ptr);//обработчик нажатия на кнопку мышки
   void mouseReleaseEvent(QMouseEvent *qMouseEvent_Ptr);//обработчик отпускания кнопки мышки
+private slots:
+ void on_cCheckBox_Matherial_Barrier_clicked();//слот нажатия на кнопку проницаемости материала
 };
 
 #endif

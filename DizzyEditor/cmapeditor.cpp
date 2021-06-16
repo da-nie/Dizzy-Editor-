@@ -31,9 +31,11 @@ CMapEditor::CMapEditor(QWidget *parent):QWidget(parent)
  MouseRButton=false;
  MouseCButton=false;
 
- qPoint_LeftTop=QPoint(0,0);
- SetSelectedTilePos(0,0);
+ qPoint_LeftTop=QPoint(0,0); 
  qPoint_MousePos=QPoint(0,0);
+
+ ChangeTileCounter=0;
+ SelectedBarrier=false;
 
  //подключим таймер обновления экрана
  TimerId=startTimer(TIMER_INTERVAL_MS);
@@ -71,6 +73,11 @@ void CMapEditor::timerEvent(QTimerEvent *qTimerEvent_Ptr)
   MoveMap(dx,dy);
  }
  qPoint_MousePos=qPoint;
+
+ ChangeTileCounter++;
+ ChangeTileCounter%=TIMER_CHANGE_TILE_DIVIDER;
+ if (ChangeTileCounter==0) AnimateTiles();
+
  update();
 }
 
@@ -142,18 +149,23 @@ void CMapEditor::paintEvent(QPaintEvent *qPaintEvent_Ptr)
 
  qPainter.setPen(QPen(Qt::gray,1,Qt::SolidLine));
 
- for(int32_t y_pos=CImageStorage::TILE_HEIGHT-qPoint_LeftTop.y()%CImageStorage::TILE_HEIGHT;y_pos<w_height;y_pos+=CImageStorage::TILE_HEIGHT)
+ int32_t py=qPoint_LeftTop.y()/CImageStorage::TILE_HEIGHT;
+ for(int32_t y_pos=CImageStorage::TILE_HEIGHT-qPoint_LeftTop.y()%CImageStorage::TILE_HEIGHT;y_pos<w_height;y_pos+=CImageStorage::TILE_HEIGHT,py++)
  {
+  if (py%15==0) qPainter.setPen(QPen(Qt::white,1,Qt::SolidLine));
+           else qPainter.setPen(QPen(Qt::gray,1,Qt::SolidLine));
   qPainter.drawLine(0,y_pos,w_width,y_pos);
  }
- for(int32_t x_pos=CImageStorage::TILE_WIDTH-qPoint_LeftTop.x()%CImageStorage::TILE_WIDTH;x_pos<w_width;x_pos+=CImageStorage::TILE_WIDTH)
+ int32_t px=qPoint_LeftTop.x()/CImageStorage::TILE_HEIGHT;
+ for(int32_t x_pos=CImageStorage::TILE_WIDTH-qPoint_LeftTop.x()%CImageStorage::TILE_WIDTH;x_pos<w_width;x_pos+=CImageStorage::TILE_WIDTH,px++)
  {
+  if (px%20==0) qPainter.setPen(QPen(Qt::white,1,Qt::SolidLine));
+           else qPainter.setPen(QPen(Qt::gray,1,Qt::SolidLine));
   qPainter.drawLine(x_pos,0,x_pos,w_height);
  }
 
  QPixmap &qPixmap_Tiles=CImageStorage::GetPtr()->GetTiles();
- int32_t tx=SelectedTileIndexX*CImageStorage::TILE_WITH_BORDER_WIDTH;
- int32_t ty=SelectedTileIndexY*CImageStorage::TILE_WITH_BORDER_HEIGHT;
+
  int32_t tw=CImageStorage::TILE_WIDTH;
  int32_t th=CImageStorage::TILE_HEIGHT;
 
@@ -168,13 +180,22 @@ void CMapEditor::paintEvent(QPaintEvent *qPaintEvent_Ptr)
   screen_x-=qPoint_LeftTop.x();
   screen_y-=qPoint_LeftTop.y();
 
-  int32_t tx=cPart.TileX*CImageStorage::TILE_WITH_BORDER_WIDTH;
-  int32_t ty=cPart.TileY*CImageStorage::TILE_WITH_BORDER_HEIGHT;
+  size_t tile_index=cPart.cTilesSequence.GetCurrentIndex();
+  CTile &cTile=cPart.cTilesSequence.GetTile(tile_index);
+
+  int32_t tx=cTile.X*CImageStorage::TILE_WITH_BORDER_WIDTH;
+  int32_t ty=cTile.Y*CImageStorage::TILE_WITH_BORDER_HEIGHT;
 
   qPainter.drawPixmap(screen_x,screen_y,qPixmap_Tiles.copy(tx,ty,tw,th));
  };
  std::for_each(Map.begin(),Map.end(),OutputFunc);
 
+
+ size_t tile_index=cTilesSequence_Selected.GetCurrentIndex();
+ CTile &cTile=cTilesSequence_Selected.GetTile(tile_index);
+
+ int32_t tx=cTile.X*CImageStorage::TILE_WITH_BORDER_WIDTH;
+ int32_t ty=cTile.Y*CImageStorage::TILE_WITH_BORDER_HEIGHT;
 
  //координаты в общем пространстве
  int32_t map_x=(qPoint_MousePos+qPoint_LeftTop).x();
@@ -211,7 +232,7 @@ void CMapEditor::SetTile(int32_t mouse_x,int32_t mouse_y)
   return(false);
  };
  Map.erase(std::remove_if(Map.begin(),Map.end(),compare_func),Map.end());
- Map.push_back(CPart(block_x,block_y,SelectedTileIndexX,SelectedTileIndexY,false));
+ Map.push_back(CPart(block_x,block_y,cTilesSequence_Selected,SelectedBarrier));
 }
 //----------------------------------------------------------------------------------------------------
 //переместить поле
@@ -264,17 +285,35 @@ bool CMapEditor::LoadMap(const std::string &file_name)
  }
  return(true);
 }
-
-
+//----------------------------------------------------------------------------------------------------
+//анимировать тайлы
+//----------------------------------------------------------------------------------------------------
+void CMapEditor::AnimateTiles(void)
+{
+ //анимируем выбранный тайл
+ cTilesSequence_Selected.ToNextTile();
+ //анимируем карту
+ auto OutputFunc=[](CPart &cPart)
+ {
+  cPart.cTilesSequence.ToNextTile();
+ };
+ std::for_each(Map.begin(),Map.end(),OutputFunc);
+}
 //****************************************************************************************************
 //открытые функции
 //****************************************************************************************************
 
 //----------------------------------------------------------------------------------------------------
-//задать координату выбранного тайла
+//задать выбранную последовательность тайлов
 //----------------------------------------------------------------------------------------------------
-void CMapEditor::SetSelectedTilePos(int32_t x,int32_t y)
+void CMapEditor::SetSelectedTiles(const CTilesSequence &cTilesSequence)
 {
- SelectedTileIndexX=x;
- SelectedTileIndexY=y;
+ cTilesSequence_Selected=cTilesSequence;
+}
+//----------------------------------------------------------------------------------------------------
+//задать является ли выбранная часть барьером
+//----------------------------------------------------------------------------------------------------
+void CMapEditor::SetSelectedBarrier(bool barrier)
+{
+ SelectedBarrier=barrier;
 }

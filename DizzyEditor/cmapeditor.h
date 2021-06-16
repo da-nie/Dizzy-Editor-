@@ -13,6 +13,7 @@
 #include <stdint.h>
 #include <string>
 #include "cpart.h"
+#include "ctilessequence.h"
 
 //****************************************************************************************************
 //макроопределения
@@ -36,10 +37,13 @@ class CMapEditor:public QWidget
   //-структуры------------------------------------------------------------------------------------------
   //-константы------------------------------------------------------------------------------------------
   static const uint32_t TIMER_INTERVAL_MS=50;//интервал срабатывания таймера, мс
+  static const uint32_t TIMER_CHANGE_TILE_DIVIDER=10;//делитель для анимации тайлов
  private:
   //-переменные-----------------------------------------------------------------------------------------
   int32_t TimerId;//идентификатор таймера
   QImage qImage_Map;//изображение поля
+
+  size_t ChangeTileCounter;//счётчик для анимации тайлов
 
   bool MouseLButton;//состояние левой кнопки мышки
   bool MouseRButton;//состояние правой кнопки мышки
@@ -50,8 +54,8 @@ class CMapEditor:public QWidget
   QPoint qPoint_MouseRightButtonDownPos;//координата нажатия правой кнопки мыши
   QPoint qPoint_MousePos;//текущая координата мышки
 
-  int32_t SelectedTileIndexX;//позиция выбранного тайла по X
-  int32_t SelectedTileIndexY;//позиция выбранного тайла по Y
+  CTilesSequence cTilesSequence_Selected;//выбранная последовательность тайлов
+  bool SelectedBarrier;//выбранный тип части как барьера
 
   std::list<CPart> Map;//карта
  public:
@@ -61,7 +65,8 @@ class CMapEditor:public QWidget
   ~CMapEditor();
  public:
   //-открытые функции-----------------------------------------------------------------------------------
-  void SetSelectedTilePos(int32_t x,int32_t y);//задать координату выбранного тайла
+  void SetSelectedTiles(const CTilesSequence &cTilesSequence);//задать выбранную последовательность тайлов
+  void SetSelectedBarrier(bool barrier);//задать является ли выбранная часть барьером
  private:
   //-закрытые функции-----------------------------------------------------------------------------------  
   void timerEvent(QTimerEvent *qTimerEvent_Ptr);//обработчик таймера
@@ -74,6 +79,7 @@ class CMapEditor:public QWidget
   void MoveMap(int32_t dx,int32_t dy);//переместить поле
   bool SaveMap(const std::string &file_name);//записать карту
   bool LoadMap(const std::string &file_name);//загрузить карту
+  void AnimateTiles(void);//анимировать тайлы
 };
 
 #endif

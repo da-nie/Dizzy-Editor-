@@ -85,7 +85,8 @@ void CMainWindow::mousePressEvent(QMouseEvent *qMouseEvent_Ptr)
   SelectedTileIndexX=tx;
   SelectedTileIndexY=ty;
 
-  ui->cMapEditor->SetSelectedTilePos(SelectedTileIndexX,SelectedTileIndexY);
+  CTilesSequence cTilesSequence(CTile(SelectedTileIndexX,SelectedTileIndexY));
+  ui->cMapEditor->SetSelectedTiles(cTilesSequence);
   UpdateTilesImage();
  }
 }
@@ -95,6 +96,15 @@ void CMainWindow::mousePressEvent(QMouseEvent *qMouseEvent_Ptr)
 void CMainWindow::mouseReleaseEvent(QMouseEvent *qMouseEvent_Ptr)
 {
 }
+//----------------------------------------------------------------------------------------------------
+//слот нажатия на кнопку проницаемости материала
+//----------------------------------------------------------------------------------------------------
+void CMainWindow::on_cCheckBox_Matherial_Barrier_clicked()
+{
+ bool barrier=ui->cCheckBox_Matherial_Barrier->isChecked();
+ ui->cMapEditor->SetSelectedBarrier(barrier);
+}
+
 
 
 //****************************************************************************************************

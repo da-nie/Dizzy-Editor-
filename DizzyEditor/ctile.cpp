@@ -1,7 +1,7 @@
 //****************************************************************************************************
 //подключаемые библиотеки
 //****************************************************************************************************
-#include "cpart.h"
+#include "ctile.h"
 
 //****************************************************************************************************
 //глобальные переменные
@@ -22,17 +22,15 @@
 //----------------------------------------------------------------------------------------------------
 //конструктор
 //----------------------------------------------------------------------------------------------------
-CPart::CPart(int32_t block_x,int32_t block_y,const CTilesSequence &cTilesSequence_Set,bool barrier)
+CTile::CTile(int32_t x,int32_t y)
 {
- BlockPosX=block_x;
- BlockPosY=block_y;
- cTilesSequence=cTilesSequence_Set;
- Barrier=barrier;
+ X=x;
+ Y=y;
 }
 //----------------------------------------------------------------------------------------------------
 //деструктор
 //----------------------------------------------------------------------------------------------------
-CPart::~CPart()
+CTile::~CTile()
 {
 }
 
@@ -51,28 +49,18 @@ CPart::~CPart()
 //----------------------------------------------------------------------------------------------------
 //записать
 //----------------------------------------------------------------------------------------------------
-bool CPart::Save(std::ofstream &file)
+bool CTile::Save(std::ofstream &file)
 {
- if (file.write(reinterpret_cast<char*>(&BlockPosX),sizeof(BlockPosX)).fail()==true) return(false);
- if (file.write(reinterpret_cast<char*>(&BlockPosY),sizeof(BlockPosY)).fail()==true) return(false);
-
- cTilesSequence.Save(file);
-
- if (file.write(reinterpret_cast<char*>(&Barrier),sizeof(Barrier)).fail()==true) return(false);
-
+ if (file.write(reinterpret_cast<char*>(&X),sizeof(X)).fail()==true) return(false);
+ if (file.write(reinterpret_cast<char*>(&Y),sizeof(Y)).fail()==true) return(false);
  return(true);
 }
 //----------------------------------------------------------------------------------------------------
 //сохранить
 //----------------------------------------------------------------------------------------------------
-bool CPart::Load(std::ifstream &file)
+bool CTile::Load(std::ifstream &file)
 {
- if (file.read(reinterpret_cast<char*>(&BlockPosX),sizeof(BlockPosX)).fail()==true) return(false);
- if (file.read(reinterpret_cast<char*>(&BlockPosY),sizeof(BlockPosY)).fail()==true) return(false);
-
- cTilesSequence.Load(file);
-
- if (file.read(reinterpret_cast<char*>(&Barrier),sizeof(Barrier)).fail()==true) return(false);
-
+ if (file.read(reinterpret_cast<char*>(&X),sizeof(X)).fail()==true) return(false);
+ if (file.read(reinterpret_cast<char*>(&Y),sizeof(Y)).fail()==true) return(false);
  return(true);
 }
