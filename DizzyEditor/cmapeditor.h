@@ -12,7 +12,7 @@
 #include <list>
 #include <stdint.h>
 #include <string>
-#include "cpart.h"
+#include "ipart.h"
 #include "ctilessequence.h"
 
 //****************************************************************************************************
@@ -54,10 +54,8 @@ class CMapEditor:public QWidget
   QPoint qPoint_MouseRightButtonDownPos;//координата нажатия правой кнопки мыши
   QPoint qPoint_MousePos;//текущая координата мышки
 
-  CTilesSequence cTilesSequence_Selected;//выбранная последовательность тайлов
-  bool SelectedBarrier;//выбранный тип части как барьера
-
-  std::list<CPart> Map;//карта
+  std::shared_ptr<IPart> Map_Ptr;//карта
+  std::shared_ptr<IPart> CursorPart_Ptr;//перемещаемые курсором блоки
  public:
   //-конструктор----------------------------------------------------------------------------------------
   explicit CMapEditor(QWidget *parent=0);
@@ -65,8 +63,10 @@ class CMapEditor:public QWidget
   ~CMapEditor();
  public:
   //-открытые функции-----------------------------------------------------------------------------------
-  void SetSelectedTiles(const CTilesSequence &cTilesSequence);//задать выбранную последовательность тайлов
+  void SetSelectedPart(std::shared_ptr<IPart> iPart_Ptr);//задать выбранную последовательность блоков
   void SetSelectedBarrier(bool barrier);//задать является ли выбранная часть барьером
+  bool SaveMap(const std::string &file_name);//записать карту
+  bool LoadMap(const std::string &file_name);//загрузить карту
  private:
   //-закрытые функции-----------------------------------------------------------------------------------  
   void timerEvent(QTimerEvent *qTimerEvent_Ptr);//обработчик таймера
@@ -77,8 +77,6 @@ class CMapEditor:public QWidget
 
   void SetTile(int32_t mouse_x,int32_t mouse_y);//поставить тайл в позицию
   void MoveMap(int32_t dx,int32_t dy);//переместить поле
-  bool SaveMap(const std::string &file_name);//записать карту
-  bool LoadMap(const std::string &file_name);//загрузить карту
   void AnimateTiles(void);//анимировать тайлы
 };
 

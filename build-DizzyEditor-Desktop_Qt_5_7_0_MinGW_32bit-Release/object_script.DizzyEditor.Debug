@@ -1,0 +1,12 @@
+INPUT(
+./debug/main.o
+./debug/cmainwindow.o
+./debug/cimagestorage.o
+./debug/cmapeditor.o
+./debug/cpart.o
+./debug/cpartunion.o
+./debug/ctile.o
+./debug/ctilessequence.o
+./debug/ipart.o
+./debug/moc_cmainwindow.o
+);

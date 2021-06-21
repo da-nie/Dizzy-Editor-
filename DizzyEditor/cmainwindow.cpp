@@ -5,6 +5,9 @@
 #include "ui_cmainwindow.h"
 #include <QtWidgets>
 #include <stdint.h>
+#include <memory>
+#include "cpart.h"
+#include "cpartunion.h"
 
 //****************************************************************************************************
 //глобальные переменные
@@ -32,6 +35,9 @@ CMainWindow::CMainWindow(QWidget *parent):QMainWindow(parent),ui(new Ui::CMainWi
  SelectedTileIndexY=0;
 
  UpdateTilesImage();
+
+ //ui->cToolBar_Main->addAction();
+
 }
 //----------------------------------------------------------------------------------------------------
 //деструктор
@@ -86,7 +92,14 @@ void CMainWindow::mousePressEvent(QMouseEvent *qMouseEvent_Ptr)
   SelectedTileIndexY=ty;
 
   CTilesSequence cTilesSequence(CTile(SelectedTileIndexX,SelectedTileIndexY));
-  ui->cMapEditor->SetSelectedTiles(cTilesSequence);
+  bool barrier=ui->cCheckBox_Matherial_Barrier->isChecked();
+  std::shared_ptr<IPart> iPart_Ptr(new CPartUnion());
+  iPart_Ptr->GetItemPtr()->push_back(std::shared_ptr<IPart>(new CPart(0,0,cTilesSequence,barrier)));
+  /*iPart_Ptr->GetItemPtr()->push_back(std::shared_ptr<IPart>(new CPart(0,1,cTilesSequence,barrier)));
+  iPart_Ptr->GetItemPtr()->push_back(std::shared_ptr<IPart>(new CPart(1,0,cTilesSequence,barrier)));
+  iPart_Ptr->GetItemPtr()->push_back(std::shared_ptr<IPart>(new CPart(1,1,cTilesSequence,barrier)));
+  */
+  ui->cMapEditor->SetSelectedPart(iPart_Ptr);
   UpdateTilesImage();
  }
 }
@@ -104,13 +117,23 @@ void CMainWindow::on_cCheckBox_Matherial_Barrier_clicked()
  bool barrier=ui->cCheckBox_Matherial_Barrier->isChecked();
  ui->cMapEditor->SetSelectedBarrier(barrier);
 }
-
+//----------------------------------------------------------------------------------------------------
+//слот выбора пункта меню "сохранить карту"
+//----------------------------------------------------------------------------------------------------
+void CMainWindow::on_cAction_SaveMap_triggered()
+{
+ ui->cMapEditor->SaveMap("map.bin");
+}
+//----------------------------------------------------------------------------------------------------
+//слот выбора пункта меню "загрузить карту"
+//----------------------------------------------------------------------------------------------------
+void CMainWindow::on_cAction_LoadMap_triggered()
+{
+ ui->cMapEditor->LoadMap("map.bin");
+}
 
 
 //****************************************************************************************************
 //открытые функции
 //****************************************************************************************************
 
-//----------------------------------------------------------------------------------------------------
-//
-//----------------------------------------------------------------------------------------------------

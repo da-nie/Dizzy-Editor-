@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2021-06-07T14:00:03
+# Project created by QtCreator 2021-06-22T11:49:11
 #
 #-------------------------------------------------
 
@@ -14,17 +14,21 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         cmainwindow.cpp \
-    cmapeditor.cpp \
     cimagestorage.cpp \
+    cmapeditor.cpp \
     cpart.cpp \
+    cpartunion.cpp \
     ctile.cpp \
-    ctilessequence.cpp
+    ctilessequence.cpp \
+    ipart.cpp
 
 HEADERS  += cmainwindow.h \
-    cmapeditor.h \
     cimagestorage.h \
+    cmapeditor.h \
     cpart.h \
+    cpartunion.h \
     ctile.h \
-    ctilessequence.h
+    ctilessequence.h \
+    ipart.h
 
 FORMS    += cmainwindow.ui

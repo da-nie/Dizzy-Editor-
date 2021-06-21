@@ -1,0 +1,12 @@
+INPUT(
+./release/main.o
+./release/cmainwindow.o
+./release/cimagestorage.o
+./release/cmapeditor.o
+./release/cpart.o
+./release/cpartunion.o
+./release/ctile.o
+./release/ctilessequence.o
+./release/ipart.o
+./release/moc_cmainwindow.o
+);

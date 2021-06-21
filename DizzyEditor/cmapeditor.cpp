@@ -3,6 +3,8 @@
 //****************************************************************************************************
 #include "cmapeditor.h"
 #include "cimagestorage.h"
+#include "cpartunion.h"
+#include "cpart.h"
 #include <fstream>
 
 //****************************************************************************************************
@@ -34,13 +36,15 @@ CMapEditor::CMapEditor(QWidget *parent):QWidget(parent)
  qPoint_LeftTop=QPoint(0,0); 
  qPoint_MousePos=QPoint(0,0);
 
- ChangeTileCounter=0;
- SelectedBarrier=false;
+ CursorPart_Ptr.reset(new CPartUnion());
+
+ //создаём карту
+ Map_Ptr.reset(new CPartUnion());
 
  //подключим таймер обновления экрана
- TimerId=startTimer(TIMER_INTERVAL_MS);
+ TimerId=startTimer(TIMER_INTERVAL_MS); 
 
- LoadMap("map.bin");
+ LoadMap("last_map.bin");
 }
 //----------------------------------------------------------------------------------------------------
 //деструктор
@@ -48,7 +52,7 @@ CMapEditor::CMapEditor(QWidget *parent):QWidget(parent)
 CMapEditor::~CMapEditor()
 {
  killTimer(TimerId);
- SaveMap("map.bin");
+ SaveMap("last_map.bin");
 }
 
 //****************************************************************************************************
@@ -135,7 +139,6 @@ void CMapEditor::mouseReleaseEvent(QMouseEvent *qMouseEvent_Ptr)
   if (MouseCButton==true) MouseCButton=false;
  }
 }
-
 //----------------------------------------------------------------------------------------------------
 //обработчик события перерисовки
 //----------------------------------------------------------------------------------------------------
@@ -170,33 +173,30 @@ void CMapEditor::paintEvent(QPaintEvent *qPaintEvent_Ptr)
  int32_t th=CImageStorage::TILE_HEIGHT;
 
  //выводим карту
- auto OutputFunc=[this,&tw,&th,&qPainter,&qPixmap_Tiles](CPart &cPart)
+ auto output_function=[this,&tw,&th,&qPainter,&qPixmap_Tiles](std::shared_ptr<IPart> iPart_Ptr)
  {
-  int32_t block_x=cPart.BlockPosX;
-  int32_t block_y=cPart.BlockPosY;
+  if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
+
+  int32_t block_x=iPart_Ptr->BlockPosX;
+  int32_t block_y=iPart_Ptr->BlockPosY;
 
   int32_t screen_x=block_x*CImageStorage::TILE_WIDTH;
   int32_t screen_y=block_y*CImageStorage::TILE_HEIGHT;
   screen_x-=qPoint_LeftTop.x();
   screen_y-=qPoint_LeftTop.y();
 
-  size_t tile_index=cPart.cTilesSequence.GetCurrentIndex();
-  CTile &cTile=cPart.cTilesSequence.GetTile(tile_index);
+  size_t tile_index=iPart_Ptr->cTilesSequence.GetCurrentIndex();
+  CTile &cTile=iPart_Ptr->cTilesSequence.GetTile(tile_index);
 
   int32_t tx=cTile.X*CImageStorage::TILE_WITH_BORDER_WIDTH;
   int32_t ty=cTile.Y*CImageStorage::TILE_WITH_BORDER_HEIGHT;
 
   qPainter.drawPixmap(screen_x,screen_y,qPixmap_Tiles.copy(tx,ty,tw,th));
  };
- std::for_each(Map.begin(),Map.end(),OutputFunc);
+ Map_Ptr->Visit(output_function);
 
 
- size_t tile_index=cTilesSequence_Selected.GetCurrentIndex();
- CTile &cTile=cTilesSequence_Selected.GetTile(tile_index);
-
- int32_t tx=cTile.X*CImageStorage::TILE_WITH_BORDER_WIDTH;
- int32_t ty=cTile.Y*CImageStorage::TILE_WITH_BORDER_HEIGHT;
-
+ //выводим блоки курсора
  //координаты в общем пространстве
  int32_t map_x=(qPoint_MousePos+qPoint_LeftTop).x();
  int32_t map_y=(qPoint_MousePos+qPoint_LeftTop).y();
@@ -210,7 +210,22 @@ void CMapEditor::paintEvent(QPaintEvent *qPaintEvent_Ptr)
  screen_x-=qPoint_LeftTop.x();
  screen_y-=qPoint_LeftTop.y();
 
- qPainter.drawPixmap(screen_x,screen_y,qPixmap_Tiles.copy(tx,ty,tw,th));
+ auto cursoroutput_function=[this,&screen_x,&screen_y,&tw,&th,&qPainter,&qPixmap_Tiles](std::shared_ptr<IPart> iPart_Ptr)
+ {
+  if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
+
+  size_t tile_index=iPart_Ptr->cTilesSequence.GetCurrentIndex();
+  CTile &cTile=iPart_Ptr->cTilesSequence.GetTile(tile_index);
+
+  int32_t tx=cTile.X*CImageStorage::TILE_WITH_BORDER_WIDTH;
+  int32_t ty=cTile.Y*CImageStorage::TILE_WITH_BORDER_HEIGHT;
+
+  int32_t ox=iPart_Ptr->BlockPosX*CImageStorage::TILE_WIDTH;
+  int32_t oy=iPart_Ptr->BlockPosY*CImageStorage::TILE_HEIGHT;
+
+  qPainter.drawPixmap(screen_x+ox,screen_y+oy,qPixmap_Tiles.copy(tx,ty,tw,th));
+ };
+ CursorPart_Ptr->Visit(cursoroutput_function);
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -224,15 +239,29 @@ void CMapEditor::SetTile(int32_t mouse_x,int32_t mouse_y)
  int32_t map_y=(qPoint+qPoint_LeftTop).y();
  //координаты в индексах блоков
  int32_t block_x=map_x/CImageStorage::TILE_WIDTH;
- int32_t block_y=map_y/CImageStorage::TILE_HEIGHT;
- //ищем по данным координатам блок
- auto compare_func=[block_x,block_y](CPart &cPart)->bool
+ int32_t block_y=map_y/CImageStorage::TILE_HEIGHT; 
+
+ //выполняем установку тайлов
+ //удаляем все тайлы, которые наложились
+
+ std::shared_ptr<IPart> iPart_Map_Ptr=Map_Ptr;
+ auto remove_function=[this,iPart_Map_Ptr,&block_x,&block_y](std::shared_ptr<IPart> iPart_Ptr)
  {
-  if (block_x==cPart.BlockPosX && block_y==cPart.BlockPosY) return(true);
-  return(false);
+  if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
+  iPart_Map_Ptr->RemovePartIfCoord(block_x+iPart_Ptr->BlockPosX,block_y+iPart_Ptr->BlockPosY);
  };
- Map.erase(std::remove_if(Map.begin(),Map.end(),compare_func),Map.end());
- Map.push_back(CPart(block_x,block_y,cTilesSequence_Selected,SelectedBarrier));
+ CursorPart_Ptr->Visit(remove_function);
+ //накладываем тайлы
+ auto add_function=[this,iPart_Map_Ptr,&block_x,&block_y](std::shared_ptr<IPart> iPart_Ptr)
+ {
+  if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
+  //смещаем положение на участок карты
+  int32_t x=iPart_Ptr->BlockPosX+block_x;
+  int32_t y=iPart_Ptr->BlockPosY+block_y;
+  std::shared_ptr<IPart> iPart_New(new CPart(x,y,iPart_Ptr->cTilesSequence,iPart_Ptr->Barrier));
+  iPart_Map_Ptr->GetItemPtr()->push_back(iPart_New);
+ };
+ CursorPart_Ptr->Visit(add_function);
 }
 //----------------------------------------------------------------------------------------------------
 //переместить поле
@@ -246,6 +275,39 @@ void CMapEditor::MoveMap(int32_t dx,int32_t dy)
  qPoint_LeftTop=QPoint(nx,ny);
 }
 //----------------------------------------------------------------------------------------------------
+//анимировать тайлы
+//----------------------------------------------------------------------------------------------------
+void CMapEditor::AnimateTiles(void)
+{
+ //анимируем выбранный тайл
+ CursorPart_Ptr->AnimateTiles();
+ //анимируем карту
+ Map_Ptr->AnimateTiles();
+}
+//****************************************************************************************************
+//открытые функции
+//****************************************************************************************************
+
+//----------------------------------------------------------------------------------------------------
+//задать выбранную последовательность блоков
+//----------------------------------------------------------------------------------------------------
+void CMapEditor::SetSelectedPart(std::shared_ptr<IPart> iPart_Ptr)
+{
+ CursorPart_Ptr=iPart_Ptr;
+}
+//----------------------------------------------------------------------------------------------------
+//задать является ли выбранная часть барьером
+//----------------------------------------------------------------------------------------------------
+void CMapEditor::SetSelectedBarrier(bool barrier)
+{
+ auto setbarrier_function=[&barrier](std::shared_ptr<IPart> iPart_Ptr)
+ {
+  if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
+  iPart_Ptr->Barrier=barrier;
+ };
+ CursorPart_Ptr->Visit(setbarrier_function);
+}
+//----------------------------------------------------------------------------------------------------
 //записать карту
 //----------------------------------------------------------------------------------------------------
 bool CMapEditor::SaveMap(const std::string &file_name)
@@ -253,14 +315,7 @@ bool CMapEditor::SaveMap(const std::string &file_name)
  std::ofstream file;
  file.open(file_name,std::ios_base::out|std::ios_base::binary);
  if (file.is_open()==false) return(false);
- size_t part=Map.size();
- if (file.write(reinterpret_cast<char*>(&part),sizeof(part)).fail()==true) return(false);
-
- auto save_function=[&file](CPart &cPart)
- {
-  cPart.Save(file);
- };
- std::for_each(Map.begin(),Map.end(),save_function);
+ Map_Ptr->Save(file);
  return(true);
 }
 
@@ -272,48 +327,7 @@ bool CMapEditor::LoadMap(const std::string &file_name)
  std::ifstream file;
  file.open(file_name,std::ios_base::in|std::ios_base::binary);
  if (file.is_open()==false) return(false);
-
- size_t part;
- if (file.read(reinterpret_cast<char*>(&part),sizeof(part)).fail()==true) return(false);
- Map.clear();
-
- for(size_t n=0;n<part;n++)
- {
-  CPart cPart;
-  cPart.Load(file);
-  Map.push_back(cPart);
- }
+ Map_Ptr->Release();
+ Map_Ptr->Load(file);
  return(true);
-}
-//----------------------------------------------------------------------------------------------------
-//анимировать тайлы
-//----------------------------------------------------------------------------------------------------
-void CMapEditor::AnimateTiles(void)
-{
- //анимируем выбранный тайл
- cTilesSequence_Selected.ToNextTile();
- //анимируем карту
- auto OutputFunc=[](CPart &cPart)
- {
-  cPart.cTilesSequence.ToNextTile();
- };
- std::for_each(Map.begin(),Map.end(),OutputFunc);
-}
-//****************************************************************************************************
-//открытые функции
-//****************************************************************************************************
-
-//----------------------------------------------------------------------------------------------------
-//задать выбранную последовательность тайлов
-//----------------------------------------------------------------------------------------------------
-void CMapEditor::SetSelectedTiles(const CTilesSequence &cTilesSequence)
-{
- cTilesSequence_Selected=cTilesSequence;
-}
-//----------------------------------------------------------------------------------------------------
-//задать является ли выбранная часть барьером
-//----------------------------------------------------------------------------------------------------
-void CMapEditor::SetSelectedBarrier(bool barrier)
-{
- SelectedBarrier=barrier;
 }

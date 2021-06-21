@@ -182,7 +182,6 @@ Makefile: ../DizzyEditor/DizzyEditor.pro E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/win32/qt_config.prf \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/win32-g++/qmake.conf \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/spec_post.prf \
-		.qmake.stash \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/exclusive_builds.prf \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/default_pre.prf \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/win32/default_pre.prf \
@@ -332,7 +331,6 @@ E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/qt_config.prf:
 E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/win32/qt_config.prf:
 E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/win32-g++/qmake.conf:
 E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/spec_post.prf:
-.qmake.stash:
 E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/exclusive_builds.prf:
 E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/default_pre.prf:
 E:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/features/win32/default_pre.prf:
@@ -368,7 +366,6 @@ all: release-all debug-all  FORCE
 clean: release-clean debug-clean  FORCE
 distclean: release-distclean debug-distclean  FORCE
 	-$(DEL_FILE) Makefile
-	-$(DEL_FILE) .qmake.stash
 
 release-mocclean:
 	$(MAKE) -f $(MAKEFILE).Release mocclean

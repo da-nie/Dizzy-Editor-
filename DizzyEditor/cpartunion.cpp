@@ -1,7 +1,9 @@
 //****************************************************************************************************
 //подключаемые библиотеки
 //****************************************************************************************************
+#include "cpartunion.h"
 #include "cpart.h"
+#include <algorithm>
 
 //****************************************************************************************************
 //глобальные переменные
@@ -22,17 +24,13 @@
 //----------------------------------------------------------------------------------------------------
 //конструктор
 //----------------------------------------------------------------------------------------------------
-CPart::CPart(int32_t block_x,int32_t block_y,const CTilesSequence &cTilesSequence_Set,bool barrier)
+CPartUnion::CPartUnion(void)
 {
- BlockPosX=block_x;
- BlockPosY=block_y;
- cTilesSequence=cTilesSequence_Set;
- Barrier=barrier;
 }
 //----------------------------------------------------------------------------------------------------
 //деструктор
 //----------------------------------------------------------------------------------------------------
-CPart::~CPart()
+CPartUnion::~CPartUnion()
 {
  Release();
 }
@@ -52,62 +50,99 @@ CPart::~CPart()
 //----------------------------------------------------------------------------------------------------
 //записать
 //----------------------------------------------------------------------------------------------------
-bool CPart::Save(std::ofstream &file)
+bool CPartUnion::Save(std::ofstream &file)
 {
- if (file.write(reinterpret_cast<char*>(&BlockPosX),sizeof(BlockPosX)).fail()==true) return(false);
- if (file.write(reinterpret_cast<char*>(&BlockPosY),sizeof(BlockPosY)).fail()==true) return(false);
+ size_t part=Item.size();
+ if (file.write(reinterpret_cast<char*>(&part),sizeof(part)).fail()==true) return(false);
 
- cTilesSequence.Save(file);
-
- if (file.write(reinterpret_cast<char*>(&Barrier),sizeof(Barrier)).fail()==true) return(false);
-
+ auto save_function=[&file](std::shared_ptr<IPart> iPart_Ptr)
+ {
+  bool part_union=true;
+  if (iPart_Ptr->GetItemPtr()==NULL) part_union=false;
+  if (file.write(reinterpret_cast<char*>(&part_union),sizeof(part_union)).fail()==true) return;
+  iPart_Ptr->Save(file);
+ };
+ std::for_each(Item.begin(),Item.end(),save_function);
  return(true);
 }
 //----------------------------------------------------------------------------------------------------
-//сохранить
+//загрузить
 //----------------------------------------------------------------------------------------------------
-bool CPart::Load(std::ifstream &file)
+bool CPartUnion::Load(std::ifstream &file)
 {
- if (file.read(reinterpret_cast<char*>(&BlockPosX),sizeof(BlockPosX)).fail()==true) return(false);
- if (file.read(reinterpret_cast<char*>(&BlockPosY),sizeof(BlockPosY)).fail()==true) return(false);
+ size_t part;
+ if (file.read(reinterpret_cast<char*>(&part),sizeof(part)).fail()==true) return(false);
 
- cTilesSequence.Load(file);
-
- if (file.read(reinterpret_cast<char*>(&Barrier),sizeof(Barrier)).fail()==true) return(false);
-
+ for(size_t n=0;n<part;n++)
+ {
+  //загружаем, какого типа объект нам нужно создавать
+  bool part_union;
+  if (file.read(reinterpret_cast<char*>(&part_union),sizeof(part_union)).fail()==true) return(false);
+  IPart *iPart_Ptr=NULL;
+  if (part_union==true) iPart_Ptr=new CPartUnion();
+                   else iPart_Ptr=new CPart();
+  iPart_Ptr->Load(file);
+  Item.push_back(std::shared_ptr<IPart>(iPart_Ptr));
+ }
  return(true);
-}
-//----------------------------------------------------------------------------------------------------
-//удалить все элементы
-//----------------------------------------------------------------------------------------------------
-void CPart::Release(void)
-{
-}
-//----------------------------------------------------------------------------------------------------
-//выполнить анимацию тайлов
-//----------------------------------------------------------------------------------------------------
-void CPart::AnimateTiles(void)
-{
- cTilesSequence.ToNextTile();
-}
-//----------------------------------------------------------------------------------------------------
-//обойти все элементы
-//----------------------------------------------------------------------------------------------------
-void CPart::Visit(std::function<void(std::shared_ptr<IPart>)> callback_function)
-{
- callback_function(shared_from_this());//вызываем для самого себя
-}
-//----------------------------------------------------------------------------------------------------
-//удалить часть при совпадении координат
-//----------------------------------------------------------------------------------------------------
-void CPart::RemovePartIfCoord(int32_t x,int32_t y)
-{
- //удаление возможно только для объединения частей
 }
 //----------------------------------------------------------------------------------------------------
 //получить указатель на список элементов
 //----------------------------------------------------------------------------------------------------
-std::list<std::shared_ptr<IPart>>* CPart::GetItemPtr(void)
+std::list<std::shared_ptr<IPart>>* CPartUnion::GetItemPtr(void)
 {
- return(NULL);
+ return(&Item);
+}
+//----------------------------------------------------------------------------------------------------
+//удалить все элементы
+//----------------------------------------------------------------------------------------------------
+void CPartUnion::Release(void)
+{
+ auto release_function=[](std::shared_ptr<IPart> iPart_Ptr)
+ {
+  iPart_Ptr->Release();
+ };
+ std::for_each(Item.begin(),Item.end(),release_function);
+ Item.clear();
+}
+//----------------------------------------------------------------------------------------------------
+//обойти все элементы
+//----------------------------------------------------------------------------------------------------
+void CPartUnion::Visit(std::function<void(std::shared_ptr<IPart>)> callback_function)
+{
+ callback_function(shared_from_this());//вызываем для самого себя
+ auto visit_function=[&callback_function](std::shared_ptr<IPart> iPart_Ptr)
+ {
+  iPart_Ptr->Visit(callback_function);
+ };
+ std::for_each(Item.begin(),Item.end(),visit_function);
+}
+//----------------------------------------------------------------------------------------------------
+//удалить часть при совпадении координат
+//----------------------------------------------------------------------------------------------------
+void CPartUnion::RemovePartIfCoord(int32_t x,int32_t y)
+{
+ auto compare_function=[&x,&y](std::shared_ptr<IPart> iPart_Ptr)->bool
+ {
+  if (iPart_Ptr->GetItemPtr()!=NULL)
+  {
+   iPart_Ptr->RemovePartIfCoord(x,y);
+   if (iPart_Ptr->GetItemPtr()->size()!=0) return(false);//ветка ещё не пустая
+   return(true);//требуется удаление
+  }
+  if (iPart_Ptr->IsCoord(x,y)==true) return(true);//требуется удаление
+  return(false);
+ };
+ Item.erase(std::remove_if(Item.begin(),Item.end(),compare_function),Item.end());
+}
+//----------------------------------------------------------------------------------------------------
+//выполнить анимацию тайлов
+//----------------------------------------------------------------------------------------------------
+void CPartUnion::AnimateTiles(void)
+{
+ auto animatetiles_function=[](std::shared_ptr<IPart> iPart_Ptr)
+ {
+  iPart_Ptr->AnimateTiles();
+ };
+ std::for_each(Item.begin(),Item.end(),animatetiles_function);
 }
