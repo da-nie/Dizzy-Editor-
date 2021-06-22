@@ -43,6 +43,7 @@ class IPart:public std::enable_shared_from_this<IPart>
   int32_t BlockPosY;
   CTilesSequence cTilesSequence;//последовательность тайлов
   bool Barrier;//является ли барьером
+  bool Selected;//выбран
  private:
   //-переменные-----------------------------------------------------------------------------------------
  public:
@@ -52,6 +53,7 @@ class IPart:public std::enable_shared_from_this<IPart>
    BlockPosX=0;
    BlockPosY=0;
    Barrier=false;
+   Selected=false;
   }
   //-деструктор-----------------------------------------------------------------------------------------
   virtual ~IPart() {}  
@@ -67,7 +69,7 @@ class IPart:public std::enable_shared_from_this<IPart>
    if (x==BlockPosX && y==BlockPosY) return(true);
    return(false);
   }
-  virtual void RemovePartIfCoord(int32_t x,int32_t y)=0;//удалить часть при совпадении координат
+  virtual void RemovePart(std::function<bool(std::shared_ptr<IPart>)> callback_function)=0;//удалить часть
   virtual std::list<std::shared_ptr<IPart>>* GetItemPtr(void)=0;//получить указатель на список элементов
   //-открытые статические функции-----------------------------------------------------------------------
 };

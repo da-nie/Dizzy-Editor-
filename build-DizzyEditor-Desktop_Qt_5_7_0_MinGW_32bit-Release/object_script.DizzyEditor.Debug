@@ -8,5 +8,6 @@ INPUT(
 ./debug/ctile.o
 ./debug/ctilessequence.o
 ./debug/ipart.o
+./debug/qrc_resource.o
 ./debug/moc_cmainwindow.o
 );

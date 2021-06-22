@@ -34,6 +34,19 @@ class CMapEditor:public QWidget
 {
  public:
   //-перечисления---------------------------------------------------------------------------------------
+  //режим работы компонента
+  enum MODE
+  {
+   MODE_SET,//режим установки блоков
+   MODE_SELECT//режим выбора блоков
+  };
+  //режим работы мышки
+  enum MOUSE_MODE
+  {
+   MOUSE_MODE_STANDARD,//обычное перемещение мышки
+   MOUSE_MODE_SELECT_AREA//задание области выделения
+  };
+
   //-структуры------------------------------------------------------------------------------------------
   //-константы------------------------------------------------------------------------------------------
   static const uint32_t TIMER_INTERVAL_MS=50;//интервал срабатывания таймера, мс
@@ -56,6 +69,12 @@ class CMapEditor:public QWidget
 
   std::shared_ptr<IPart> Map_Ptr;//карта
   std::shared_ptr<IPart> CursorPart_Ptr;//перемещаемые курсором блоки
+
+  MODE Mode;//режим работы редактора
+  MOUSE_MODE MouseMode;//режим работы мышки
+  bool CtrlOn;//нажата ли клавиша ctrl
+
+  QRect qRect_SelectedArea;//выбранная область
  public:
   //-конструктор----------------------------------------------------------------------------------------
   explicit CMapEditor(QWidget *parent=0);
@@ -67,6 +86,11 @@ class CMapEditor:public QWidget
   void SetSelectedBarrier(bool barrier);//задать является ли выбранная часть барьером
   bool SaveMap(const std::string &file_name);//записать карту
   bool LoadMap(const std::string &file_name);//загрузить карту
+  void SetModeSetPart(void);//установить режим установки блоков
+  void SetModeDeletePart(void);//установить режим удаления блоков
+  void SetModeSelectPart(void);//установить режим выбора блоков
+  void PressKey(QKeyEvent *pe);//нажатие клавиши
+  void ReleaseKey(QKeyEvent *pe);//отпускание клавиши  
  private:
   //-закрытые функции-----------------------------------------------------------------------------------  
   void timerEvent(QTimerEvent *qTimerEvent_Ptr);//обработчик таймера
@@ -76,8 +100,15 @@ class CMapEditor:public QWidget
   void paintEvent(QPaintEvent *qPaintEvent_Ptr);//обработчик события перерисовки
 
   void SetTile(int32_t mouse_x,int32_t mouse_y);//поставить тайл в позицию
+  void SelectTiles(QRect &qRect_Area);//выбрать область тайлов
+  void UnselectTiles(void);//отменить выбор тайлов
+  void SelectTile(int32_t mouse_x,int32_t mouse_y);//выбрать тайл
+  void DeleteSelectedTiles(void);//удалить выбранные тайлы
+  void ConnectSelectedTiles(void);//объединить выбранные тайлы и установить результат в качестве курсора
   void MoveMap(int32_t dx,int32_t dy);//переместить поле
   void AnimateTiles(void);//анимировать тайлы
+  void MouseToMap(int32_t mouse_x,int32_t mouse_y,int32_t &map_x,int32_t &map_y);//перевести координаты мыши в координаты блоков карты
+
 };
 
 #endif

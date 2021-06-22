@@ -34,10 +34,11 @@ CMainWindow::CMainWindow(QWidget *parent):QMainWindow(parent),ui(new Ui::CMainWi
  SelectedTileIndexX=0;
  SelectedTileIndexY=0;
 
+ ui->cToolBar_Main->addAction(QPixmap(":/image/img_set.png"),"Установка блоков",this,SLOT(on_ToolBar_Main_SetPart()));
+ ui->cToolBar_Main->addAction(QPixmap(":/image/img_delete.png"),"Удаление блоков",this,SLOT(on_ToolBar_Main_DeletePart()));
+ ui->cToolBar_Main->addAction(QPixmap(":/image/img_select.png"),"Выбор блоков",this,SLOT(on_ToolBar_Main_SelectPart()));
+
  UpdateTilesImage();
-
- //ui->cToolBar_Main->addAction();
-
 }
 //----------------------------------------------------------------------------------------------------
 //деструктор
@@ -110,9 +111,23 @@ void CMainWindow::mouseReleaseEvent(QMouseEvent *qMouseEvent_Ptr)
 {
 }
 //----------------------------------------------------------------------------------------------------
+//обработчик нажатия клавиши
+//----------------------------------------------------------------------------------------------------
+void CMainWindow::keyPressEvent(QKeyEvent *pe)
+{
+ ui->cMapEditor->PressKey(pe);
+}
+//----------------------------------------------------------------------------------------------------
+//обработчик отпускание клавиши
+//----------------------------------------------------------------------------------------------------
+void CMainWindow::keyReleaseEvent(QKeyEvent *pe)
+{
+ ui->cMapEditor->ReleaseKey(pe);
+}
+//----------------------------------------------------------------------------------------------------
 //слот нажатия на кнопку проницаемости материала
 //----------------------------------------------------------------------------------------------------
-void CMainWindow::on_cCheckBox_Matherial_Barrier_clicked()
+void CMainWindow::on_cCheckBox_Matherial_Barrier_clicked(void)
 {
  bool barrier=ui->cCheckBox_Matherial_Barrier->isChecked();
  ui->cMapEditor->SetSelectedBarrier(barrier);
@@ -120,19 +135,38 @@ void CMainWindow::on_cCheckBox_Matherial_Barrier_clicked()
 //----------------------------------------------------------------------------------------------------
 //слот выбора пункта меню "сохранить карту"
 //----------------------------------------------------------------------------------------------------
-void CMainWindow::on_cAction_SaveMap_triggered()
+void CMainWindow::on_cAction_SaveMap_triggered(void)
 {
  ui->cMapEditor->SaveMap("map.bin");
 }
 //----------------------------------------------------------------------------------------------------
 //слот выбора пункта меню "загрузить карту"
 //----------------------------------------------------------------------------------------------------
-void CMainWindow::on_cAction_LoadMap_triggered()
+void CMainWindow::on_cAction_LoadMap_triggered(void)
 {
  ui->cMapEditor->LoadMap("map.bin");
 }
-
-
+//----------------------------------------------------------------------------------------------------
+//слот выбора в панеле инструментов режима установки блоков
+//----------------------------------------------------------------------------------------------------
+void CMainWindow::on_ToolBar_Main_SetPart(void)
+{
+ ui->cMapEditor->SetModeSetPart();
+}
+//----------------------------------------------------------------------------------------------------
+//слот выбора в панеле инструментов режима удаления блоков
+//----------------------------------------------------------------------------------------------------
+void CMainWindow::on_ToolBar_Main_DeletePart(void)
+{
+ ui->cMapEditor->SetModeDeletePart();
+}
+//----------------------------------------------------------------------------------------------------
+//слот выбора в панеле инструментов режима выбора блоков
+//----------------------------------------------------------------------------------------------------
+void CMainWindow::on_ToolBar_Main_SelectPart(void)
+{
+ ui->cMapEditor->SetModeSelectPart();
+}
 //****************************************************************************************************
 //открытые функции
 //****************************************************************************************************

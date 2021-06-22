@@ -60,11 +60,16 @@ class CMainWindow:public QMainWindow
   //-закрытые функции-----------------------------------------------------------------------------------
   void UpdateTilesImage(void);//обновить картинку списка тайлов
   void mousePressEvent(QMouseEvent *qMouseEvent_Ptr);//обработчик нажатия на кнопку мышки
-  void mouseReleaseEvent(QMouseEvent *qMouseEvent_Ptr);//обработчик отпускания кнопки мышки
+  void mouseReleaseEvent(QMouseEvent *qMouseEvent_Ptr);//обработчик отпускания кнопки мышки  
+  void keyPressEvent(QKeyEvent *pe);//обработчик нажатия клавиши
+  void keyReleaseEvent(QKeyEvent *event);//обработчик отпускания клавиши
 private slots:
- void on_cCheckBox_Matherial_Barrier_clicked();//слот нажатия на кнопку проницаемости материала
- void on_cAction_SaveMap_triggered();//слот выбора пункта меню "сохранить карту"
- void on_cAction_LoadMap_triggered();//слот выбора пункта меню "загрузить карту"
+ void on_cCheckBox_Matherial_Barrier_clicked(void);//слот нажатия на кнопку проницаемости материала
+ void on_cAction_SaveMap_triggered(void);//слот выбора пункта меню "сохранить карту"
+ void on_cAction_LoadMap_triggered(void);//слот выбора пункта меню "загрузить карту"
+ void on_ToolBar_Main_SetPart(void);//слот выбора в панеле инструментов режима установки блоков
+ void on_ToolBar_Main_DeletePart(void);//слот выбора в панеле инструментов режима удаления блоков
+ void on_ToolBar_Main_SelectPart(void);//слот выбора в панеле инструментов режима выбора блоков
 };
 
 #endif

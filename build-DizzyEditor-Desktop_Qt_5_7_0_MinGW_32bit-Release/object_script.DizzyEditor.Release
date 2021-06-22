@@ -8,5 +8,6 @@ INPUT(
 ./release/ctile.o
 ./release/ctilessequence.o
 ./release/ipart.o
+./release/qrc_resource.o
 ./release/moc_cmainwindow.o
 );

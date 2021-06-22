@@ -98,9 +98,9 @@ void CPart::Visit(std::function<void(std::shared_ptr<IPart>)> callback_function)
  callback_function(shared_from_this());//вызываем для самого себя
 }
 //----------------------------------------------------------------------------------------------------
-//удалить часть при совпадении координат
+//удалить часть
 //----------------------------------------------------------------------------------------------------
-void CPart::RemovePartIfCoord(int32_t x,int32_t y)
+void CPart::RemovePart(std::function<bool(std::shared_ptr<IPart>)> callback_function)
 {
  //удаление возможно только для объединения частей
 }

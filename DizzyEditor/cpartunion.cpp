@@ -118,19 +118,19 @@ void CPartUnion::Visit(std::function<void(std::shared_ptr<IPart>)> callback_func
  std::for_each(Item.begin(),Item.end(),visit_function);
 }
 //----------------------------------------------------------------------------------------------------
-//удалить часть при совпадении координат
+//удалить часть
 //----------------------------------------------------------------------------------------------------
-void CPartUnion::RemovePartIfCoord(int32_t x,int32_t y)
+void CPartUnion::RemovePart(std::function<bool(std::shared_ptr<IPart>)> callback_function)
 {
- auto compare_function=[&x,&y](std::shared_ptr<IPart> iPart_Ptr)->bool
+ auto compare_function=[&callback_function](std::shared_ptr<IPart> iPart_Ptr)->bool
  {
   if (iPart_Ptr->GetItemPtr()!=NULL)
   {
-   iPart_Ptr->RemovePartIfCoord(x,y);
+   iPart_Ptr->RemovePart(callback_function);
    if (iPart_Ptr->GetItemPtr()->size()!=0) return(false);//ветка ещё не пустая
    return(true);//требуется удаление
   }
-  if (iPart_Ptr->IsCoord(x,y)==true) return(true);//требуется удаление
+  if (callback_function(iPart_Ptr)==true) return(true);//требуется удаление
   return(false);
  };
  Item.erase(std::remove_if(Item.begin(),Item.end(),compare_function),Item.end());

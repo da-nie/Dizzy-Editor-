@@ -32,3 +32,8 @@ HEADERS  += cmainwindow.h \
     ipart.h
 
 FORMS    += cmainwindow.ui
+
+DISTFILES +=
+
+RESOURCES += \
+    resource.qrc
