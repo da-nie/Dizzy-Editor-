@@ -124,7 +124,6 @@ compiler_rcc_clean:
 	-$(DEL_FILE) release/qrc_resource.cpp
 release/qrc_resource.cpp: ../DizzyEditor/resource.qrc \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/bin/rcc.exe \
-		../DizzyEditor/image/img_delete.png \
 		../DizzyEditor/image/img_set.png \
 		../DizzyEditor/image/img_select.png
 	'E:\Lang\Qt5.7.0\5.7\mingw53_32\bin\rcc.exe' -name resource ../DizzyEditor/resource.qrc -o release/qrc_resource.cpp

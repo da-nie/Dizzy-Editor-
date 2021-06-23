@@ -68,7 +68,6 @@ private slots:
  void on_cAction_SaveMap_triggered(void);//слот выбора пункта меню "сохранить карту"
  void on_cAction_LoadMap_triggered(void);//слот выбора пункта меню "загрузить карту"
  void on_ToolBar_Main_SetPart(void);//слот выбора в панеле инструментов режима установки блоков
- void on_ToolBar_Main_DeletePart(void);//слот выбора в панеле инструментов режима удаления блоков
  void on_ToolBar_Main_SelectPart(void);//слот выбора в панеле инструментов режима выбора блоков
 };
 

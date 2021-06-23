@@ -35,7 +35,6 @@ CMainWindow::CMainWindow(QWidget *parent):QMainWindow(parent),ui(new Ui::CMainWi
  SelectedTileIndexY=0;
 
  ui->cToolBar_Main->addAction(QPixmap(":/image/img_set.png"),"Установка блоков",this,SLOT(on_ToolBar_Main_SetPart()));
- ui->cToolBar_Main->addAction(QPixmap(":/image/img_delete.png"),"Удаление блоков",this,SLOT(on_ToolBar_Main_DeletePart()));
  ui->cToolBar_Main->addAction(QPixmap(":/image/img_select.png"),"Выбор блоков",this,SLOT(on_ToolBar_Main_SelectPart()));
 
  UpdateTilesImage();
@@ -96,10 +95,6 @@ void CMainWindow::mousePressEvent(QMouseEvent *qMouseEvent_Ptr)
   bool barrier=ui->cCheckBox_Matherial_Barrier->isChecked();
   std::shared_ptr<IPart> iPart_Ptr(new CPartUnion());
   iPart_Ptr->GetItemPtr()->push_back(std::shared_ptr<IPart>(new CPart(0,0,cTilesSequence,barrier)));
-  /*iPart_Ptr->GetItemPtr()->push_back(std::shared_ptr<IPart>(new CPart(0,1,cTilesSequence,barrier)));
-  iPart_Ptr->GetItemPtr()->push_back(std::shared_ptr<IPart>(new CPart(1,0,cTilesSequence,barrier)));
-  iPart_Ptr->GetItemPtr()->push_back(std::shared_ptr<IPart>(new CPart(1,1,cTilesSequence,barrier)));
-  */
   ui->cMapEditor->SetSelectedPart(iPart_Ptr);
   UpdateTilesImage();
  }
@@ -152,13 +147,6 @@ void CMainWindow::on_cAction_LoadMap_triggered(void)
 void CMainWindow::on_ToolBar_Main_SetPart(void)
 {
  ui->cMapEditor->SetModeSetPart();
-}
-//----------------------------------------------------------------------------------------------------
-//слот выбора в панеле инструментов режима удаления блоков
-//----------------------------------------------------------------------------------------------------
-void CMainWindow::on_ToolBar_Main_DeletePart(void)
-{
- ui->cMapEditor->SetModeDeletePart();
 }
 //----------------------------------------------------------------------------------------------------
 //слот выбора в панеле инструментов режима выбора блоков
