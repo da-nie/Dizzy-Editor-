@@ -48,7 +48,7 @@ CMapEditor::CMapEditor(QWidget *parent):QWidget(parent)
 
  //создаём меню
  qMenu_Context=new QMenu(this);
- qMenu_Context->addAction("Скопировать");
+ qMenu_Context->addAction("Сделать копию");
  connect(qMenu_Context,SIGNAL(triggered(QAction*)),SLOT(on_ContextMenu_CopyPart(QAction*)));
 
  //подключим таймер обновления экрана
@@ -210,8 +210,8 @@ void CMapEditor::paintEvent(QPaintEvent *qPaintEvent_Ptr)
  QPainter qPainter(this);
  qPainter.fillRect(QRect(0,0,w_width,w_height),QBrush(Qt::black));
 
- DrawGrid(qPainter,w_width,w_height);
  DrawMap(qPainter);
+ DrawGrid(qPainter,w_width,w_height);
  if (MouseMode==MOUSE_MODE_SELECT_AREA) DrawSelectedArea(qPainter);
  if (Mode==MODE_SET) DrawCursor(qPainter);
 }
@@ -264,8 +264,8 @@ void CMapEditor::DrawMap(QPainter &qPainter)
   size_t tile_index=iPart_Ptr->cTilesSequence.GetCurrentIndex();
   CTile &cTile=iPart_Ptr->cTilesSequence.GetTile(tile_index);
 
-  int32_t tx=cTile.X*CImageStorage::TILE_WITH_BORDER_WIDTH;
-  int32_t ty=cTile.Y*CImageStorage::TILE_WITH_BORDER_HEIGHT;
+  int32_t tx=cTile.X*CImageStorage::TILE_WITH_BORDER_WIDTH+CImageStorage::TILE_BORDER_WIDTH;
+  int32_t ty=cTile.Y*CImageStorage::TILE_WITH_BORDER_HEIGHT+CImageStorage::TILE_BORDER_HEIGHT;
 
   if (iPart_Ptr->Selected==false)
   {
@@ -310,8 +310,8 @@ void CMapEditor::DrawCursor(QPainter &qPainter)
   size_t tile_index=iPart_Ptr->cTilesSequence.GetCurrentIndex();
   CTile &cTile=iPart_Ptr->cTilesSequence.GetTile(tile_index);
 
-  int32_t tx=cTile.X*CImageStorage::TILE_WITH_BORDER_WIDTH;
-  int32_t ty=cTile.Y*CImageStorage::TILE_WITH_BORDER_HEIGHT;
+  int32_t tx=cTile.X*CImageStorage::TILE_WITH_BORDER_WIDTH+CImageStorage::TILE_BORDER_WIDTH;
+  int32_t ty=cTile.Y*CImageStorage::TILE_WITH_BORDER_HEIGHT+CImageStorage::TILE_BORDER_HEIGHT;
 
   int32_t ox=iPart_Ptr->BlockPosX*CImageStorage::TILE_WIDTH;
   int32_t oy=iPart_Ptr->BlockPosY*CImageStorage::TILE_HEIGHT;
@@ -331,6 +331,19 @@ void CMapEditor::DrawSelectedArea(QPainter &qPainter)
  int x2;
  int y2;
  qRect_SelectedArea.getCoords(&x1,&y1,&x2,&y2);
+
+ if (x2<x1)
+ {
+  int x=x2;
+  x2=x1;
+  x1=x;
+ }
+ if (y2<y1)
+ {
+  int y=y2;
+  y2=y1;
+  y1=y;
+ }
 
  x2++;
  y2++;
@@ -358,9 +371,9 @@ void CMapEditor::SetTile(int32_t mouse_x,int32_t mouse_y)
  {
   if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент  
   void RemovePart(std::function<bool(std::shared_ptr<IPart>)> callback_function);//удалить часть
-  auto if_function=[this,&block_x,&block_y](std::shared_ptr<IPart> iPart_Ptr)->bool
+  auto if_function=[this,&block_x,&block_y,&iPart_Ptr](std::shared_ptr<IPart> iPart_Local_Ptr)->bool
   {
-   return(iPart_Ptr->IsCoord(block_x+iPart_Ptr->BlockPosX,block_y+iPart_Ptr->BlockPosY));
+   return(iPart_Local_Ptr->IsCoord(block_x+iPart_Ptr->BlockPosX,block_y+iPart_Ptr->BlockPosY));
   };
   iPart_Map_Ptr->RemovePart(if_function);
  };
@@ -555,6 +568,8 @@ void CMapEditor::MouseToMap(int32_t mouse_x,int32_t mouse_y,int32_t &map_x,int32
 void CMapEditor::on_ContextMenu_CopyPart(QAction *pAction)
 {
  ConnectSelectedTiles();//объединяем выбранные тайлы и устанавливаем их в качестве курсора
+ //переключаемся принудительно в режим установки блоков
+ SetModeSetPart();
 }
 
 //****************************************************************************************************
@@ -601,6 +616,27 @@ bool CMapEditor::LoadMap(const std::string &file_name)
  if (file.is_open()==false) return(false);
  Map_Ptr->Release();
  Map_Ptr->Load(file);
+ return(true);
+}
+//----------------------------------------------------------------------------------------------------
+//экспортировать карту
+//----------------------------------------------------------------------------------------------------
+bool CMapEditor::ExportMap(const std::string &file_name)
+{
+ std::ofstream file;
+ file.open(file_name,std::ios_base::out|std::ios_base::binary);
+ if (file.is_open()==false) return(false);
+ //считаем количество блоков
+ int32_t counter=0;
+ auto counter_function=[this,&counter](std::shared_ptr<IPart> iPart_Ptr)
+ {
+  if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
+  counter++;
+ };
+ Map_Ptr->Visit(counter_function);
+
+ if (file.write(reinterpret_cast<char*>(&counter),sizeof(counter)).fail()==true) return(false);
+ Map_Ptr->Export(file);
  return(true);
 }
 //----------------------------------------------------------------------------------------------------

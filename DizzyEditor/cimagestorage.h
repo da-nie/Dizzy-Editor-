@@ -35,8 +35,10 @@ class CImageStorage
   //-константы------------------------------------------------------------------------------------------
   static const int32_t TILE_WIDTH=16;//ширина тайла
   static const int32_t TILE_HEIGHT=16;//высота тайла
-  static const int32_t TILE_WITH_BORDER_WIDTH=TILE_WIDTH+2;//ширина тайла с рамкой
-  static const int32_t TILE_WITH_BORDER_HEIGHT=TILE_HEIGHT+2;//высота тайла с рамкой
+  static const int32_t TILE_BORDER_WIDTH=1;//ширина рамки
+  static const int32_t TILE_BORDER_HEIGHT=1;//высота рамки
+  static const int32_t TILE_WITH_BORDER_WIDTH=TILE_WIDTH+TILE_BORDER_WIDTH+TILE_BORDER_WIDTH;//ширина тайла с рамкой
+  static const int32_t TILE_WITH_BORDER_HEIGHT=TILE_HEIGHT+TILE_BORDER_HEIGHT+TILE_BORDER_HEIGHT;//высота тайла с рамкой
  private:
   //-переменные-----------------------------------------------------------------------------------------
   QPixmap qPixmap_Tiles;//набор тайлов

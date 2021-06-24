@@ -10,4 +10,5 @@ INPUT(
 ./release/ipart.o
 ./release/qrc_resource.o
 ./release/moc_cmainwindow.o
+./release/moc_cmapeditor.o
 );

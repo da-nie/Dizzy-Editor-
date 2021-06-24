@@ -10,4 +10,5 @@ INPUT(
 ./debug/ipart.o
 ./debug/qrc_resource.o
 ./debug/moc_cmainwindow.o
+./debug/moc_cmapeditor.o
 );

@@ -59,7 +59,12 @@ bool CPart::Save(std::ofstream &file)
 
  cTilesSequence.Save(file);
 
- if (file.write(reinterpret_cast<char*>(&Barrier),sizeof(Barrier)).fail()==true) return(false);
+ static const uint8_t NO_BARRIER_TYPE=0;
+ static const uint8_t BARRIER_TYPE=1;
+ uint8_t barrier=NO_BARRIER_TYPE;
+ if (Barrier==true) barrier=BARRIER_TYPE;
+
+ if (file.write(reinterpret_cast<char*>(&barrier),sizeof(barrier)).fail()==true) return(false);
 
  return(true);
 }
@@ -73,9 +78,23 @@ bool CPart::Load(std::ifstream &file)
 
  cTilesSequence.Load(file);
 
- if (file.read(reinterpret_cast<char*>(&Barrier),sizeof(Barrier)).fail()==true) return(false);
+ static const uint8_t NO_BARRIER_TYPE=0;
+ static const uint8_t BARRIER_TYPE=1;
+
+ uint8_t barrier;
+ if (file.read(reinterpret_cast<char*>(&barrier),sizeof(barrier)).fail()==true) return(false);
+
+ Barrier=false;
+ if (barrier==BARRIER_TYPE) Barrier=true;
 
  return(true);
+}
+//----------------------------------------------------------------------------------------------------
+//экспортировать
+//----------------------------------------------------------------------------------------------------
+bool CPart::Export(std::ofstream &file)
+{
+ return(Save(file));
 }
 //----------------------------------------------------------------------------------------------------
 //удалить все элементы

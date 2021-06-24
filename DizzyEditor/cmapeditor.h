@@ -88,6 +88,7 @@ class CMapEditor:public QWidget
   void SetSelectedBarrier(bool barrier);//задать является ли выбранная часть барьером
   bool SaveMap(const std::string &file_name);//записать карту
   bool LoadMap(const std::string &file_name);//загрузить карту
+  bool ExportMap(const std::string &file_name);//экспортировать карту
   void SetModeSetPart(void);//установить режим установки блоков  
   void SetModeSelectPart(void);//установить режим выбора блоков
   void PressKey(QKeyEvent *pe);//нажатие клавиши

@@ -57,7 +57,7 @@ bool CTilesSequence::Save(std::ofstream &file)
  {
   if (cTile.Save(file)==false) ret=false;
  };
- size_t size=cTile_Sequence.size();
+ int32_t size=cTile_Sequence.size();
  if (file.write(reinterpret_cast<char*>(&size),sizeof(size)).fail()==true) return(false);
  std::for_each(cTile_Sequence.begin(),cTile_Sequence.end(),save_function);
  return(ret);
@@ -67,11 +67,11 @@ bool CTilesSequence::Save(std::ofstream &file)
 //----------------------------------------------------------------------------------------------------
 bool CTilesSequence::Load(std::ifstream &file)
 {
- size_t size;
+ int32_t size;
  if (file.read(reinterpret_cast<char*>(&size),sizeof(size)).fail()==true) return(false);
  cTile_Sequence.clear();
  CurrentIndex=0;
- for(size_t n=0;n<size;n++)
+ for(int32_t n=0;n<size;n++)
  {
   CTile cTile;
   if (cTile.Load(file)==false) return(false);

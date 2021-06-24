@@ -61,6 +61,7 @@ class IPart:public std::enable_shared_from_this<IPart>
   //-открытые функции-----------------------------------------------------------------------------------
   virtual bool Save(std::ofstream &file)=0;//записать
   virtual bool Load(std::ifstream &file)=0;//сохранить
+  virtual bool Export(std::ofstream &file)=0;//экспортировать
   virtual void Release(void)=0;//удалить все элементы
   virtual void AnimateTiles(void)=0;//выполнить анимацию тайлов
   virtual void Visit(std::function<void(std::shared_ptr<IPart>)> callback_function)=0;//обойти все элементы

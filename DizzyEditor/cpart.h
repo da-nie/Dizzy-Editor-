@@ -50,6 +50,7 @@ class CPart:public IPart
   //-открытые функции-----------------------------------------------------------------------------------
   bool Save(std::ofstream &file);//записать
   bool Load(std::ifstream &file);//сохранить
+  bool Export(std::ofstream &file);//экспортировать
   void Release(void);//удалить все элементы
   void AnimateTiles(void);//выполнить анимацию тайлов
   void Visit(std::function<void(std::shared_ptr<IPart>)> callback_function);//обойти все элементы

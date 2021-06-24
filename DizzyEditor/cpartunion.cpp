@@ -55,10 +55,13 @@ bool CPartUnion::Save(std::ofstream &file)
  size_t part=Item.size();
  if (file.write(reinterpret_cast<char*>(&part),sizeof(part)).fail()==true) return(false);
 
+ static const uint8_t PART_TYPE=0;
+ static const uint8_t UNION_TYPE=1;
+
  auto save_function=[&file](std::shared_ptr<IPart> iPart_Ptr)
  {
-  bool part_union=true;
-  if (iPart_Ptr->GetItemPtr()==NULL) part_union=false;
+  uint8_t part_union=UNION_TYPE;
+  if (iPart_Ptr->GetItemPtr()==NULL) part_union=PART_TYPE;
   if (file.write(reinterpret_cast<char*>(&part_union),sizeof(part_union)).fail()==true) return;
   iPart_Ptr->Save(file);
  };
@@ -73,18 +76,32 @@ bool CPartUnion::Load(std::ifstream &file)
  size_t part;
  if (file.read(reinterpret_cast<char*>(&part),sizeof(part)).fail()==true) return(false);
 
+ static const uint8_t PART_TYPE=0;
+ static const uint8_t UNION_TYPE=1;
+
  for(size_t n=0;n<part;n++)
  {
   //загружаем, какого типа объект нам нужно создавать
-  bool part_union;
+  uint8_t part_union;
   if (file.read(reinterpret_cast<char*>(&part_union),sizeof(part_union)).fail()==true) return(false);
   IPart *iPart_Ptr=NULL;
-  if (part_union==true) iPart_Ptr=new CPartUnion();
+  if (part_union==UNION_TYPE) iPart_Ptr=new CPartUnion();
                    else iPart_Ptr=new CPart();
   iPart_Ptr->Load(file);
   Item.push_back(std::shared_ptr<IPart>(iPart_Ptr));
  }
  return(true);
+}
+//----------------------------------------------------------------------------------------------------
+//экспортировать
+//----------------------------------------------------------------------------------------------------
+bool CPartUnion::Export(std::ofstream &file)
+{
+ auto export_function=[&file](std::shared_ptr<IPart> iPart_Ptr)
+ {
+  iPart_Ptr->Export(file);
+ };
+ std::for_each(Item.begin(),Item.end(),export_function);
 }
 //----------------------------------------------------------------------------------------------------
 //получить указатель на список элементов

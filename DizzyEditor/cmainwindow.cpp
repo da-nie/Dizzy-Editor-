@@ -34,8 +34,8 @@ CMainWindow::CMainWindow(QWidget *parent):QMainWindow(parent),ui(new Ui::CMainWi
  SelectedTileIndexX=0;
  SelectedTileIndexY=0;
 
- ui->cToolBar_Main->addAction(QPixmap(":/image/img_set.png"),"Установка блоков",this,SLOT(on_ToolBar_Main_SetPart()));
- ui->cToolBar_Main->addAction(QPixmap(":/image/img_select.png"),"Выбор блоков",this,SLOT(on_ToolBar_Main_SelectPart()));
+ ui->cToolBar_Main->addAction(QPixmap(":/image/img_set.png"),"Установка блоков",this,SLOT(On_ToolBar_Main_SetPart()));
+ ui->cToolBar_Main->addAction(QPixmap(":/image/img_select.png"),"Выбор блоков",this,SLOT(On_ToolBar_Main_SelectPart()));
 
  UpdateTilesImage();
 }
@@ -142,20 +142,26 @@ void CMainWindow::on_cAction_LoadMap_triggered(void)
  ui->cMapEditor->LoadMap("map.bin");
 }
 //----------------------------------------------------------------------------------------------------
+//слот выбора пункта меню "экспортировать карту"
+//----------------------------------------------------------------------------------------------------
+void CMainWindow::on_cAction_ExportMap_triggered()
+{
+ ui->cMapEditor->ExportMap("map.gam");
+}
+//----------------------------------------------------------------------------------------------------
 //слот выбора в панеле инструментов режима установки блоков
 //----------------------------------------------------------------------------------------------------
-void CMainWindow::on_ToolBar_Main_SetPart(void)
+void CMainWindow::On_ToolBar_Main_SetPart(void)
 {
  ui->cMapEditor->SetModeSetPart();
 }
 //----------------------------------------------------------------------------------------------------
 //слот выбора в панеле инструментов режима выбора блоков
 //----------------------------------------------------------------------------------------------------
-void CMainWindow::on_ToolBar_Main_SelectPart(void)
+void CMainWindow::On_ToolBar_Main_SelectPart(void)
 {
  ui->cMapEditor->SetModeSelectPart();
 }
 //****************************************************************************************************
 //открытые функции
 //****************************************************************************************************
-

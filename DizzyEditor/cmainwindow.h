@@ -67,8 +67,9 @@ private slots:
  void on_cCheckBox_Matherial_Barrier_clicked(void);//слот нажатия на кнопку проницаемости материала
  void on_cAction_SaveMap_triggered(void);//слот выбора пункта меню "сохранить карту"
  void on_cAction_LoadMap_triggered(void);//слот выбора пункта меню "загрузить карту"
- void on_ToolBar_Main_SetPart(void);//слот выбора в панеле инструментов режима установки блоков
- void on_ToolBar_Main_SelectPart(void);//слот выбора в панеле инструментов режима выбора блоков
+ void on_cAction_ExportMap_triggered();//слот выбора пункта меню "экспортировать карту"
+ void On_ToolBar_Main_SetPart(void);//слот выбора в панеле инструментов режима установки блоков
+ void On_ToolBar_Main_SelectPart(void);//слот выбора в панеле инструментов режима выбора блоков
 };
 
 #endif
