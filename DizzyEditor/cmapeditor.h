@@ -118,6 +118,8 @@ class CMapEditor:public QWidget
   void DrawCursor(QPainter &qPainter,std::shared_ptr<IPart> MousePart_Ptr);//рисование курсора
   void DrawSelectedArea(QPainter &qPainter);//рисование области выделения
 
+  void SetTileForMousePos(int32_t mouse_x,int32_t mouse_y,std::shared_ptr<IPart> MousePart_Ptr);//поставить тайл в позицию по координатам мыши
+  void SetTileForBlockPos(int32_t block_x,int32_t block_y,std::shared_ptr<IPart> MousePart_Ptr);//поставить тайл в позицию по координатам блоков
   void SetTile(int32_t mouse_x,int32_t mouse_y,std::shared_ptr<IPart> MousePart_Ptr);//поставить тайл в позицию
   void SelectTiles(QRect &qRect_Area);//выбрать область тайлов
   void UnselectTiles(void);//отменить выбор тайлов

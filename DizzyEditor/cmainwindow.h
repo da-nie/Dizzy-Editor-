@@ -47,6 +47,10 @@ class CMainWindow:public QMainWindow
   Ui::CMainWindow *ui;
   QPixmap qPixmap_Screen;//поле редактирования
 
+  QAction *qAction_ModeSetPart;//действие при выборе режима "установка элементов"
+  QAction *qAction_ModeSelectPart;//действие при выборе режима "выбор элементов"
+  QAction *qAction_ModeMoveMap;//действие при выборе режима "перемещение карты"
+
   int32_t SelectedTileIndexX;//позиция выбранного тайла по X
   int32_t SelectedTileIndexY;//позиция выбранного тайла по Y
  public:

@@ -34,9 +34,24 @@ CMainWindow::CMainWindow(QWidget *parent):QMainWindow(parent),ui(new Ui::CMainWi
  SelectedTileIndexX=0;
  SelectedTileIndexY=0;
 
- ui->cToolBar_Main->addAction(QPixmap(":/image/img_set.png"),"Установка блоков",this,SLOT(On_ToolBar_Main_SetPart()));
- ui->cToolBar_Main->addAction(QPixmap(":/image/img_select.png"),"Выбор блоков",this,SLOT(On_ToolBar_Main_SelectPart()));
- ui->cToolBar_Main->addAction(QPixmap(":/image/img_move.png"),"Перемещение по карте",this,SLOT(On_ToolBar_Main_MoveMap()));
+ qAction_ModeSetPart=new QAction(QPixmap(":/image/img_set.png"),tr("Установка блоков"),this);
+ qAction_ModeSetPart->setStatusTip(tr("Установка блоков"));
+ qAction_ModeSetPart->setCheckable(true);
+ connect(qAction_ModeSetPart,SIGNAL(triggered()),this,SLOT(On_ToolBar_Main_SetPart()));
+
+ qAction_ModeSelectPart=new QAction(QPixmap(":/image/img_select.png"),tr("Выбор блоков"),this);
+ qAction_ModeSelectPart->setStatusTip(tr("Выбор блоков"));
+ qAction_ModeSelectPart->setCheckable(true);
+ connect(qAction_ModeSelectPart,SIGNAL(triggered()),this,SLOT(On_ToolBar_Main_SelectPart()));
+
+ qAction_ModeMoveMap=new QAction(QPixmap(":/image/img_move.png"),tr("Перемещение по карте"),this);
+ qAction_ModeMoveMap->setStatusTip(tr("Перемещение по карте"));
+ qAction_ModeMoveMap->setCheckable(true);
+ connect(qAction_ModeMoveMap,SIGNAL(triggered()),this,SLOT(On_ToolBar_Main_MoveMap()));
+
+ ui->cToolBar_Main->addAction(qAction_ModeSetPart);
+ ui->cToolBar_Main->addAction(qAction_ModeSelectPart);
+ ui->cToolBar_Main->addAction(qAction_ModeMoveMap);
 
  UpdateTilesImage();
 }
@@ -153,8 +168,11 @@ void CMainWindow::on_cAction_ExportMap_triggered()
 //слот выбора в панеле инструментов режима установки блоков
 //----------------------------------------------------------------------------------------------------
 void CMainWindow::On_ToolBar_Main_SetPart(void)
-{
+{     
  ui->cMapEditor->SetModeSetPart();
+ qAction_ModeSetPart->setChecked(true);
+ qAction_ModeSelectPart->setChecked(false);
+ qAction_ModeMoveMap->setChecked(false);
 }
 //----------------------------------------------------------------------------------------------------
 //слот выбора в панеле инструментов режима выбора блоков
@@ -162,6 +180,9 @@ void CMainWindow::On_ToolBar_Main_SetPart(void)
 void CMainWindow::On_ToolBar_Main_SelectPart(void)
 {
  ui->cMapEditor->SetModeSelectPart();
+ qAction_ModeSetPart->setChecked(false);
+ qAction_ModeSelectPart->setChecked(true);
+ qAction_ModeMoveMap->setChecked(false);
 }
 //----------------------------------------------------------------------------------------------------
 //слот выбора в панеле инструментов режима перемещения по карте
@@ -169,6 +190,9 @@ void CMainWindow::On_ToolBar_Main_SelectPart(void)
 void CMainWindow::On_ToolBar_Main_MoveMap(void)
 {
  ui->cMapEditor->SetModeMoveMap();
+ qAction_ModeSetPart->setChecked(false);
+ qAction_ModeSelectPart->setChecked(false);
+ qAction_ModeMoveMap->setChecked(true);
 }
 //****************************************************************************************************
 //открытые функции

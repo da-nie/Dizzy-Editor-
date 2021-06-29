@@ -119,12 +119,12 @@ void CMapEditor::mousePressEvent(QMouseEvent *qMouseEvent_Ptr)
    SetMouseMode(MOUSE_MODE_MOVE_MAP);
   }
 
-  if (Mode==MODE_SET) SetTile(x,y,CursorPart_Ptr);
+  if (Mode==MODE_SET) SetTileForMousePos(x,y,CursorPart_Ptr);
   if (Mode==MODE_SELECT)
   {
    if (MouseMode==MOUSE_MODE_PASTE)
    {
-    SetTile(x,y,CopyPart_Ptr);
+    SetTileForMousePos(x,y,CopyPart_Ptr);
     SetMouseMode(MOUSE_MODE_STANDARD);
    }
    else
@@ -238,7 +238,7 @@ void CMapEditor::TimerEvent_Mode_MoveMap(const QPoint &qPoint)
 //----------------------------------------------------------------------------------------------------
 void CMapEditor::MouseMoveEvent_Mode_Set(const QPoint &qPoint)
 {
- if (MouseLButton==true) SetTile(qPoint.x(),qPoint.y(),CursorPart_Ptr);
+ if (MouseLButton==true) SetTileForMousePos(qPoint.x(),qPoint.y(),CursorPart_Ptr);
 }
 //----------------------------------------------------------------------------------------------------
 //обработчик перемещения мышки в режиме выбора блоков
@@ -486,14 +486,20 @@ void CMapEditor::DrawSelectedArea(QPainter &qPainter)
  qPainter.drawRect(ox1,oy1,(ox2-ox1),(oy2-oy1));
 }
 //----------------------------------------------------------------------------------------------------
-//поставить тайл в позицию
+//поставить тайл в позицию по координатам мыши
 //----------------------------------------------------------------------------------------------------
-void CMapEditor::SetTile(int32_t mouse_x,int32_t mouse_y,std::shared_ptr<IPart> MousePart_Ptr)
+void CMapEditor::SetTileForMousePos(int32_t mouse_x,int32_t mouse_y,std::shared_ptr<IPart> MousePart_Ptr)
 {
  int32_t block_x;
  int32_t block_y;
  MouseToMap(mouse_x,mouse_y,block_x,block_y);
-
+ SetTileForBlockPos(block_x,block_y,MousePart_Ptr);
+}
+//----------------------------------------------------------------------------------------------------
+//поставить тайл в позицию по координатам блоков
+//----------------------------------------------------------------------------------------------------
+void CMapEditor::SetTileForBlockPos(int32_t block_x,int32_t block_y,std::shared_ptr<IPart> MousePart_Ptr)
+{
  //выполняем установку тайлов
  //удаляем все тайлы, которые наложились
  std::shared_ptr<IPart> iPart_Map_Ptr=Map_Ptr;
@@ -515,7 +521,11 @@ void CMapEditor::SetTile(int32_t mouse_x,int32_t mouse_y,std::shared_ptr<IPart> 
   //смещаем положение на участок карты
   int32_t x=iPart_Ptr->BlockPosX+block_x;
   int32_t y=iPart_Ptr->BlockPosY+block_y;
-  std::shared_ptr<IPart> iPart_New(new CPart(x,y,iPart_Ptr->cTilesSequence,iPart_Ptr->Barrier));
+  std::shared_ptr<IPart> iPart_New(new CPart());
+  *iPart_New=*iPart_Ptr;
+  iPart_New->BlockPosX=x;
+  iPart_New->BlockPosY=y;
+  iPart_New->Selected=false;
   iPart_Map_Ptr->GetItemPtr()->push_back(iPart_New);
  };
  MousePart_Ptr->Visit(add_function);
@@ -582,13 +592,25 @@ void CMapEditor::SelectTiles(QRect &qRect_Area)
 //----------------------------------------------------------------------------------------------------
 void CMapEditor::UnselectTiles(void)
 {
- //отменяем выделение блоков
- auto select_function=[this](std::shared_ptr<IPart> iPart_Ptr)
+ //собираем выделенные блоки в отдельное объединение
+ std::shared_ptr<IPart> SelectedPart_Ptr;//выделенные блоки
+ SelectedPart_Ptr.reset(new CPartUnion());
+ //отменяем выделение блоков и собираем выделенные блоки
+ auto unselect_function=[this,&SelectedPart_Ptr](std::shared_ptr<IPart> iPart_Ptr)
  {
   if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
+  if (iPart_Ptr->Selected==true)
+  {
+   std::shared_ptr<IPart> iPart_New(new CPart());
+   *iPart_New=*iPart_Ptr;
+   SelectedPart_Ptr->GetItemPtr()->push_back(iPart_New);
+  }
   iPart_Ptr->Selected=false;
  };
- Map_Ptr->Visit(select_function);
+ Map_Ptr->Visit(unselect_function);
+ //устанавливаем выделенные блоки на поле
+ //так как координаты блоков абсолютные, то установку выполняем с нулевой позиции
+ SetTileForBlockPos(0,0,SelectedPart_Ptr);
 }
 //----------------------------------------------------------------------------------------------------
 //удалить выбранные тайлы
