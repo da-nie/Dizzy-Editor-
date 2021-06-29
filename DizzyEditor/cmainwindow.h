@@ -70,6 +70,7 @@ private slots:
  void on_cAction_ExportMap_triggered();//слот выбора пункта меню "экспортировать карту"
  void On_ToolBar_Main_SetPart(void);//слот выбора в панеле инструментов режима установки блоков
  void On_ToolBar_Main_SelectPart(void);//слот выбора в панеле инструментов режима выбора блоков
+ void On_ToolBar_Main_MoveMap(void);//слот выбора в панеле инструментов режима перемещения по карте
 };
 
 #endif

@@ -38,18 +38,19 @@ CMapEditor::CMapEditor(QWidget *parent):QWidget(parent)
  qPoint_LeftTop=QPoint(0,0); 
  qPoint_MousePos=QPoint(0,0);
 
- Mode=MODE_SELECT;
- MouseMode=MOUSE_MODE_STANDARD;
+ Mode=MODE_MOVE_MAP;
+ SetMouseMode(MOUSE_MODE_STANDARD);
 
  CursorPart_Ptr.reset(new CPartUnion());
+ CopyPart_Ptr.reset(new CPartUnion());
 
  //создаём карту
  Map_Ptr.reset(new CPartUnion());
 
  //создаём меню
- qMenu_Context=new QMenu(this);
- qMenu_Context->addAction("Сделать копию");
- connect(qMenu_Context,SIGNAL(triggered(QAction*)),SLOT(on_ContextMenu_CopyPart(QAction*)));
+ qMenu_Context=new QMenu(this); 
+ qMenu_Context->addAction("Копировать",this,SLOT(on_ContextMenu_CopyPart()));
+ qMenu_Context->addAction("Вставить",this,SLOT(on_ContextMenu_PastePart()));
 
  //подключим таймер обновления экрана
  TimerId=startTimer(TIMER_INTERVAL_MS); 
@@ -69,7 +70,6 @@ CMapEditor::~CMapEditor()
 //закрытые функции
 //****************************************************************************************************
 
-
 //----------------------------------------------------------------------------------------------------
 //обработчик таймера
 //----------------------------------------------------------------------------------------------------
@@ -79,15 +79,9 @@ void CMapEditor::timerEvent(QTimerEvent *qTimerEvent_Ptr)
  //переводим координаты курсора в систему координат виджета
  QPoint qPoint=mapFromGlobal(cursor().pos());
 
- if (MouseRButton==true)
- {
-  int32_t dx=qPoint.x()-qPoint_MouseRightButtonDownPos.x();
-  int32_t dy=qPoint.y()-qPoint_MouseRightButtonDownPos.y();
-  qPoint_MouseRightButtonDownPos=qPoint;
-  MoveMap(dx,dy);
- }
- qPoint_MousePos=qPoint;
+ if (Mode==MODE_MOVE_MAP) TimerEvent_Mode_MoveMap(qPoint);//режим перемещения карты
 
+ qPoint_MousePos=qPoint;
  ChangeTileCounter++;
  ChangeTileCounter%=TIMER_CHANGE_TILE_DIVIDER;
  if (ChangeTileCounter==0) AnimateTiles();
@@ -103,26 +97,9 @@ void CMapEditor::mouseMoveEvent(QMouseEvent *qMouseEvent_Ptr)
  int32_t x=qMouseEvent_Ptr->localPos().x();
  int32_t y=qMouseEvent_Ptr->localPos().y(); 
 
- if (MouseLButton==true)
- {
-  if (Mode==MODE_SET) SetTile(x,y);  
-  if (Mode==MODE_SELECT)
-  {
-   if (MouseMode==MOUSE_MODE_SELECT_AREA)
-   {
-    int32_t map_x;
-    int32_t map_y;
-    MouseToMap(x,y,map_x,map_y);
-
-    int x1;
-    int y1;
-    int x2;
-    int y2;
-    qRect_SelectedArea.getCoords(&x1,&y1,&x2,&y2);
-    qRect_SelectedArea.setCoords(x1,y1,map_x,map_y);
-   }
-  }
- }
+ qPoint_MousePos=QPoint(x,y);
+ if (Mode==MODE_SET) MouseMoveEvent_Mode_Set(qPoint_MousePos);
+ if (Mode==MODE_SELECT) MouseMoveEvent_Mode_Select(qPoint_MousePos);
 }
 //----------------------------------------------------------------------------------------------------
 //обработчик нажатия на кнопку мышки
@@ -135,32 +112,50 @@ void CMapEditor::mousePressEvent(QMouseEvent *qMouseEvent_Ptr)
  if (qMouseEvent_Ptr->button()&Qt::LeftButton)
  {
   if (MouseLButton==false) MouseLButton=true;
-  if (Mode==MODE_SET) SetTile(x,y);
+
+  if (Mode==MODE_MOVE_MAP)
+  {
+   qPoint_MouseMoveMapButtonDownPos=QPoint(x,y);
+   SetMouseMode(MOUSE_MODE_MOVE_MAP);
+  }
+
+  if (Mode==MODE_SET) SetTile(x,y,CursorPart_Ptr);
   if (Mode==MODE_SELECT)
   {
-   if (CtrlOn==true) SelectTile(x,y);
+   if (MouseMode==MOUSE_MODE_PASTE)
+   {
+    SetTile(x,y,CopyPart_Ptr);
+    SetMouseMode(MOUSE_MODE_STANDARD);
+   }
    else
    {
-    UnselectTiles();
-    MouseMode=MOUSE_MODE_SELECT_AREA;
-    int32_t map_x;
-    int32_t map_y;
-    MouseToMap(x,y,map_x,map_y);
-    qRect_SelectedArea.setCoords(map_x,map_y,map_x,map_y);
+    if (CtrlOn==true) SelectTile(x,y);
+    else
+    {
+     if (IsTileSelected(x,y)==true)
+     {
+      SetMouseMode(MOUSE_MODE_MOVE_SELECTED);
+      qPoint_MouseMoveSelectedButtonDownPos=QPoint(x,y);
+     }
+     else
+     {
+      UnselectTiles();
+      SetMouseMode(MOUSE_MODE_SELECT_AREA);
+      int32_t map_x;
+      int32_t map_y;
+      MouseToMap(x,y,map_x,map_y);
+      qRect_SelectedArea.setCoords(map_x,map_y,map_x,map_y);
+     }
+    }
    }
   }
  }
  if (qMouseEvent_Ptr->button()&Qt::RightButton)
  {
   if (MouseRButton==false) MouseRButton=true;
-  qPoint_MouseRightButtonDownPos=QPoint(x,y);
   if (Mode==MODE_SELECT)
   {
-   if (IsTileSelected(x,y)==true)//нажатие произошло на выбранном тайле
-   {
-    MouseRButton=false;
-    qMenu_Context->exec(qMouseEvent_Ptr->globalPos());
-   }
+   qMenu_Context->exec(qMouseEvent_Ptr->globalPos());
   }
  }
  if (qMouseEvent_Ptr->button()&Qt::MidButton)
@@ -179,14 +174,17 @@ void CMapEditor::mouseReleaseEvent(QMouseEvent *qMouseEvent_Ptr)
  if (qMouseEvent_Ptr->button()&Qt::LeftButton)
  {
   if (MouseLButton==true) MouseLButton=false;
-
+  if (Mode==MODE_MOVE_MAP)
+  {
+   SetMouseMode(MOUSE_MODE_STANDARD);
+  }
   if (Mode==MODE_SELECT)
   {
    if (MouseMode==MOUSE_MODE_SELECT_AREA)
    {
     //для всей выделенной области вызываем выбор блоков
     SelectTiles(qRect_SelectedArea);
-    MouseMode=MOUSE_MODE_STANDARD;
+    SetMouseMode(MOUSE_MODE_STANDARD);
    }
   }
  }
@@ -208,12 +206,102 @@ void CMapEditor::paintEvent(QPaintEvent *qPaintEvent_Ptr)
  int32_t w_height=height();
 
  QPainter qPainter(this);
- qPainter.fillRect(QRect(0,0,w_width,w_height),QBrush(Qt::black));
+ static const uint32_t sky=(81<<16)|(162<<8)|(243<<0);
+ qPainter.fillRect(QRect(0,0,w_width,w_height),QBrush(QColor(sky)));
 
  DrawMap(qPainter);
  DrawGrid(qPainter,w_width,w_height);
+ DrawFrameSelectedPartAndBarrier(qPainter);
  if (MouseMode==MOUSE_MODE_SELECT_AREA) DrawSelectedArea(qPainter);
- if (Mode==MODE_SET) DrawCursor(qPainter);
+ if (Mode==MODE_SET) DrawCursor(qPainter,CursorPart_Ptr);
+ if (Mode==MODE_SELECT)
+ {
+  if (MouseMode==MOUSE_MODE_PASTE) DrawCursor(qPainter,CopyPart_Ptr);
+ }
+}
+
+//----------------------------------------------------------------------------------------------------
+//обработчик таймера в режиме перемещения карты
+//----------------------------------------------------------------------------------------------------
+void CMapEditor::TimerEvent_Mode_MoveMap(const QPoint &qPoint)
+{
+ if (MouseLButton==true)//удерживается левая кнопка мышки
+ {
+  int32_t dx=qPoint.x()-qPoint_MouseMoveMapButtonDownPos.x();
+  int32_t dy=qPoint.y()-qPoint_MouseMoveMapButtonDownPos.y();
+  qPoint_MouseMoveMapButtonDownPos=qPoint;
+  MoveMap(-dx,-dy);
+ }
+}
+//----------------------------------------------------------------------------------------------------
+//обработчик перемещения мышки в режиме установки блоков
+//----------------------------------------------------------------------------------------------------
+void CMapEditor::MouseMoveEvent_Mode_Set(const QPoint &qPoint)
+{
+ if (MouseLButton==true) SetTile(qPoint.x(),qPoint.y(),CursorPart_Ptr);
+}
+//----------------------------------------------------------------------------------------------------
+//обработчик перемещения мышки в режиме выбора блоков
+//----------------------------------------------------------------------------------------------------
+void CMapEditor::MouseMoveEvent_Mode_Select(const QPoint &qPoint)
+{
+ if (MouseLButton==true)
+ {
+  if (MouseMode==MOUSE_MODE_MOVE_SELECTED)
+  {
+   int32_t old_map_x;
+   int32_t old_map_y;
+   MouseToMap(qPoint_MouseMoveSelectedButtonDownPos.x(),qPoint_MouseMoveSelectedButtonDownPos.y(),old_map_x,old_map_y);
+   qPoint_MouseMoveSelectedButtonDownPos=qPoint;
+
+   int32_t new_map_x;
+   int32_t new_map_y;
+   MouseToMap(qPoint.x(),qPoint.y(),new_map_x,new_map_y);
+
+   int32_t dx=new_map_x-old_map_x;
+   int32_t dy=new_map_y-old_map_y;
+   //проверим возможносьб перемещения блоков
+   bool error=false;
+   auto ismove_function=[this,&dx,&dy,&error](std::shared_ptr<IPart> iPart_Ptr)
+   {
+    if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
+    if (iPart_Ptr->Selected==true)
+    {
+     if ((iPart_Ptr->BlockPosX+dx)<0) error=true;
+     if ((iPart_Ptr->BlockPosY+dy)<0) error=true;
+    }
+   };
+   Map_Ptr->Visit(ismove_function);
+   if (error==false)
+   {
+    //перемещаем выбранные блоки
+    auto move_function=[this,&dx,&dy](std::shared_ptr<IPart> iPart_Ptr)
+    {
+     if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
+     if (iPart_Ptr->Selected==true)
+     {
+      iPart_Ptr->BlockPosX+=dx;
+      iPart_Ptr->BlockPosY+=dy;
+     }
+    };
+    Map_Ptr->Visit(move_function);
+   }
+  }
+
+  if (MouseMode==MOUSE_MODE_SELECT_AREA)
+  {
+   int32_t map_x;
+   int32_t map_y;
+   MouseToMap(qPoint.x(),qPoint.y(),map_x,map_y);
+
+   int x1;
+   int y1;
+   int x2;
+   int y2;
+   qRect_SelectedArea.getCoords(&x1,&y1,&x2,&y2);
+   qRect_SelectedArea.setCoords(x1,y1,map_x,map_y);
+  }
+ }
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -224,14 +312,14 @@ void CMapEditor::DrawGrid(QPainter &qPainter,int32_t w_width,int32_t w_height)
  qPainter.setPen(QPen(Qt::gray,1,Qt::SolidLine));
 
  int32_t py=qPoint_LeftTop.y()/CImageStorage::TILE_HEIGHT;
- for(int32_t y_pos=CImageStorage::TILE_HEIGHT-qPoint_LeftTop.y()%CImageStorage::TILE_HEIGHT;y_pos<w_height;y_pos+=CImageStorage::TILE_HEIGHT,py++)
+ for(int32_t y_pos=CImageStorage::TILE_HEIGHT-qPoint_LeftTop.y()%CImageStorage::TILE_HEIGHT-CImageStorage::TILE_HEIGHT;y_pos<w_height;y_pos+=CImageStorage::TILE_HEIGHT,py++)
  {
   if (py%15==0) qPainter.setPen(QPen(Qt::white,1,Qt::SolidLine));
            else qPainter.setPen(QPen(Qt::gray,1,Qt::SolidLine));
   qPainter.drawLine(0,y_pos,w_width,y_pos);
  }
- int32_t px=qPoint_LeftTop.x()/CImageStorage::TILE_HEIGHT;
- for(int32_t x_pos=CImageStorage::TILE_WIDTH-qPoint_LeftTop.x()%CImageStorage::TILE_WIDTH;x_pos<w_width;x_pos+=CImageStorage::TILE_WIDTH,px++)
+ int32_t px=qPoint_LeftTop.x()/CImageStorage::TILE_WIDTH;
+ for(int32_t x_pos=CImageStorage::TILE_WIDTH-qPoint_LeftTop.x()%CImageStorage::TILE_WIDTH-CImageStorage::TILE_WIDTH;x_pos<w_width;x_pos+=CImageStorage::TILE_WIDTH,px++)
  {
   if (px%20==0) qPainter.setPen(QPen(Qt::white,1,Qt::SolidLine));
            else qPainter.setPen(QPen(Qt::gray,1,Qt::SolidLine));
@@ -267,25 +355,67 @@ void CMapEditor::DrawMap(QPainter &qPainter)
   int32_t tx=cTile.X*CImageStorage::TILE_WITH_BORDER_WIDTH+CImageStorage::TILE_BORDER_WIDTH;
   int32_t ty=cTile.Y*CImageStorage::TILE_WITH_BORDER_HEIGHT+CImageStorage::TILE_BORDER_HEIGHT;
 
-  if (iPart_Ptr->Selected==false)
-  {
-   qPainter.drawPixmap(screen_x,screen_y,qPixmap_Tiles.copy(tx,ty,tw,th));
-   return;
-  }
-  //выводим выбранный блок
   qPainter.drawPixmap(screen_x,screen_y,qPixmap_Tiles.copy(tx,ty,tw,th));
-
-  qPainter.setPen(QPen(Qt::yellow,1,Qt::SolidLine));
-  qPainter.drawRect(screen_x+1,screen_y+1,tw-2,th-2);
-  qPainter.setPen(QPen(Qt::green,1,Qt::SolidLine));
-  qPainter.drawRect(screen_x+2,screen_y+2,tw-4,th-4);
  };
  Map_Ptr->Visit(output_function);
 }
 //----------------------------------------------------------------------------------------------------
+//рисование рамкок вокруг выделенных и непроницаемых блоков карты
+//----------------------------------------------------------------------------------------------------
+void CMapEditor::DrawFrameSelectedPartAndBarrier(QPainter &qPainter)
+{
+ QPixmap &qPixmap_Tiles=CImageStorage::GetPtr()->GetTiles();
+
+ int32_t tw=CImageStorage::TILE_WIDTH;
+ int32_t th=CImageStorage::TILE_HEIGHT;
+
+ //выводим рамки
+ auto output_barrier_function=[this,&tw,&th,&qPainter,&qPixmap_Tiles](std::shared_ptr<IPart> iPart_Ptr)
+ {
+  if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
+
+  int32_t block_x=iPart_Ptr->BlockPosX;
+  int32_t block_y=iPart_Ptr->BlockPosY;
+
+  int32_t screen_x=block_x*CImageStorage::TILE_WIDTH;
+  int32_t screen_y=block_y*CImageStorage::TILE_HEIGHT;
+  screen_x-=qPoint_LeftTop.x();
+  screen_y-=qPoint_LeftTop.y();
+
+  if (iPart_Ptr->Barrier==true)
+  {
+   qPainter.setPen(QPen(Qt::red,1,Qt::SolidLine));
+   qPainter.drawRect(screen_x,screen_y,tw,th);
+  }
+ };
+ Map_Ptr->Visit(output_barrier_function);
+
+ auto output_selected_function=[this,&tw,&th,&qPainter,&qPixmap_Tiles](std::shared_ptr<IPart> iPart_Ptr)
+ {
+  if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
+
+  int32_t block_x=iPart_Ptr->BlockPosX;
+  int32_t block_y=iPart_Ptr->BlockPosY;
+
+  int32_t screen_x=block_x*CImageStorage::TILE_WIDTH;
+  int32_t screen_y=block_y*CImageStorage::TILE_HEIGHT;
+  screen_x-=qPoint_LeftTop.x();
+  screen_y-=qPoint_LeftTop.y();
+
+  if (iPart_Ptr->Selected==true)
+  {
+   qPainter.setPen(QPen(Qt::yellow,1,Qt::SolidLine));
+   qPainter.drawRect(screen_x,screen_y,tw,th);
+   qPainter.drawRect(screen_x+1,screen_y+1,tw-2,th-2);
+  }
+ };
+ Map_Ptr->Visit(output_selected_function);
+}
+
+//----------------------------------------------------------------------------------------------------
 //рисование курсора
 //----------------------------------------------------------------------------------------------------
-void CMapEditor::DrawCursor(QPainter &qPainter)
+void CMapEditor::DrawCursor(QPainter &qPainter,std::shared_ptr<IPart> MousePart_Ptr)
 {
  QPixmap &qPixmap_Tiles=CImageStorage::GetPtr()->GetTiles();
 
@@ -318,7 +448,7 @@ void CMapEditor::DrawCursor(QPainter &qPainter)
 
   qPainter.drawPixmap(screen_x+ox,screen_y+oy,qPixmap_Tiles.copy(tx,ty,tw,th));
  };
- CursorPart_Ptr->Visit(cursoroutput_function);
+ MousePart_Ptr->Visit(cursoroutput_function);
 }
 //----------------------------------------------------------------------------------------------------
 //рисование области выделения
@@ -358,7 +488,7 @@ void CMapEditor::DrawSelectedArea(QPainter &qPainter)
 //----------------------------------------------------------------------------------------------------
 //поставить тайл в позицию
 //----------------------------------------------------------------------------------------------------
-void CMapEditor::SetTile(int32_t mouse_x,int32_t mouse_y)
+void CMapEditor::SetTile(int32_t mouse_x,int32_t mouse_y,std::shared_ptr<IPart> MousePart_Ptr)
 {
  int32_t block_x;
  int32_t block_y;
@@ -377,7 +507,7 @@ void CMapEditor::SetTile(int32_t mouse_x,int32_t mouse_y)
   };
   iPart_Map_Ptr->RemovePart(if_function);
  };
- CursorPart_Ptr->Visit(remove_function);
+ MousePart_Ptr->Visit(remove_function);
  //накладываем тайлы
  auto add_function=[this,iPart_Map_Ptr,&block_x,&block_y](std::shared_ptr<IPart> iPart_Ptr)
  {
@@ -388,7 +518,7 @@ void CMapEditor::SetTile(int32_t mouse_x,int32_t mouse_y)
   std::shared_ptr<IPart> iPart_New(new CPart(x,y,iPart_Ptr->cTilesSequence,iPart_Ptr->Barrier));
   iPart_Map_Ptr->GetItemPtr()->push_back(iPart_New);
  };
- CursorPart_Ptr->Visit(add_function);
+ MousePart_Ptr->Visit(add_function);
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -493,7 +623,7 @@ bool CMapEditor::IsTileSelected(int32_t mouse_x,int32_t mouse_y)
  return(selected);
 }
 //----------------------------------------------------------------------------------------------------
-//объединить выбранные тайлы и установить результат в качестве курсора
+//объединить выбранные тайлы и установить результат в качестве курсора копирования
 //----------------------------------------------------------------------------------------------------
 void CMapEditor::ConnectSelectedTiles(void)
 {
@@ -525,7 +655,7 @@ void CMapEditor::ConnectSelectedTiles(void)
  };
  iPart_Set_Ptr->Visit(subcoord_function);
 
- SetSelectedPart(iPart_Set_Ptr);
+ CopyPart_Ptr=iPart_Set_Ptr;
 }
 //----------------------------------------------------------------------------------------------------
 //переместить поле
@@ -561,15 +691,37 @@ void CMapEditor::MouseToMap(int32_t mouse_x,int32_t mouse_y,int32_t &map_x,int32
  map_x=map_x/CImageStorage::TILE_WIDTH;
  map_y=map_y/CImageStorage::TILE_HEIGHT;
 }
+//----------------------------------------------------------------------------------------------------
+//задать режим работы мышки
+//----------------------------------------------------------------------------------------------------
+void CMapEditor::SetMouseMode(MOUSE_MODE mouse_mode)
+{
+ MouseMode=mouse_mode;
+ if (MouseMode==MOUSE_MODE_STANDARD)
+ {
+  if (Mode==MODE_SET || Mode==MODE_SELECT) setCursor(Qt::ArrowCursor);
+  if (Mode==MODE_MOVE_MAP) setCursor(Qt::OpenHandCursor);
+ }
+ if (MouseMode==MOUSE_MODE_SELECT_AREA) setCursor(Qt::CrossCursor);
+ if (MouseMode==MOUSE_MODE_PASTE) setCursor(Qt::ArrowCursor);
+ if (MouseMode==MOUSE_MODE_MOVE_SELECTED) setCursor(Qt::ArrowCursor);
+ if (MouseMode==MOUSE_MODE_MOVE_MAP) setCursor(Qt::ClosedHandCursor);
+}
 
 //----------------------------------------------------------------------------------------------------
 //слот выбора в контекстном меню пункта "скопировать"
 //----------------------------------------------------------------------------------------------------
-void CMapEditor::on_ContextMenu_CopyPart(QAction *pAction)
+void CMapEditor::on_ContextMenu_CopyPart(void)
 {
- ConnectSelectedTiles();//объединяем выбранные тайлы и устанавливаем их в качестве курсора
- //переключаемся принудительно в режим установки блоков
- SetModeSetPart();
+ ConnectSelectedTiles();//объединяем выбранные тайлы и устанавливаем их в качестве курсора копирования
+ SetMouseMode(MOUSE_MODE_STANDARD);
+}
+//----------------------------------------------------------------------------------------------------
+//слот выбора в контекстном меню пункта "вставить"
+//----------------------------------------------------------------------------------------------------
+void CMapEditor::on_ContextMenu_PastePart(void)
+{
+ SetMouseMode(MOUSE_MODE_PASTE);
 }
 
 //****************************************************************************************************
@@ -594,6 +746,7 @@ void CMapEditor::SetSelectedBarrier(bool barrier)
   iPart_Ptr->Barrier=barrier;
  };
  CursorPart_Ptr->Visit(setbarrier_function);
+ CopyPart_Ptr->Visit(setbarrier_function);
 }
 //----------------------------------------------------------------------------------------------------
 //записать карту
@@ -643,9 +796,9 @@ bool CMapEditor::ExportMap(const std::string &file_name)
 //установить режим установки блоков
 //----------------------------------------------------------------------------------------------------
 void CMapEditor::SetModeSetPart(void)
-{
- MouseMode=MOUSE_MODE_STANDARD;
+{ 
  Mode=MODE_SET;
+ SetMouseMode(MOUSE_MODE_STANDARD);
  UnselectTiles();
 }
 //----------------------------------------------------------------------------------------------------
@@ -653,8 +806,16 @@ void CMapEditor::SetModeSetPart(void)
 //----------------------------------------------------------------------------------------------------
 void CMapEditor::SetModeSelectPart(void)
 { 
- MouseMode=MOUSE_MODE_STANDARD;
  Mode=MODE_SELECT;
+ SetMouseMode(MOUSE_MODE_STANDARD);
+}
+//----------------------------------------------------------------------------------------------------
+//установить режим перемещения карты
+//----------------------------------------------------------------------------------------------------
+void CMapEditor::SetModeMoveMap(void)
+{
+ Mode=MODE_MOVE_MAP;
+ SetMouseMode(MOUSE_MODE_STANDARD);
 }
 //----------------------------------------------------------------------------------------------------
 //нажатие клавиши
@@ -663,6 +824,11 @@ void CMapEditor::PressKey(QKeyEvent *pe)
 {
  if (pe->key()==Qt::Key_Delete) DeleteSelectedTiles();
  if (pe->key()==Qt::Key_Control) CtrlOn=true;
+ if (pe->key()==Qt::Key_Escape)
+ {
+  SetMouseMode(MOUSE_MODE_STANDARD);
+  UnselectTiles();
+ }
 }
 //----------------------------------------------------------------------------------------------------
 //отпускание клавиши

@@ -36,6 +36,7 @@ CMainWindow::CMainWindow(QWidget *parent):QMainWindow(parent),ui(new Ui::CMainWi
 
  ui->cToolBar_Main->addAction(QPixmap(":/image/img_set.png"),"Установка блоков",this,SLOT(On_ToolBar_Main_SetPart()));
  ui->cToolBar_Main->addAction(QPixmap(":/image/img_select.png"),"Выбор блоков",this,SLOT(On_ToolBar_Main_SelectPart()));
+ ui->cToolBar_Main->addAction(QPixmap(":/image/img_move.png"),"Перемещение по карте",this,SLOT(On_ToolBar_Main_MoveMap()));
 
  UpdateTilesImage();
 }
@@ -67,7 +68,7 @@ void CMainWindow::UpdateTilesImage(void)
  qPalette.setBrush(backgroundRole(),QBrush(qPixmap_Local));
  ui->cScrollAreaWidgetContents_Tiles->setPalette(qPalette);
  ui->cScrollAreaWidgetContents_Tiles->setAutoFillBackground(true);
- ui->cScrollAreaWidgetContents_Tiles->setFixedSize(qPixmap_Local.width(),qPixmap_Local.height()); 
+ ui->cScrollAreaWidgetContents_Tiles->setFixedSize(qPixmap_Local.width(),qPixmap_Local.height());  
 }
 //----------------------------------------------------------------------------------------------------
 //обработчик нажатия на кнопку мышки
@@ -161,6 +162,13 @@ void CMainWindow::On_ToolBar_Main_SetPart(void)
 void CMainWindow::On_ToolBar_Main_SelectPart(void)
 {
  ui->cMapEditor->SetModeSelectPart();
+}
+//----------------------------------------------------------------------------------------------------
+//слот выбора в панеле инструментов режима перемещения по карте
+//----------------------------------------------------------------------------------------------------
+void CMainWindow::On_ToolBar_Main_MoveMap(void)
+{
+ ui->cMapEditor->SetModeMoveMap();
 }
 //****************************************************************************************************
 //открытые функции

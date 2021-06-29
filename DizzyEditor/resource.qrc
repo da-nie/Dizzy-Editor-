@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>image/img_select.png</file>
         <file>image/img_set.png</file>
+        <file>image/img_move.png</file>
     </qresource>
 </RCC>
