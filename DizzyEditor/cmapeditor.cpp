@@ -811,7 +811,7 @@ bool CMapEditor::ExportMap(const std::string &file_name)
  Map_Ptr->Visit(counter_function);
 
  if (file.write(reinterpret_cast<char*>(&counter),sizeof(counter)).fail()==true) return(false);
- Map_Ptr->Export(file);
+ Map_Ptr->Export(file,CImageStorage::TILE_WIDTH,CImageStorage::TILE_HEIGHT);
  return(true);
 }
 //----------------------------------------------------------------------------------------------------

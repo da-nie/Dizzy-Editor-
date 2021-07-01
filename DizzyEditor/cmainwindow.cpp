@@ -54,6 +54,8 @@ CMainWindow::CMainWindow(QWidget *parent):QMainWindow(parent),ui(new Ui::CMainWi
  ui->cToolBar_Main->addAction(qAction_ModeMoveMap);
 
  UpdateTilesImage();
+
+ On_ToolBar_Main_MoveMap();
 }
 //----------------------------------------------------------------------------------------------------
 //деструктор
