@@ -8,7 +8,9 @@ INPUT(
 ./debug/ctile.o
 ./debug/ctilessequence.o
 ./debug/ipart.o
+./debug/cdialog_animations.o
 ./debug/qrc_resource.o
 ./debug/moc_cmainwindow.o
 ./debug/moc_cmapeditor.o
+./debug/moc_cdialog_animations.o
 );

@@ -851,6 +851,36 @@ void CMapEditor::PressKey(QKeyEvent *pe)
   SetMouseMode(MOUSE_MODE_STANDARD);
   UnselectTiles();
  }
+ if (pe->key()==Qt::Key_Insert)
+ {
+/*  QMessageBox *qMessageBox=new QMessageBox(QMessageBox::Information,"1","2",QMessageBox::Yes);
+  qMessageBox->exec();
+  delete(qMessageBox);*/
+
+  std::shared_ptr<IPart> iPart_ptr(NULL);
+  if (Mode==MODE_SET) iPart_ptr=CursorPart_Ptr;
+  if (iPart_ptr.get()!=NULL)
+  {
+
+   std::list<std::shared_ptr<IPart> > *list_ptr=iPart_ptr->GetItemPtr();
+   if (list_ptr!=NULL)
+   {
+    size_t size=list_ptr->size();
+    if (size==1)//допустимо редактирование только одного элемента
+    {
+     std::shared_ptr<IPart> iPart_Ptr=*list_ptr->begin();
+     CTilesSequence &cTilesSequence=iPart_Ptr->cTilesSequence;
+     CDialog_Animations *cDialog_Animations_Ptr=new CDialog_Animations(this,cTilesSequence);
+     cDialog_Animations_Ptr->setModal(true);
+     if (cDialog_Animations_Ptr->exec()==QDialog::Accepted)//диалог завершился успешно
+     {
+      //заменяем последовательность
+      cTilesSequence=cDialog_Animations_Ptr->GetTilesSequence();
+     }
+    }
+   }
+  }
+ }
 }
 //----------------------------------------------------------------------------------------------------
 //отпускание клавиши

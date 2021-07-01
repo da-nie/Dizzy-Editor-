@@ -14,6 +14,7 @@
 #include <string>
 #include "ipart.h"
 #include "ctilessequence.h"
+#include "cdialog_animations.h"
 
 //****************************************************************************************************
 //макроопределения

@@ -56,6 +56,7 @@ CMainWindow::CMainWindow(QWidget *parent):QMainWindow(parent),ui(new Ui::CMainWi
  UpdateTilesImage();
 
  On_ToolBar_Main_MoveMap();
+
 }
 //----------------------------------------------------------------------------------------------------
 //деструктор
@@ -96,12 +97,18 @@ void CMainWindow::mousePressEvent(QMouseEvent *qMouseEvent_Ptr)
  {
   QPoint mpos=qMouseEvent_Ptr->globalPos();
   QPoint mpoint=ui->cScrollAreaWidgetContents_Tiles->mapFromGlobal(mpos);
+  QPoint marea=ui->cScrollArea_Tiles->mapFromGlobal(mpos);
 
-  int32_t width=ui->cScrollAreaWidgetContents_Tiles->width();
-  int32_t height=ui->cScrollAreaWidgetContents_Tiles->height();
+  QRect qRect_image=ui->cScrollAreaWidgetContents_Tiles->geometry();
+  QRect qRect=ui->cScrollArea_Tiles->contentsRect();
 
-  if (mpoint.x()>=width) return;
-  if (mpoint.y()>=height) return;
+  if (marea.x()>=qRect.width()) return;
+  if (marea.y()>=qRect.height()) return;
+  if (marea.x()<qRect.x()) return;
+  if (marea.y()<qRect.y()) return;
+
+  if (mpoint.x()>qRect_image.width()) return;
+  if (mpoint.y()>qRect_image.height()) return;
 
   int32_t tx=mpoint.x()/CImageStorage::TILE_WITH_BORDER_WIDTH;
   int32_t ty=mpoint.y()/CImageStorage::TILE_WITH_BORDER_HEIGHT;

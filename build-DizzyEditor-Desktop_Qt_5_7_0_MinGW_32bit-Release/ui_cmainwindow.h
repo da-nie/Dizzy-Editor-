@@ -37,15 +37,13 @@ public:
     QWidget *centralWidget;
     QGridLayout *gridLayout;
     QGridLayout *gridLayout_basic;
+    CMapEditor *cMapEditor;
     QWidget *widget;
     QGridLayout *gridLayout_3;
     QGroupBox *groupBox;
     QCheckBox *cCheckBox_Matherial_Barrier;
-    QScrollArea *cScrollArea_Map;
-    QWidget *cScrollAreaWidgetContents_Map;
-    QScrollArea *CScrollArea_Tiles;
+    QScrollArea *cScrollArea_Tiles;
     QWidget *cScrollAreaWidgetContents_Tiles;
-    CMapEditor *cMapEditor;
     QMenuBar *menuBar;
     QMenu *menu;
     QStatusBar *statusBar;
@@ -71,6 +69,11 @@ public:
         gridLayout_basic = new QGridLayout();
         gridLayout_basic->setSpacing(6);
         gridLayout_basic->setObjectName(QStringLiteral("gridLayout_basic"));
+        cMapEditor = new CMapEditor(centralWidget);
+        cMapEditor->setObjectName(QStringLiteral("cMapEditor"));
+
+        gridLayout_basic->addWidget(cMapEditor, 0, 1, 3, 1);
+
         widget = new QWidget(centralWidget);
         widget->setObjectName(QStringLiteral("widget"));
         gridLayout_3 = new QGridLayout(widget);
@@ -86,36 +89,19 @@ public:
         gridLayout_3->addWidget(groupBox, 0, 0, 1, 1);
 
 
-        gridLayout_basic->addWidget(widget, 1, 0, 1, 1);
+        gridLayout_basic->addWidget(widget, 2, 0, 1, 1);
 
-        cScrollArea_Map = new QScrollArea(centralWidget);
-        cScrollArea_Map->setObjectName(QStringLiteral("cScrollArea_Map"));
-        cScrollArea_Map->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-        cScrollArea_Map->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-        cScrollArea_Map->setWidgetResizable(true);
-        cScrollAreaWidgetContents_Map = new QWidget();
-        cScrollAreaWidgetContents_Map->setObjectName(QStringLiteral("cScrollAreaWidgetContents_Map"));
-        cScrollAreaWidgetContents_Map->setGeometry(QRect(0, 0, 198, 137));
-        cScrollArea_Map->setWidget(cScrollAreaWidgetContents_Map);
-
-        gridLayout_basic->addWidget(cScrollArea_Map, 2, 0, 1, 1);
-
-        CScrollArea_Tiles = new QScrollArea(centralWidget);
-        CScrollArea_Tiles->setObjectName(QStringLiteral("CScrollArea_Tiles"));
-        CScrollArea_Tiles->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-        CScrollArea_Tiles->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-        CScrollArea_Tiles->setWidgetResizable(true);
+        cScrollArea_Tiles = new QScrollArea(centralWidget);
+        cScrollArea_Tiles->setObjectName(QStringLiteral("cScrollArea_Tiles"));
+        cScrollArea_Tiles->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+        cScrollArea_Tiles->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+        cScrollArea_Tiles->setWidgetResizable(true);
         cScrollAreaWidgetContents_Tiles = new QWidget();
         cScrollAreaWidgetContents_Tiles->setObjectName(QStringLiteral("cScrollAreaWidgetContents_Tiles"));
-        cScrollAreaWidgetContents_Tiles->setGeometry(QRect(0, 0, 198, 137));
-        CScrollArea_Tiles->setWidget(cScrollAreaWidgetContents_Tiles);
+        cScrollAreaWidgetContents_Tiles->setGeometry(QRect(0, 0, 198, 299));
+        cScrollArea_Tiles->setWidget(cScrollAreaWidgetContents_Tiles);
 
-        gridLayout_basic->addWidget(CScrollArea_Tiles, 0, 0, 1, 1);
-
-        cMapEditor = new CMapEditor(centralWidget);
-        cMapEditor->setObjectName(QStringLiteral("cMapEditor"));
-
-        gridLayout_basic->addWidget(cMapEditor, 0, 1, 3, 1);
+        gridLayout_basic->addWidget(cScrollArea_Tiles, 0, 0, 2, 1);
 
         gridLayout_basic->setRowStretch(0, 10);
         gridLayout_basic->setRowStretch(1, 10);
@@ -153,7 +139,7 @@ public:
 
     void retranslateUi(QMainWindow *CMainWindow)
     {
-        CMainWindow->setWindowTitle(QApplication::translate("CMainWindow", "CMainWindow", 0));
+        CMainWindow->setWindowTitle(QApplication::translate("CMainWindow", "Dizzy Map Editor v1.0", 0));
         cAction_SaveMap->setText(QApplication::translate("CMainWindow", "\320\241\320\276\321\205\321\200\320\260\320\275\320\270\321\202\321\214 \320\272\320\260\321\200\321\202\321\203", 0));
         cAction_LoadMap->setText(QApplication::translate("CMainWindow", "\320\236\321\202\320\272\321\200\321\213\321\202\321\214 \320\272\320\260\321\200\321\202\321\203", 0));
         cAction_ExportMap->setText(QApplication::translate("CMainWindow", "\320\255\320\272\321\201\320\277\320\276\321\200\321\202\320\270\321\200\320\276\320\262\320\260\321\202\321\214 \320\272\320\260\321\200\321\202\321\203", 0));

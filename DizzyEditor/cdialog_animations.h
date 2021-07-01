@@ -1,15 +1,16 @@
-#ifndef C_MAIN_WINDOW_H
-#define C_MAIN_WINDOW_H
+#ifndef C_DIALOG_ANIMATIONS_H
+#define C_DIALOG_ANIMATIONS_H
 
 //****************************************************************************************************
-//Класс главного окна программы
+//Класс диалога настройки анимации
 //****************************************************************************************************
 
 //****************************************************************************************************
 //подключаемые библиотеки
 //****************************************************************************************************
-#include <QMainWindow>
+#include <QDialog>
 #include "cimagestorage.h"
+#include "ctilessequence.h"
 
 //****************************************************************************************************
 //пространства имён
@@ -17,7 +18,7 @@
 
 namespace Ui
 {
- class CMainWindow;
+ class CDialog_Animations;
 }
 
 //****************************************************************************************************
@@ -33,9 +34,9 @@ namespace Ui
 //****************************************************************************************************
 
 //****************************************************************************************************
-//Класс главного окна программы
+//Класс диалога настройки анимации
 //****************************************************************************************************
-class CMainWindow:public QMainWindow
+class CDialog_Animations:public QDialog
 {
  Q_OBJECT
  public:
@@ -44,37 +45,36 @@ class CMainWindow:public QMainWindow
   //-константы------------------------------------------------------------------------------------------
  private:
   //-переменные-----------------------------------------------------------------------------------------
-  Ui::CMainWindow *ui;
-  QPixmap qPixmap_Screen;//поле редактирования
-
-  QAction *qAction_ModeSetPart;//действие при выборе режима "установка элементов"
-  QAction *qAction_ModeSelectPart;//действие при выборе режима "выбор элементов"
-  QAction *qAction_ModeMoveMap;//действие при выборе режима "перемещение карты"
+  Ui::CDialog_Animations *ui;
 
   int32_t SelectedTileIndexX;//позиция выбранного тайла по X
   int32_t SelectedTileIndexY;//позиция выбранного тайла по Y
+
+  int32_t SelectedTileSequenceIndexX;//позиция выбранного тайла в последовательности по X
+  int32_t SelectedTileSequenceIndexY;//позиция выбранного тайла в последовательности по Y
+
+  CTilesSequence cTilesSequence;//последовательность анимации
  public:
   //-конструктор----------------------------------------------------------------------------------------
-  explicit CMainWindow(QWidget *parent=0);
+  CDialog_Animations(QWidget *parent,const CTilesSequence &cTilesSequence_set);
   //-деструктор-----------------------------------------------------------------------------------------
-  ~CMainWindow();
+  ~CDialog_Animations();
  public:
   //-открытые функции-----------------------------------------------------------------------------------
+  CTilesSequence& GetTilesSequence(void);//получить последовательность анимации
  private:
   //-закрытые функции-----------------------------------------------------------------------------------
   void UpdateTilesImage(void);//обновить картинку списка тайлов
+  bool SelectedTile(QPoint &mpos);//выбрать тайл в наборе
+  bool SelectedTileSequence(QPoint &mpos);//выбрать тайл в последовательности
   void mousePressEvent(QMouseEvent *qMouseEvent_Ptr);//обработчик нажатия на кнопку мышки
-  void mouseReleaseEvent(QMouseEvent *qMouseEvent_Ptr);//обработчик отпускания кнопки мышки  
-  void keyPressEvent(QKeyEvent *pe);//обработчик нажатия клавиши
-  void keyReleaseEvent(QKeyEvent *event);//обработчик отпускания клавиши
+  void mouseReleaseEvent(QMouseEvent *qMouseEvent_Ptr);//обработчик отпускания кнопки мышки
  private slots:
-  void on_cCheckBox_Matherial_Barrier_clicked(void);//слот нажатия на кнопку проницаемости материала
-  void on_cAction_SaveMap_triggered(void);//слот выбора пункта меню "сохранить карту"
-  void on_cAction_LoadMap_triggered(void);//слот выбора пункта меню "загрузить карту"
-  void on_cAction_ExportMap_triggered();//слот выбора пункта меню "экспортировать карту"
-  void On_ToolBar_Main_SetPart(void);//слот выбора в панеле инструментов режима установки блоков
-  void On_ToolBar_Main_SelectPart(void);//слот выбора в панеле инструментов режима выбора блоков
-  void On_ToolBar_Main_MoveMap(void);//слот выбора в панеле инструментов режима перемещения по карте
+  void on_cPushButton_Add_clicked(void);//слот нажатия на кнопку добавление тайла в последовательность
+  void on_cPushButton_Clear_clicked(void);//слот нажатия на кнопку удаления всех тайлов кроме первого из последовательности
+  void on_cPushButton_Delete_clicked();//слот нажатия на кнопку удаления выбранного тайла из последовательности
+  void on_cPushButton_Cancel_clicked();//слот нажатия на кнопку отмена
+  void on_cPushButton_Apply_clicked();//слот нажатия на кнопку применить
 };
 
 #endif

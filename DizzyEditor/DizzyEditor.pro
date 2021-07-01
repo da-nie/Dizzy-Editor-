@@ -20,7 +20,8 @@ SOURCES += main.cpp\
     cpartunion.cpp \
     ctile.cpp \
     ctilessequence.cpp \
-    ipart.cpp
+    ipart.cpp \
+    cdialog_animations.cpp
 
 HEADERS  += cmainwindow.h \
     cimagestorage.h \
@@ -29,9 +30,11 @@ HEADERS  += cmainwindow.h \
     cpartunion.h \
     ctile.h \
     ctilessequence.h \
-    ipart.h
+    ipart.h \
+    cdialog_animations.h
 
-FORMS    += cmainwindow.ui
+FORMS    += cmainwindow.ui \
+    cdialog_animations.ui
 
 DISTFILES +=
 
