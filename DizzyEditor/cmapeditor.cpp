@@ -119,13 +119,18 @@ void CMapEditor::mousePressEvent(QMouseEvent *qMouseEvent_Ptr)
    SetMouseMode(MOUSE_MODE_MOVE_MAP);
   }
 
-  if (Mode==MODE_SET) SetTileForMousePos(x,y,CursorPart_Ptr);
+  if (Mode==MODE_SET)
+  {
+   SetTileForMousePos(x,y,CursorPart_Ptr);
+   ResetTilesFrame();
+  }
   if (Mode==MODE_SELECT)
   {
    if (MouseMode==MOUSE_MODE_PASTE)
    {
     SetTileForMousePos(x,y,CopyPart_Ptr);
     SetMouseMode(MOUSE_MODE_STANDARD);
+    ResetTilesFrame();
    }
    else
    {
@@ -238,7 +243,11 @@ void CMapEditor::TimerEvent_Mode_MoveMap(const QPoint &qPoint)
 //----------------------------------------------------------------------------------------------------
 void CMapEditor::MouseMoveEvent_Mode_Set(const QPoint &qPoint)
 {
- if (MouseLButton==true) SetTileForMousePos(qPoint.x(),qPoint.y(),CursorPart_Ptr);
+ if (MouseLButton==true)
+ {
+  SetTileForMousePos(qPoint.x(),qPoint.y(),CursorPart_Ptr);
+  ResetTilesFrame();
+ }
 }
 //----------------------------------------------------------------------------------------------------
 //обработчик перемещения мышки в режиме выбора блоков
@@ -260,7 +269,7 @@ void CMapEditor::MouseMoveEvent_Mode_Select(const QPoint &qPoint)
 
    int32_t dx=new_map_x-old_map_x;
    int32_t dy=new_map_y-old_map_y;
-   //проверим возможносьб перемещения блоков
+   //проверим возможность перемещения блоков
    bool error=false;
    auto ismove_function=[this,&dx,&dy,&error](std::shared_ptr<IPart> iPart_Ptr)
    {
@@ -611,6 +620,7 @@ void CMapEditor::UnselectTiles(void)
  //устанавливаем выделенные блоки на поле
  //так как координаты блоков абсолютные, то установку выполняем с нулевой позиции
  SetTileForBlockPos(0,0,SelectedPart_Ptr);
+ ResetTilesFrame();
 }
 //----------------------------------------------------------------------------------------------------
 //удалить выбранные тайлы
@@ -700,6 +710,19 @@ void CMapEditor::AnimateTiles(void)
  //анимируем карту
  Map_Ptr->AnimateTiles();
 }
+//----------------------------------------------------------------------------------------------------
+//сбросить кадр на исходный для тайлов (нужно для синхронности анимации)
+//----------------------------------------------------------------------------------------------------
+void CMapEditor::ResetTilesFrame(void)
+{
+ auto reset_frame_function=[this](std::shared_ptr<IPart> iPart_Ptr)
+ {
+  if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
+  iPart_Ptr->cTilesSequence.ResetCurrentIndex();
+ };
+ Map_Ptr->Visit(reset_frame_function);
+}
+
 //----------------------------------------------------------------------------------------------------
 //перевести координаты мыши в координаты блоков карты
 //----------------------------------------------------------------------------------------------------
@@ -859,9 +882,22 @@ void CMapEditor::PressKey(QKeyEvent *pe)
 
   std::shared_ptr<IPart> iPart_ptr(NULL);
   if (Mode==MODE_SET) iPart_ptr=CursorPart_Ptr;
+  if (Mode==MODE_SELECT)
+  {
+   iPart_ptr.reset(new CPartUnion());
+   //собираем выбранные блоки
+   auto add_selected_function=[this,&iPart_ptr](std::shared_ptr<IPart> iPart_Local_Ptr)
+   {
+    if (iPart_Local_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
+    if (iPart_Local_Ptr->Selected==true)
+    {
+     iPart_ptr->GetItemPtr()->push_back(iPart_Local_Ptr);
+    }
+   };
+   Map_Ptr->Visit(add_selected_function);
+  }
   if (iPart_ptr.get()!=NULL)
   {
-
    std::list<std::shared_ptr<IPart> > *list_ptr=iPart_ptr->GetItemPtr();
    if (list_ptr!=NULL)
    {

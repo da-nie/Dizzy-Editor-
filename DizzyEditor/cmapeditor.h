@@ -130,6 +130,7 @@ class CMapEditor:public QWidget
   void ConnectSelectedTiles(void);//объединить выбранные тайлы и установить результат в качестве курсора
   void MoveMap(int32_t dx,int32_t dy);//переместить поле
   void AnimateTiles(void);//анимировать тайлы
+  void ResetTilesFrame(void);//сбросить кадр на исходный для тайлов (нужно для синхронности анимации)
   void MouseToMap(int32_t mouse_x,int32_t mouse_y,int32_t &map_x,int32_t &map_y);//перевести координаты мыши в координаты блоков карты
   void SetMouseMode(MOUSE_MODE mouse_mode);//задать режим работы мышки
  private slots:
