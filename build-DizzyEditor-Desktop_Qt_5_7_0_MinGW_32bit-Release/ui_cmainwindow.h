@@ -17,9 +17,11 @@
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QPushButton>
 #include <QtWidgets/QScrollArea>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
@@ -42,6 +44,9 @@ public:
     QGridLayout *gridLayout_3;
     QGroupBox *groupBox;
     QCheckBox *cCheckBox_Matherial_Barrier;
+    QCheckBox *cCheckBox_Matherial_FirstPlane;
+    QLineEdit *cLineEdit_PartName;
+    QPushButton *cPushButton_SetPartName;
     QScrollArea *cScrollArea_Tiles;
     QWidget *cScrollAreaWidgetContents_Tiles;
     QMenuBar *menuBar;
@@ -85,6 +90,15 @@ public:
         cCheckBox_Matherial_Barrier = new QCheckBox(groupBox);
         cCheckBox_Matherial_Barrier->setObjectName(QStringLiteral("cCheckBox_Matherial_Barrier"));
         cCheckBox_Matherial_Barrier->setGeometry(QRect(10, 20, 181, 18));
+        cCheckBox_Matherial_FirstPlane = new QCheckBox(groupBox);
+        cCheckBox_Matherial_FirstPlane->setObjectName(QStringLiteral("cCheckBox_Matherial_FirstPlane"));
+        cCheckBox_Matherial_FirstPlane->setGeometry(QRect(10, 40, 181, 18));
+        cLineEdit_PartName = new QLineEdit(groupBox);
+        cLineEdit_PartName->setObjectName(QStringLiteral("cLineEdit_PartName"));
+        cLineEdit_PartName->setGeometry(QRect(10, 70, 181, 20));
+        cPushButton_SetPartName = new QPushButton(groupBox);
+        cPushButton_SetPartName->setObjectName(QStringLiteral("cPushButton_SetPartName"));
+        cPushButton_SetPartName->setGeometry(QRect(10, 93, 181, 21));
 
         gridLayout_3->addWidget(groupBox, 0, 0, 1, 1);
 
@@ -145,6 +159,8 @@ public:
         cAction_ExportMap->setText(QApplication::translate("CMainWindow", "\320\255\320\272\321\201\320\277\320\276\321\200\321\202\320\270\321\200\320\276\320\262\320\260\321\202\321\214 \320\272\320\260\321\200\321\202\321\203", 0));
         groupBox->setTitle(QApplication::translate("CMainWindow", "\320\235\320\260\321\201\321\202\321\200\320\276\320\271\320\272\320\270 \320\274\320\260\321\202\320\265\321\200\320\270\320\260\320\273\320\260", 0));
         cCheckBox_Matherial_Barrier->setText(QApplication::translate("CMainWindow", "\320\237\321\200\320\265\320\263\321\200\320\260\320\264\320\260", 0));
+        cCheckBox_Matherial_FirstPlane->setText(QApplication::translate("CMainWindow", "\320\237\320\265\321\200\320\265\320\264\320\275\320\270\320\271 \320\277\320\273\320\260\320\275", 0));
+        cPushButton_SetPartName->setText(QApplication::translate("CMainWindow", "\320\227\320\260\320\264\320\260\321\202\321\214 \320\270\320\274\321\217 \320\274\320\260\321\202\320\265\321\200\320\270\320\260\320\273\321\203", 0));
         menu->setTitle(QApplication::translate("CMainWindow", "\320\244\320\260\320\271\320\273", 0));
         cToolBar_Main->setWindowTitle(QApplication::translate("CMainWindow", "toolBar", 0));
     } // retranslateUi

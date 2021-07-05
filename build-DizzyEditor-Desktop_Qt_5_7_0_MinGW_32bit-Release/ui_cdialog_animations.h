@@ -13,6 +13,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QComboBox>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHeaderView>
@@ -38,6 +39,7 @@ public:
     QPushButton *cPushButton_Apply;
     QPushButton *cPushButton_Cancel;
     QSpacerItem *horizontalSpacer;
+    QComboBox *cComboBox_AnimationMode;
 
     void setupUi(QDialog *CDialog_Animations)
     {
@@ -100,6 +102,11 @@ public:
         horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
         gridLayout->addItem(horizontalSpacer, 3, 0, 1, 1);
+
+        cComboBox_AnimationMode = new QComboBox(CDialog_Animations);
+        cComboBox_AnimationMode->setObjectName(QStringLiteral("cComboBox_AnimationMode"));
+
+        gridLayout->addWidget(cComboBox_AnimationMode, 3, 2, 1, 3);
 
         gridLayout->setColumnStretch(0, 1);
 

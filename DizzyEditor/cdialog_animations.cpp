@@ -25,9 +25,10 @@
 //----------------------------------------------------------------------------------------------------
 CDialog_Animations::CDialog_Animations(QWidget *parent,const CTilesSequence &cTilesSequence_set):QDialog(parent),ui(new Ui::CDialog_Animations)
 { 
+ ui->setupUi(this);
+
  cTilesSequence=cTilesSequence_set;
 
- ui->setupUi(this);
  SelectedTileIndexX=0;
  SelectedTileIndexY=0;
 
@@ -43,6 +44,12 @@ CDialog_Animations::CDialog_Animations(QWidget *parent,const CTilesSequence &cTi
   SelectedTileIndexY=cTile.Y;
  }
  UpdateTilesImage();
+
+ ui->cComboBox_AnimationMode->addItem("Циклическая анимация");
+ ui->cComboBox_AnimationMode->addItem("Анимация остановлена");
+ CTilesSequence::ANIMATION_MODE animation_mode=cTilesSequence.GetAnimationMode();
+ if (animation_mode==CTilesSequence::ANIMATION_MODE_CYCLIC) ui->cComboBox_AnimationMode->setCurrentIndex(0);
+ if (animation_mode==CTilesSequence::ANIMATION_MODE_SET_STEP) ui->cComboBox_AnimationMode->setCurrentIndex(1);
 }
 //----------------------------------------------------------------------------------------------------
 //деструктор
@@ -243,6 +250,9 @@ void CDialog_Animations::on_cPushButton_Cancel_clicked()
 //----------------------------------------------------------------------------------------------------
 void CDialog_Animations::on_cPushButton_Apply_clicked()
 {
+ int32_t index=ui->cComboBox_AnimationMode->currentIndex();
+ if (index==CYCLYC_ANIMATION_INDEX) cTilesSequence.SetAnimationMode(CTilesSequence::ANIMATION_MODE_CYCLIC);
+ if (index==SET_STEP_ANIMATION_INDEX) cTilesSequence.SetAnimationMode(CTilesSequence::ANIMATION_MODE_SET_STEP);
  accept();
 }
 //****************************************************************************************************

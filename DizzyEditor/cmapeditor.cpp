@@ -84,7 +84,7 @@ void CMapEditor::timerEvent(QTimerEvent *qTimerEvent_Ptr)
  qPoint_MousePos=qPoint;
  ChangeTileCounter++;
  ChangeTileCounter%=TIMER_CHANGE_TILE_DIVIDER;
- if (ChangeTileCounter==0) AnimateTiles();
+ if (ChangeTileCounter==0) AnimationTiles();
 
  update();
 }
@@ -216,7 +216,7 @@ void CMapEditor::paintEvent(QPaintEvent *qPaintEvent_Ptr)
 
  DrawMap(qPainter);
  DrawGrid(qPainter,w_width,w_height);
- DrawFrameSelectedPartAndBarrier(qPainter);
+ DrawFrameSelectedPartAndBarrierAndFirstPlane(qPainter);
  if (MouseMode==MOUSE_MODE_SELECT_AREA) DrawSelectedArea(qPainter);
  if (Mode==MODE_SET) DrawCursor(qPainter,CursorPart_Ptr);
  if (Mode==MODE_SELECT)
@@ -368,10 +368,11 @@ void CMapEditor::DrawMap(QPainter &qPainter)
  };
  Map_Ptr->Visit(output_function);
 }
+
 //----------------------------------------------------------------------------------------------------
-//рисование рамкок вокруг выделенных и непроницаемых блоков карты
+//рисование рамкок вокруг выделенных, частей переднего плана и непроницаемых блоков карты
 //----------------------------------------------------------------------------------------------------
-void CMapEditor::DrawFrameSelectedPartAndBarrier(QPainter &qPainter)
+void CMapEditor::DrawFrameSelectedPartAndBarrierAndFirstPlane(QPainter &qPainter)
 {
  QPixmap &qPixmap_Tiles=CImageStorage::GetPtr()->GetTiles();
 
@@ -399,6 +400,26 @@ void CMapEditor::DrawFrameSelectedPartAndBarrier(QPainter &qPainter)
  };
  Map_Ptr->Visit(output_barrier_function);
 
+ auto output_firstplane_function=[this,&tw,&th,&qPainter,&qPixmap_Tiles](std::shared_ptr<IPart> iPart_Ptr)
+ {
+  if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
+
+  int32_t block_x=iPart_Ptr->BlockPosX;
+  int32_t block_y=iPart_Ptr->BlockPosY;
+
+  int32_t screen_x=block_x*CImageStorage::TILE_WIDTH;
+  int32_t screen_y=block_y*CImageStorage::TILE_HEIGHT;
+  screen_x-=qPoint_LeftTop.x();
+  screen_y-=qPoint_LeftTop.y();
+
+  if (iPart_Ptr->FirstPlane==true)
+  {
+   qPainter.setPen(QPen(Qt::green,1,Qt::DotLine));
+   qPainter.drawRect(screen_x,screen_y,tw,th);
+  }
+ };
+ Map_Ptr->Visit(output_firstplane_function);
+
  auto output_selected_function=[this,&tw,&th,&qPainter,&qPixmap_Tiles](std::shared_ptr<IPart> iPart_Ptr)
  {
   if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
@@ -416,10 +437,19 @@ void CMapEditor::DrawFrameSelectedPartAndBarrier(QPainter &qPainter)
    qPainter.setPen(QPen(Qt::yellow,1,Qt::SolidLine));
    qPainter.drawRect(screen_x,screen_y,tw,th);
    qPainter.drawRect(screen_x+1,screen_y+1,tw-2,th-2);
+   //рисуем имена выбранных элементов
+
+   qPainter.setPen(QPen(Qt::green,1,Qt::SolidLine));
+   //так как у drawText задаются координаты нижнего левого угла и выравнивание, требуется задать рамку в которую будет выводиться текст
+   uint32_t width;
+   uint32_t height;
+   GetStringImageSize(qPainter,iPart_Ptr->Name,width,height);
+   qPainter.drawText(screen_x+2,screen_y+2,width,height,Qt::AlignHCenter,iPart_Ptr->Name.c_str());
   }
  };
  Map_Ptr->Visit(output_selected_function);
 }
+
 
 //----------------------------------------------------------------------------------------------------
 //рисование курсора
@@ -703,12 +733,12 @@ void CMapEditor::MoveMap(int32_t dx,int32_t dy)
 //----------------------------------------------------------------------------------------------------
 //анимировать тайлы
 //----------------------------------------------------------------------------------------------------
-void CMapEditor::AnimateTiles(void)
+void CMapEditor::AnimationTiles(void)
 {
- //анимируем выбранный тайл
- CursorPart_Ptr->AnimateTiles();
- //анимируем карту
- Map_Ptr->AnimateTiles();
+ //анимируем выбранный тайл принудительно
+ CursorPart_Ptr->AnimationTilesByForce();
+ //анимируем карту принудительно
+ Map_Ptr->AnimationTilesByForce();
 }
 //----------------------------------------------------------------------------------------------------
 //сбросить кадр на исходный для тайлов (нужно для синхронности анимации)
@@ -768,6 +798,17 @@ void CMapEditor::on_ContextMenu_PastePart(void)
 {
  SetMouseMode(MOUSE_MODE_PASTE);
 }
+//----------------------------------------------------------------------------------------------------
+//получить размер строки в пикселях
+//----------------------------------------------------------------------------------------------------
+void CMapEditor::GetStringImageSize(QPainter &qPainter,const std::string &string,uint32_t &width,uint32_t &height)
+{
+ QFontMetrics qFontMetrics(qPainter.font());
+ QRect qRect=qFontMetrics.boundingRect(string.c_str());
+ //width=qFontMetrics.horizontalAdvance();
+ width=qRect.width();
+ height=qRect.height();
+}
 
 //****************************************************************************************************
 //открытые функции
@@ -792,6 +833,32 @@ void CMapEditor::SetSelectedBarrier(bool barrier)
  };
  CursorPart_Ptr->Visit(setbarrier_function);
  CopyPart_Ptr->Visit(setbarrier_function);
+}
+//----------------------------------------------------------------------------------------------------
+//задать является ли выбранная часть передним планом
+//----------------------------------------------------------------------------------------------------
+void CMapEditor::SetSelectedFirstPlane(bool first_plane)
+{
+ auto setfirstplane_function=[&first_plane](std::shared_ptr<IPart> iPart_Ptr)
+ {
+  if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
+  iPart_Ptr->FirstPlane=first_plane;
+ };
+ CursorPart_Ptr->Visit(setfirstplane_function);
+ CopyPart_Ptr->Visit(setfirstplane_function);
+}
+//----------------------------------------------------------------------------------------------------
+//задать имя материалу
+//----------------------------------------------------------------------------------------------------
+void CMapEditor::SetName(const std::string &name)
+{
+ auto setname_function=[&name](std::shared_ptr<IPart> iPart_Ptr)
+ {
+  if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
+  iPart_Ptr->Name=name;
+ };
+ CursorPart_Ptr->Visit(setname_function);
+ CopyPart_Ptr->Visit(setname_function);
 }
 //----------------------------------------------------------------------------------------------------
 //записать карту

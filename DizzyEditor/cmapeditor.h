@@ -93,11 +93,13 @@ class CMapEditor:public QWidget
   //-открытые функции-----------------------------------------------------------------------------------
   void SetSelectedPart(std::shared_ptr<IPart> iPart_Ptr);//задать выбранную последовательность блоков
   void SetSelectedBarrier(bool barrier);//задать является ли выбранная часть барьером
+  void SetSelectedFirstPlane(bool first_plane);//задать является ли выбранная часть передним планом
   bool SaveMap(const std::string &file_name);//записать карту
   bool LoadMap(const std::string &file_name);//загрузить карту
   bool ExportMap(const std::string &file_name);//экспортировать карту
   void SetModeSetPart(void);//установить режим установки блоков  
   void SetModeSelectPart(void);//установить режим выбора блоков
+  void SetName(const std::string &name);//задать имя материалу
   void SetModeMoveMap(void);//установить режим перемещения карты
   void PressKey(QKeyEvent *pe);//нажатие клавиши
   void ReleaseKey(QKeyEvent *pe);//отпускание клавиши  
@@ -115,7 +117,7 @@ class CMapEditor:public QWidget
 
   void DrawGrid(QPainter &qPainter,int32_t w_width,int32_t w_height);//рисование сетки
   void DrawMap(QPainter &qPainter);//рисование карты
-  void DrawFrameSelectedPartAndBarrier(QPainter &qPainter);//рисование рамкок вокруг выделенных и непроницаемых блоков карты
+  void DrawFrameSelectedPartAndBarrierAndFirstPlane(QPainter &qPainter);//рисование рамкок вокруг выделенных, частей переднего плана и непроницаемых блоков карты
   void DrawCursor(QPainter &qPainter,std::shared_ptr<IPart> MousePart_Ptr);//рисование курсора
   void DrawSelectedArea(QPainter &qPainter);//рисование области выделения
 
@@ -129,10 +131,11 @@ class CMapEditor:public QWidget
   bool IsTileSelected(int32_t mouse_x,int32_t mouse_y);//проверить, что по данным координатам мышки тайл выбран
   void ConnectSelectedTiles(void);//объединить выбранные тайлы и установить результат в качестве курсора
   void MoveMap(int32_t dx,int32_t dy);//переместить поле
-  void AnimateTiles(void);//анимировать тайлы
+  void AnimationTiles(void);//анимировать тайлы
   void ResetTilesFrame(void);//сбросить кадр на исходный для тайлов (нужно для синхронности анимации)
   void MouseToMap(int32_t mouse_x,int32_t mouse_y,int32_t &map_x,int32_t &map_y);//перевести координаты мыши в координаты блоков карты
   void SetMouseMode(MOUSE_MODE mouse_mode);//задать режим работы мышки
+  void GetStringImageSize(QPainter &qPainter,const std::string &string,uint32_t &width,uint32_t &height);//получить размер строки в пикселях
  private slots:
   void on_ContextMenu_CopyPart(void);//слот выбора в контекстном меню пункта "скопировать"
   void on_ContextMenu_PastePart(void);//слот выбора в контекстном меню пункта "вставить"
