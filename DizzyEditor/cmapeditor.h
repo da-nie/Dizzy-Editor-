@@ -94,6 +94,7 @@ class CMapEditor:public QWidget
   void SetSelectedPart(std::shared_ptr<IPart> iPart_Ptr);//задать выбранную последовательность блоков
   void SetSelectedBarrier(bool barrier);//задать является ли выбранная часть барьером
   void SetSelectedFirstPlane(bool first_plane);//задать является ли выбранная часть передним планом
+  void SetSelectedItem(bool item);//задать является ли выбранная часть предметом
   bool SaveMap(const std::string &file_name);//записать карту
   bool LoadMap(const std::string &file_name);//загрузить карту
   bool ExportMap(const std::string &file_name);//экспортировать карту

@@ -70,6 +70,7 @@ class CMainWindow:public QMainWindow
  private slots:
   void on_cCheckBox_Matherial_Barrier_clicked(void);//слот нажатия на кнопку проницаемости материала
   void on_cCheckBox_Matherial_FirstPlane_clicked();//слот нажатия на кнопку переднего плана материала
+  void on_cCheckBox_Matherial_Item_clicked();//слот нажатия на кнопку задания, что материал является предметом
   void on_cPushButton_SetPartName_clicked();//слот нажатия на кнопку задания имени материала
   void on_cAction_SaveMap_triggered(void);//слот выбора пункта меню "сохранить карту"
   void on_cAction_LoadMap_triggered(void);//слот выбора пункта меню "загрузить карту"

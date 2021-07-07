@@ -420,6 +420,26 @@ void CMapEditor::DrawFrameSelectedPartAndBarrierAndFirstPlane(QPainter &qPainter
  };
  Map_Ptr->Visit(output_firstplane_function);
 
+ auto output_item_function=[this,&tw,&th,&qPainter,&qPixmap_Tiles](std::shared_ptr<IPart> iPart_Ptr)
+ {
+  if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
+
+  int32_t block_x=iPart_Ptr->BlockPosX;
+  int32_t block_y=iPart_Ptr->BlockPosY;
+
+  int32_t screen_x=block_x*CImageStorage::TILE_WIDTH;
+  int32_t screen_y=block_y*CImageStorage::TILE_HEIGHT;
+  screen_x-=qPoint_LeftTop.x();
+  screen_y-=qPoint_LeftTop.y();
+
+  if (iPart_Ptr->Item==true)
+  {
+   qPainter.setPen(QPen(Qt::blue,1,Qt::SolidLine));
+   qPainter.drawRect(screen_x+1,screen_y+1,tw-2,th-2);
+  }
+ };
+ Map_Ptr->Visit(output_item_function);
+
  auto output_selected_function=[this,&tw,&th,&qPainter,&qPixmap_Tiles](std::shared_ptr<IPart> iPart_Ptr)
  {
   if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
@@ -444,7 +464,7 @@ void CMapEditor::DrawFrameSelectedPartAndBarrierAndFirstPlane(QPainter &qPainter
    uint32_t width;
    uint32_t height;
    GetStringImageSize(qPainter,iPart_Ptr->Name,width,height);
-   qPainter.drawText(screen_x+2,screen_y+2,width,height,Qt::AlignHCenter,iPart_Ptr->Name.c_str());
+   qPainter.drawText(screen_x+4,screen_y+2,width,height,Qt::AlignHCenter,iPart_Ptr->Name.c_str());
   }
  };
  Map_Ptr->Visit(output_selected_function);
@@ -846,6 +866,19 @@ void CMapEditor::SetSelectedFirstPlane(bool first_plane)
  };
  CursorPart_Ptr->Visit(setfirstplane_function);
  CopyPart_Ptr->Visit(setfirstplane_function);
+}
+//----------------------------------------------------------------------------------------------------
+//задать является ли выбранная часть предметом
+//----------------------------------------------------------------------------------------------------
+void CMapEditor::SetSelectedItem(bool item)
+{
+ auto setitem_function=[&item](std::shared_ptr<IPart> iPart_Ptr)
+ {
+  if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
+  iPart_Ptr->Item=item;
+ };
+ CursorPart_Ptr->Visit(setitem_function);
+ CopyPart_Ptr->Visit(setitem_function);
 }
 //----------------------------------------------------------------------------------------------------
 //задать имя материалу

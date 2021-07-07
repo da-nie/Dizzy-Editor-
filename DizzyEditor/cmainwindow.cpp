@@ -118,11 +118,12 @@ void CMainWindow::mousePressEvent(QMouseEvent *qMouseEvent_Ptr)
   CTilesSequence cTilesSequence(CTile(SelectedTileIndexX,SelectedTileIndexY));
   bool barrier=ui->cCheckBox_Matherial_Barrier->isChecked();
   bool first_plane=ui->cCheckBox_Matherial_FirstPlane->isChecked();
+  bool item=ui->cCheckBox_Matherial_Item->isChecked();
   std::string name;
   name=ui->cLineEdit_PartName->text().toStdString();
   std::shared_ptr<IPart> iPart_Ptr(new CPartUnion());
 
-  iPart_Ptr->GetItemPtr()->push_back(std::shared_ptr<IPart>(new CPart(0,0,cTilesSequence,barrier,first_plane,name)));
+  iPart_Ptr->GetItemPtr()->push_back(std::shared_ptr<IPart>(new CPart(0,0,cTilesSequence,barrier,first_plane,item,name)));
   ui->cMapEditor->SetSelectedPart(iPart_Ptr);
   UpdateTilesImage();
  }
@@ -162,6 +163,14 @@ void CMainWindow::on_cCheckBox_Matherial_FirstPlane_clicked()
 {
  bool first_plane=ui->cCheckBox_Matherial_FirstPlane->isChecked();
  ui->cMapEditor->SetSelectedFirstPlane(first_plane);
+}
+//----------------------------------------------------------------------------------------------------
+//слот нажатия на кнопку задания, что материал является предметом
+//----------------------------------------------------------------------------------------------------
+void CMainWindow::on_cCheckBox_Matherial_Item_clicked()
+{
+ bool item=ui->cCheckBox_Matherial_Item->isChecked();
+ ui->cMapEditor->SetSelectedItem(item);
 }
 //----------------------------------------------------------------------------------------------------
 //слот нажатия на кнопку задания имени материала
@@ -226,5 +235,6 @@ void CMainWindow::On_ToolBar_Main_MoveMap(void)
 //****************************************************************************************************
 //открытые функции
 //****************************************************************************************************
+
 
 
