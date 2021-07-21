@@ -47,6 +47,7 @@ class CDialog_Animations:public QDialog
   //-константы------------------------------------------------------------------------------------------
   static const size_t CYCLYC_ANIMATION_INDEX=0;//индекс циклической анимации
   static const size_t SET_STEP_ANIMATION_INDEX=1;//индекс анимации с заданием шага
+  static const size_t ONE_SHOT_ANIMATION_INDEX=2;//индекс однократной анимации
   //-переменные-----------------------------------------------------------------------------------------
   Ui::CDialog_Animations *ui;
 

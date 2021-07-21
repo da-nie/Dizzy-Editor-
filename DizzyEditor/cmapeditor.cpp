@@ -121,14 +121,14 @@ void CMapEditor::mousePressEvent(QMouseEvent *qMouseEvent_Ptr)
 
   if (Mode==MODE_SET)
   {
-   SetTileForMousePos(x,y,CursorPart_Ptr);
+   SetTileForMousePos(x,y,CursorPart_Ptr,true);
    ResetTilesFrame();
   }
   if (Mode==MODE_SELECT)
   {
    if (MouseMode==MOUSE_MODE_PASTE)
    {
-    SetTileForMousePos(x,y,CopyPart_Ptr);
+    SetTileForMousePos(x,y,CopyPart_Ptr,false);
     SetMouseMode(MOUSE_MODE_STANDARD);
     ResetTilesFrame();
    }
@@ -245,7 +245,7 @@ void CMapEditor::MouseMoveEvent_Mode_Set(const QPoint &qPoint)
 {
  if (MouseLButton==true)
  {
-  SetTileForMousePos(qPoint.x(),qPoint.y(),CursorPart_Ptr);
+  SetTileForMousePos(qPoint.x(),qPoint.y(),CursorPart_Ptr,true);
   ResetTilesFrame();
  }
 }
@@ -420,7 +420,7 @@ void CMapEditor::DrawFrameSelectedPartAndBarrierAndFirstPlane(QPainter &qPainter
  };
  Map_Ptr->Visit(output_firstplane_function);
 
- auto output_item_function=[this,&tw,&th,&qPainter,&qPixmap_Tiles](std::shared_ptr<IPart> iPart_Ptr)
+ auto output_beforebackground_function=[this,&tw,&th,&qPainter,&qPixmap_Tiles](std::shared_ptr<IPart> iPart_Ptr)
  {
   if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
 
@@ -432,13 +432,13 @@ void CMapEditor::DrawFrameSelectedPartAndBarrierAndFirstPlane(QPainter &qPainter
   screen_x-=qPoint_LeftTop.x();
   screen_y-=qPoint_LeftTop.y();
 
-  if (iPart_Ptr->Item==true)
+  if (iPart_Ptr->BeforeBackground==true)
   {
    qPainter.setPen(QPen(Qt::blue,1,Qt::SolidLine));
    qPainter.drawRect(screen_x+1,screen_y+1,tw-2,th-2);
   }
  };
- Map_Ptr->Visit(output_item_function);
+ Map_Ptr->Visit(output_beforebackground_function);
 
  auto output_selected_function=[this,&tw,&th,&qPainter,&qPixmap_Tiles](std::shared_ptr<IPart> iPart_Ptr)
  {
@@ -547,32 +547,37 @@ void CMapEditor::DrawSelectedArea(QPainter &qPainter)
 //----------------------------------------------------------------------------------------------------
 //поставить тайл в позицию по координатам мыши
 //----------------------------------------------------------------------------------------------------
-void CMapEditor::SetTileForMousePos(int32_t mouse_x,int32_t mouse_y,std::shared_ptr<IPart> MousePart_Ptr)
+void CMapEditor::SetTileForMousePos(int32_t mouse_x,int32_t mouse_y,std::shared_ptr<IPart> MousePart_Ptr,bool replace)
 {
  int32_t block_x;
  int32_t block_y;
  MouseToMap(mouse_x,mouse_y,block_x,block_y);
- SetTileForBlockPos(block_x,block_y,MousePart_Ptr);
+ SetTileForBlockPos(block_x,block_y,MousePart_Ptr,replace);
 }
 //----------------------------------------------------------------------------------------------------
 //поставить тайл в позицию по координатам блоков
 //----------------------------------------------------------------------------------------------------
-void CMapEditor::SetTileForBlockPos(int32_t block_x,int32_t block_y,std::shared_ptr<IPart> MousePart_Ptr)
+void CMapEditor::SetTileForBlockPos(int32_t block_x,int32_t block_y,std::shared_ptr<IPart> MousePart_Ptr,bool replace)
 {
- //выполняем установку тайлов
- //удаляем все тайлы, которые наложились
+ //выполняем установку тайлов    
+ //удаляем все тайлы, которые наложились (если включён режим замены)
  std::shared_ptr<IPart> iPart_Map_Ptr=Map_Ptr;
- auto remove_function=[this,iPart_Map_Ptr,&block_x,&block_y](std::shared_ptr<IPart> iPart_Ptr)
+ auto remove_function=[this,iPart_Map_Ptr,&block_x,&block_y,replace](std::shared_ptr<IPart> iPart_Ptr)
  {
-  if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент  
+  if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
   void RemovePart(std::function<bool(std::shared_ptr<IPart>)> callback_function);//удалить часть
-  auto if_function=[this,&block_x,&block_y,&iPart_Ptr](std::shared_ptr<IPart> iPart_Local_Ptr)->bool
-  {
+  auto if_function=[this,&block_x,&block_y,&iPart_Ptr,replace](std::shared_ptr<IPart> iPart_Local_Ptr)->bool
+  {   
+   if (replace==false)
+   {
+    if (iPart_Local_Ptr->Selected==false) return(false);
+   }
    return(iPart_Local_Ptr->IsCoord(block_x+iPart_Ptr->BlockPosX,block_y+iPart_Ptr->BlockPosY));
   };
   iPart_Map_Ptr->RemovePart(if_function);
  };
  MousePart_Ptr->Visit(remove_function);
+
  //накладываем тайлы
  auto add_function=[this,iPart_Map_Ptr,&block_x,&block_y](std::shared_ptr<IPart> iPart_Ptr)
  {
@@ -598,14 +603,31 @@ void CMapEditor::SelectTile(int32_t mouse_x,int32_t mouse_y)
  int32_t block_x;
  int32_t block_y;
  MouseToMap(mouse_x,mouse_y,block_x,block_y);
+ std::vector<std::shared_ptr<IPart> > selected_array;
  //выбираем или отменяем выделение блоков
- auto select_function=[this,&block_x,&block_y](std::shared_ptr<IPart> iPart_Ptr)
+ auto select_function=[this,&block_x,&block_y,&selected_array](std::shared_ptr<IPart> iPart_Ptr)
  {
   if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
   if (iPart_Ptr->IsCoord(block_x,block_y)==true)
   {
    if (iPart_Ptr->Selected==true) iPart_Ptr->Selected=false;
                              else iPart_Ptr->Selected=true;
+   //проверяем, есть ли тайл с такими координатами
+   std::vector<std::shared_ptr<IPart> >::iterator begin=selected_array.begin();
+   std::vector<std::shared_ptr<IPart> >::iterator end=selected_array.end();
+   while(begin!=end)
+   {
+    if ((*begin)->IsCoord(block_x,block_y)==true)
+    {
+     (*begin)->Selected=false;
+     selected_array.erase(begin,begin+1);
+     begin=selected_array.begin();
+     end=selected_array.end();
+     continue;
+    }
+    begin++;
+   }
+   if (iPart_Ptr->Selected==true) selected_array.push_back(iPart_Ptr);
   }
  };
  Map_Ptr->Visit(select_function);
@@ -615,36 +637,64 @@ void CMapEditor::SelectTile(int32_t mouse_x,int32_t mouse_y)
 //----------------------------------------------------------------------------------------------------
 void CMapEditor::SelectTiles(QRect &qRect_Area)
 {
- //выбираем выделение блоков
- auto select_function=[this,&qRect_Area](std::shared_ptr<IPart> iPart_Ptr)
+ QRect &qRect_AreaLocal=qRect_Area;
+ int x1;
+ int y1;
+ int x2;
+ int y2;
+ qRect_Area.getCoords(&x1,&y1,&x2,&y2);
+ if (x1>x2)
  {
+  int x=x1;
+  x1=x2;
+  x2=x;
+ }
+ if (y1>y2)
+ {
+  int y=y1;
+  y1=y2;
+  y2=y;
+ }
+ qRect_AreaLocal.setCoords(x1,y1,x2,y2);
+
+ std::vector<std::shared_ptr<IPart> > selected_array;
+ //выбираем выделение блоков
+ auto select_function=[this,&qRect_AreaLocal,&selected_array](std::shared_ptr<IPart> iPart_Ptr)
+ {  
   if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
   int x1;
   int y1;
   int x2;
   int y2;
-  qRect_Area.getCoords(&x1,&y1,&x2,&y2);
-  if (x1>x2)
-  {
-   int x=x1;
-   x1=x2;
-   x2=x;
-  }
-  if (y1>y2)
-  {
-   int y=y1;
-   y1=y2;
-   y2=y;
-  }
+  qRect_AreaLocal.getCoords(&x1,&y1,&x2,&y2);
   for(int x=x1;x<=x2;x++)
   {
    for(int y=y1;y<=y2;y++)
    {
-    if (iPart_Ptr->IsCoord(x,y)==true) iPart_Ptr->Selected=true;
+    if (iPart_Ptr->IsCoord(x,y)==true)
+    {
+     //проверяем, есть ли тайл с такими координатами
+     std::vector<std::shared_ptr<IPart> >::iterator begin=selected_array.begin();
+     std::vector<std::shared_ptr<IPart> >::iterator end=selected_array.end();
+     while(begin!=end)
+     {
+      if ((*begin)->IsCoord(x,y)==true)
+      {
+       (*begin)->Selected=false;
+       selected_array.erase(begin,begin+1);
+       begin=selected_array.begin();
+       end=selected_array.end();
+       continue;
+      }
+      begin++;
+     }
+     iPart_Ptr->Selected=true;
+     selected_array.push_back(iPart_Ptr);
+    }
    }
   }
  };
- Map_Ptr->Visit(select_function);
+ Map_Ptr->Visit(select_function); 
 }
 //----------------------------------------------------------------------------------------------------
 //отменить выбор тайлов
@@ -654,8 +704,8 @@ void CMapEditor::UnselectTiles(void)
  //собираем выделенные блоки в отдельное объединение
  std::shared_ptr<IPart> SelectedPart_Ptr;//выделенные блоки
  SelectedPart_Ptr.reset(new CPartUnion());
- //отменяем выделение блоков и собираем выделенные блоки
- auto unselect_function=[this,&SelectedPart_Ptr](std::shared_ptr<IPart> iPart_Ptr)
+ //собираем выделенные блоки
+ auto collect_function=[this,&SelectedPart_Ptr](std::shared_ptr<IPart> iPart_Ptr)
  {
   if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
   if (iPart_Ptr->Selected==true)
@@ -664,12 +714,20 @@ void CMapEditor::UnselectTiles(void)
    *iPart_New=*iPart_Ptr;
    SelectedPart_Ptr->GetItemPtr()->push_back(iPart_New);
   }
+ };
+ Map_Ptr->Visit(collect_function);
+ //устанавливаем выделенные блоки на поле
+ //так как координаты блоков абсолютные, то установку выполняем с нулевой позиции
+ SetTileForBlockPos(0,0,SelectedPart_Ptr,false);
+ //отменяем выделение блоков
+ auto unselect_function=[this,&SelectedPart_Ptr](std::shared_ptr<IPart> iPart_Ptr)
+ {
+  if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
   iPart_Ptr->Selected=false;
  };
  Map_Ptr->Visit(unselect_function);
- //устанавливаем выделенные блоки на поле
- //так как координаты блоков абсолютные, то установку выполняем с нулевой позиции
- SetTileForBlockPos(0,0,SelectedPart_Ptr);
+
+
  ResetTilesFrame();
 }
 //----------------------------------------------------------------------------------------------------
@@ -870,15 +928,15 @@ void CMapEditor::SetSelectedFirstPlane(bool first_plane)
 //----------------------------------------------------------------------------------------------------
 //задать является ли выбранная часть предметом
 //----------------------------------------------------------------------------------------------------
-void CMapEditor::SetSelectedItem(bool item)
+void CMapEditor::SetSelectedBeforeBackground(bool before_background)
 {
- auto setitem_function=[&item](std::shared_ptr<IPart> iPart_Ptr)
+ auto set_beforebackground_function=[&before_background](std::shared_ptr<IPart> iPart_Ptr)
  {
   if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
-  iPart_Ptr->Item=item;
+  iPart_Ptr->BeforeBackground=before_background;
  };
- CursorPart_Ptr->Visit(setitem_function);
- CopyPart_Ptr->Visit(setitem_function);
+ CursorPart_Ptr->Visit(set_beforebackground_function);
+ CopyPart_Ptr->Visit(set_beforebackground_function);
 }
 //----------------------------------------------------------------------------------------------------
 //задать имя материалу

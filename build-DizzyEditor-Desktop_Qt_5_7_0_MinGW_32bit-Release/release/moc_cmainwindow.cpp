@@ -20,7 +20,7 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_CMainWindow_t {
     QByteArrayData data[12];
-    char stringdata0[329];
+    char stringdata0[341];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -33,19 +33,19 @@ QT_MOC_LITERAL(0, 0, 11), // "CMainWindow"
 QT_MOC_LITERAL(1, 12, 38), // "on_cCheckBox_Matherial_Barrie..."
 QT_MOC_LITERAL(2, 51, 0), // ""
 QT_MOC_LITERAL(3, 52, 41), // "on_cCheckBox_Matherial_FirstP..."
-QT_MOC_LITERAL(4, 94, 35), // "on_cCheckBox_Matherial_Item_c..."
-QT_MOC_LITERAL(5, 130, 34), // "on_cPushButton_SetPartName_cl..."
-QT_MOC_LITERAL(6, 165, 28), // "on_cAction_SaveMap_triggered"
-QT_MOC_LITERAL(7, 194, 28), // "on_cAction_LoadMap_triggered"
-QT_MOC_LITERAL(8, 223, 30), // "on_cAction_ExportMap_triggered"
-QT_MOC_LITERAL(9, 254, 23), // "On_ToolBar_Main_SetPart"
-QT_MOC_LITERAL(10, 278, 26), // "On_ToolBar_Main_SelectPart"
-QT_MOC_LITERAL(11, 305, 23) // "On_ToolBar_Main_MoveMap"
+QT_MOC_LITERAL(4, 94, 47), // "on_cCheckBox_Matherial_Before..."
+QT_MOC_LITERAL(5, 142, 34), // "on_cPushButton_SetPartName_cl..."
+QT_MOC_LITERAL(6, 177, 28), // "on_cAction_SaveMap_triggered"
+QT_MOC_LITERAL(7, 206, 28), // "on_cAction_LoadMap_triggered"
+QT_MOC_LITERAL(8, 235, 30), // "on_cAction_ExportMap_triggered"
+QT_MOC_LITERAL(9, 266, 23), // "On_ToolBar_Main_SetPart"
+QT_MOC_LITERAL(10, 290, 26), // "On_ToolBar_Main_SelectPart"
+QT_MOC_LITERAL(11, 317, 23) // "On_ToolBar_Main_MoveMap"
 
     },
     "CMainWindow\0on_cCheckBox_Matherial_Barrier_clicked\0"
     "\0on_cCheckBox_Matherial_FirstPlane_clicked\0"
-    "on_cCheckBox_Matherial_Item_clicked\0"
+    "on_cCheckBox_Matherial_BeforeBackground_clicked\0"
     "on_cPushButton_SetPartName_clicked\0"
     "on_cAction_SaveMap_triggered\0"
     "on_cAction_LoadMap_triggered\0"
@@ -104,7 +104,7 @@ void CMainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id,
         switch (_id) {
         case 0: _t->on_cCheckBox_Matherial_Barrier_clicked(); break;
         case 1: _t->on_cCheckBox_Matherial_FirstPlane_clicked(); break;
-        case 2: _t->on_cCheckBox_Matherial_Item_clicked(); break;
+        case 2: _t->on_cCheckBox_Matherial_BeforeBackground_clicked(); break;
         case 3: _t->on_cPushButton_SetPartName_clicked(); break;
         case 4: _t->on_cAction_SaveMap_triggered(); break;
         case 5: _t->on_cAction_LoadMap_triggered(); break;

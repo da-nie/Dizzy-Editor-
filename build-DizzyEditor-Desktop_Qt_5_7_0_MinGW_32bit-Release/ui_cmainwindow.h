@@ -47,7 +47,7 @@ public:
     QCheckBox *cCheckBox_Matherial_FirstPlane;
     QLineEdit *cLineEdit_PartName;
     QPushButton *cPushButton_SetPartName;
-    QCheckBox *cCheckBox_Matherial_Item;
+    QCheckBox *cCheckBox_Matherial_BeforeBackground;
     QScrollArea *cScrollArea_Tiles;
     QWidget *cScrollAreaWidgetContents_Tiles;
     QMenuBar *menuBar;
@@ -100,9 +100,9 @@ public:
         cPushButton_SetPartName = new QPushButton(groupBox);
         cPushButton_SetPartName->setObjectName(QStringLiteral("cPushButton_SetPartName"));
         cPushButton_SetPartName->setGeometry(QRect(10, 110, 181, 21));
-        cCheckBox_Matherial_Item = new QCheckBox(groupBox);
-        cCheckBox_Matherial_Item->setObjectName(QStringLiteral("cCheckBox_Matherial_Item"));
-        cCheckBox_Matherial_Item->setGeometry(QRect(10, 60, 181, 18));
+        cCheckBox_Matherial_BeforeBackground = new QCheckBox(groupBox);
+        cCheckBox_Matherial_BeforeBackground->setObjectName(QStringLiteral("cCheckBox_Matherial_BeforeBackground"));
+        cCheckBox_Matherial_BeforeBackground->setGeometry(QRect(10, 60, 181, 18));
 
         gridLayout_3->addWidget(groupBox, 0, 0, 1, 1);
 
@@ -165,7 +165,7 @@ public:
         cCheckBox_Matherial_Barrier->setText(QApplication::translate("CMainWindow", "\320\237\321\200\320\265\320\263\321\200\320\260\320\264\320\260", 0));
         cCheckBox_Matherial_FirstPlane->setText(QApplication::translate("CMainWindow", "\320\237\320\265\321\200\320\265\320\264\320\275\320\270\320\271 \320\277\320\273\320\260\320\275", 0));
         cPushButton_SetPartName->setText(QApplication::translate("CMainWindow", "\320\227\320\260\320\264\320\260\321\202\321\214 \320\270\320\274\321\217 \320\274\320\260\321\202\320\265\321\200\320\270\320\260\320\273\321\203", 0));
-        cCheckBox_Matherial_Item->setText(QApplication::translate("CMainWindow", "\320\257\320\262\320\273\321\217\320\265\321\202\321\201\321\217 \320\277\321\200\320\265\320\264\320\274\320\265\321\202\320\276\320\274", 0));
+        cCheckBox_Matherial_BeforeBackground->setText(QApplication::translate("CMainWindow", "\320\222\321\213\320\262\320\276\320\264\320\270\321\202\321\201\321\217 \320\277\320\265\321\200\320\265\320\264 \321\204\320\276\320\275\320\276\320\274", 0));
         menu->setTitle(QApplication::translate("CMainWindow", "\320\244\320\260\320\271\320\273", 0));
         cToolBar_Main->setWindowTitle(QApplication::translate("CMainWindow", "toolBar", 0));
     } // retranslateUi

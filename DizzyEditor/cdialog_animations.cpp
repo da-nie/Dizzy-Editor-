@@ -47,9 +47,11 @@ CDialog_Animations::CDialog_Animations(QWidget *parent,const CTilesSequence &cTi
 
  ui->cComboBox_AnimationMode->addItem("Циклическая анимация");
  ui->cComboBox_AnimationMode->addItem("Анимация остановлена");
+ ui->cComboBox_AnimationMode->addItem("Однократная анимация");
  CTilesSequence::ANIMATION_MODE animation_mode=cTilesSequence.GetAnimationMode();
  if (animation_mode==CTilesSequence::ANIMATION_MODE_CYCLIC) ui->cComboBox_AnimationMode->setCurrentIndex(0);
  if (animation_mode==CTilesSequence::ANIMATION_MODE_SET_STEP) ui->cComboBox_AnimationMode->setCurrentIndex(1);
+ if (animation_mode==CTilesSequence::ANIMATION_MODE_ONE_SHOT) ui->cComboBox_AnimationMode->setCurrentIndex(2);
 }
 //----------------------------------------------------------------------------------------------------
 //деструктор
@@ -253,6 +255,7 @@ void CDialog_Animations::on_cPushButton_Apply_clicked()
  int32_t index=ui->cComboBox_AnimationMode->currentIndex();
  if (index==CYCLYC_ANIMATION_INDEX) cTilesSequence.SetAnimationMode(CTilesSequence::ANIMATION_MODE_CYCLIC);
  if (index==SET_STEP_ANIMATION_INDEX) cTilesSequence.SetAnimationMode(CTilesSequence::ANIMATION_MODE_SET_STEP);
+ if (index==ONE_SHOT_ANIMATION_INDEX) cTilesSequence.SetAnimationMode(CTilesSequence::ANIMATION_MODE_ONE_SHOT);
  accept();
 }
 //****************************************************************************************************

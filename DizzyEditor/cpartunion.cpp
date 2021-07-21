@@ -105,6 +105,7 @@ bool CPartUnion::Export(std::ofstream &file,int32_t scale_x,int32_t scale_y)
   iPart_Ptr->Export(file,scale_x,scale_y);
  };
  std::for_each(Item.begin(),Item.end(),export_function);
+ return(true);
 }
 //----------------------------------------------------------------------------------------------------
 //получить указатель на список элементов

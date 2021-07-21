@@ -118,12 +118,12 @@ void CMainWindow::mousePressEvent(QMouseEvent *qMouseEvent_Ptr)
   CTilesSequence cTilesSequence(CTile(SelectedTileIndexX,SelectedTileIndexY));
   bool barrier=ui->cCheckBox_Matherial_Barrier->isChecked();
   bool first_plane=ui->cCheckBox_Matherial_FirstPlane->isChecked();
-  bool item=ui->cCheckBox_Matherial_Item->isChecked();
+  bool before_background=ui->cCheckBox_Matherial_BeforeBackground->isChecked();
   std::string name;
   name=ui->cLineEdit_PartName->text().toStdString();
   std::shared_ptr<IPart> iPart_Ptr(new CPartUnion());
 
-  iPart_Ptr->GetItemPtr()->push_back(std::shared_ptr<IPart>(new CPart(0,0,cTilesSequence,barrier,first_plane,item,name)));
+  iPart_Ptr->GetItemPtr()->push_back(std::shared_ptr<IPart>(new CPart(0,0,cTilesSequence,barrier,first_plane,before_background,name)));
   ui->cMapEditor->SetSelectedPart(iPart_Ptr);
   UpdateTilesImage();
  }
@@ -167,10 +167,10 @@ void CMainWindow::on_cCheckBox_Matherial_FirstPlane_clicked()
 //----------------------------------------------------------------------------------------------------
 //слот нажатия на кнопку задания, что материал является предметом
 //----------------------------------------------------------------------------------------------------
-void CMainWindow::on_cCheckBox_Matherial_Item_clicked()
+void CMainWindow::on_cCheckBox_Matherial_BeforeBackground_clicked()
 {
- bool item=ui->cCheckBox_Matherial_Item->isChecked();
- ui->cMapEditor->SetSelectedItem(item);
+ bool before_background=ui->cCheckBox_Matherial_BeforeBackground->isChecked();
+ ui->cMapEditor->SetSelectedBeforeBackground(before_background);
 }
 //----------------------------------------------------------------------------------------------------
 //слот нажатия на кнопку задания имени материала

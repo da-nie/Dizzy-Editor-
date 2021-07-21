@@ -94,7 +94,7 @@ class CMapEditor:public QWidget
   void SetSelectedPart(std::shared_ptr<IPart> iPart_Ptr);//задать выбранную последовательность блоков
   void SetSelectedBarrier(bool barrier);//задать является ли выбранная часть барьером
   void SetSelectedFirstPlane(bool first_plane);//задать является ли выбранная часть передним планом
-  void SetSelectedItem(bool item);//задать является ли выбранная часть предметом
+  void SetSelectedBeforeBackground(bool before_background);//задать является ли выбранная часть предметом
   bool SaveMap(const std::string &file_name);//записать карту
   bool LoadMap(const std::string &file_name);//загрузить карту
   bool ExportMap(const std::string &file_name);//экспортировать карту
@@ -122,8 +122,8 @@ class CMapEditor:public QWidget
   void DrawCursor(QPainter &qPainter,std::shared_ptr<IPart> MousePart_Ptr);//рисование курсора
   void DrawSelectedArea(QPainter &qPainter);//рисование области выделения
 
-  void SetTileForMousePos(int32_t mouse_x,int32_t mouse_y,std::shared_ptr<IPart> MousePart_Ptr);//поставить тайл в позицию по координатам мыши
-  void SetTileForBlockPos(int32_t block_x,int32_t block_y,std::shared_ptr<IPart> MousePart_Ptr);//поставить тайл в позицию по координатам блоков
+  void SetTileForMousePos(int32_t mouse_x,int32_t mouse_y,std::shared_ptr<IPart> MousePart_Ptr,bool replace);//поставить тайл в позицию по координатам мыши
+  void SetTileForBlockPos(int32_t block_x,int32_t block_y,std::shared_ptr<IPart> MousePart_Ptr,bool replace);//поставить тайл в позицию по координатам блоков
   void SetTile(int32_t mouse_x,int32_t mouse_y,std::shared_ptr<IPart> MousePart_Ptr);//поставить тайл в позицию
   void SelectTiles(QRect &qRect_Area);//выбрать область тайлов
   void UnselectTiles(void);//отменить выбор тайлов
