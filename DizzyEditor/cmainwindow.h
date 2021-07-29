@@ -53,6 +53,8 @@ class CMainWindow:public QMainWindow
 
   int32_t SelectedTileIndexX;//позиция выбранного тайла по X
   int32_t SelectedTileIndexY;//позиция выбранного тайла по Y
+
+  std::string CurrentFileName;//текущее имя файла карты
  public:
   //-конструктор----------------------------------------------------------------------------------------
   explicit CMainWindow(QWidget *parent=0);
@@ -79,6 +81,7 @@ class CMainWindow:public QMainWindow
   void On_ToolBar_Main_SelectPart(void);//слот выбора в панеле инструментов режима выбора блоков
   void On_ToolBar_Main_MoveMap(void);//слот выбора в панеле инструментов режима перемещения по карте
 
+  void on_cAction_SaveMapAs_triggered();
 };
 
 #endif

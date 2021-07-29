@@ -19,8 +19,8 @@
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_CMainWindow_t {
-    QByteArrayData data[12];
-    char stringdata0[341];
+    QByteArrayData data[13];
+    char stringdata0[372];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -40,7 +40,8 @@ QT_MOC_LITERAL(7, 206, 28), // "on_cAction_LoadMap_triggered"
 QT_MOC_LITERAL(8, 235, 30), // "on_cAction_ExportMap_triggered"
 QT_MOC_LITERAL(9, 266, 23), // "On_ToolBar_Main_SetPart"
 QT_MOC_LITERAL(10, 290, 26), // "On_ToolBar_Main_SelectPart"
-QT_MOC_LITERAL(11, 317, 23) // "On_ToolBar_Main_MoveMap"
+QT_MOC_LITERAL(11, 317, 23), // "On_ToolBar_Main_MoveMap"
+QT_MOC_LITERAL(12, 341, 30) // "on_cAction_SaveMapAs_triggered"
 
     },
     "CMainWindow\0on_cCheckBox_Matherial_Barrier_clicked\0"
@@ -52,7 +53,8 @@ QT_MOC_LITERAL(11, 317, 23) // "On_ToolBar_Main_MoveMap"
     "on_cAction_ExportMap_triggered\0"
     "On_ToolBar_Main_SetPart\0"
     "On_ToolBar_Main_SelectPart\0"
-    "On_ToolBar_Main_MoveMap"
+    "On_ToolBar_Main_MoveMap\0"
+    "on_cAction_SaveMapAs_triggered"
 };
 #undef QT_MOC_LITERAL
 
@@ -62,7 +64,7 @@ static const uint qt_meta_data_CMainWindow[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      10,   14, // methods
+      11,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -70,18 +72,20 @@ static const uint qt_meta_data_CMainWindow[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   64,    2, 0x08 /* Private */,
-       3,    0,   65,    2, 0x08 /* Private */,
-       4,    0,   66,    2, 0x08 /* Private */,
-       5,    0,   67,    2, 0x08 /* Private */,
-       6,    0,   68,    2, 0x08 /* Private */,
-       7,    0,   69,    2, 0x08 /* Private */,
-       8,    0,   70,    2, 0x08 /* Private */,
-       9,    0,   71,    2, 0x08 /* Private */,
-      10,    0,   72,    2, 0x08 /* Private */,
-      11,    0,   73,    2, 0x08 /* Private */,
+       1,    0,   69,    2, 0x08 /* Private */,
+       3,    0,   70,    2, 0x08 /* Private */,
+       4,    0,   71,    2, 0x08 /* Private */,
+       5,    0,   72,    2, 0x08 /* Private */,
+       6,    0,   73,    2, 0x08 /* Private */,
+       7,    0,   74,    2, 0x08 /* Private */,
+       8,    0,   75,    2, 0x08 /* Private */,
+       9,    0,   76,    2, 0x08 /* Private */,
+      10,    0,   77,    2, 0x08 /* Private */,
+      11,    0,   78,    2, 0x08 /* Private */,
+      12,    0,   79,    2, 0x08 /* Private */,
 
  // slots: parameters
+    QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
@@ -112,6 +116,7 @@ void CMainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id,
         case 7: _t->On_ToolBar_Main_SetPart(); break;
         case 8: _t->On_ToolBar_Main_SelectPart(); break;
         case 9: _t->On_ToolBar_Main_MoveMap(); break;
+        case 10: _t->on_cAction_SaveMapAs_triggered(); break;
         default: ;
         }
     }
@@ -143,13 +148,13 @@ int CMainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 10)
+        if (_id < 11)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 10;
+        _id -= 11;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 10)
+        if (_id < 11)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 10;
+        _id -= 11;
     }
     return _id;
 }

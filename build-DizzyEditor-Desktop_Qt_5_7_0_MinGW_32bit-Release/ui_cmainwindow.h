@@ -36,6 +36,7 @@ public:
     QAction *cAction_SaveMap;
     QAction *cAction_LoadMap;
     QAction *cAction_ExportMap;
+    QAction *cAction_SaveMapAs;
     QWidget *centralWidget;
     QGridLayout *gridLayout;
     QGridLayout *gridLayout_basic;
@@ -66,6 +67,8 @@ public:
         cAction_LoadMap->setObjectName(QStringLiteral("cAction_LoadMap"));
         cAction_ExportMap = new QAction(CMainWindow);
         cAction_ExportMap->setObjectName(QStringLiteral("cAction_ExportMap"));
+        cAction_SaveMapAs = new QAction(CMainWindow);
+        cAction_SaveMapAs->setObjectName(QStringLiteral("cAction_SaveMapAs"));
         centralWidget = new QWidget(CMainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         gridLayout = new QGridLayout(centralWidget);
@@ -145,8 +148,11 @@ public:
         CMainWindow->addToolBar(Qt::TopToolBarArea, cToolBar_Main);
 
         menuBar->addAction(menu->menuAction());
-        menu->addAction(cAction_SaveMap);
         menu->addAction(cAction_LoadMap);
+        menu->addSeparator();
+        menu->addAction(cAction_SaveMap);
+        menu->addAction(cAction_SaveMapAs);
+        menu->addSeparator();
         menu->addAction(cAction_ExportMap);
         cToolBar_Main->addSeparator();
 
@@ -158,9 +164,10 @@ public:
     void retranslateUi(QMainWindow *CMainWindow)
     {
         CMainWindow->setWindowTitle(QApplication::translate("CMainWindow", "Dizzy Map Editor v1.0", 0));
-        cAction_SaveMap->setText(QApplication::translate("CMainWindow", "\320\241\320\276\321\205\321\200\320\260\320\275\320\270\321\202\321\214 \320\272\320\260\321\200\321\202\321\203", 0));
-        cAction_LoadMap->setText(QApplication::translate("CMainWindow", "\320\236\321\202\320\272\321\200\321\213\321\202\321\214 \320\272\320\260\321\200\321\202\321\203", 0));
+        cAction_SaveMap->setText(QApplication::translate("CMainWindow", "\320\241\320\276\321\205\321\200\320\260\320\275\320\270\321\202\321\214 \320\272\320\260\321\200\321\202\321\203..", 0));
+        cAction_LoadMap->setText(QApplication::translate("CMainWindow", "\320\236\321\202\320\272\321\200\321\213\321\202\321\214 \320\272\320\260\321\200\321\202\321\203..", 0));
         cAction_ExportMap->setText(QApplication::translate("CMainWindow", "\320\255\320\272\321\201\320\277\320\276\321\200\321\202\320\270\321\200\320\276\320\262\320\260\321\202\321\214 \320\272\320\260\321\200\321\202\321\203", 0));
+        cAction_SaveMapAs->setText(QApplication::translate("CMainWindow", "\320\241\320\276\321\205\321\200\320\260\320\275\320\270\321\202\321\214 \320\272\320\260\321\200\321\202\321\203 \320\272\320\260\320\272..", 0));
         groupBox->setTitle(QApplication::translate("CMainWindow", "\320\235\320\260\321\201\321\202\321\200\320\276\320\271\320\272\320\270 \320\261\320\273\320\276\320\272\320\276\320\262", 0));
         cCheckBox_Matherial_Barrier->setText(QApplication::translate("CMainWindow", "\320\237\321\200\320\265\320\263\321\200\320\260\320\264\320\260", 0));
         cCheckBox_Matherial_FirstPlane->setText(QApplication::translate("CMainWindow", "\320\237\320\265\321\200\320\265\320\264\320\275\320\270\320\271 \320\277\320\273\320\260\320\275", 0));

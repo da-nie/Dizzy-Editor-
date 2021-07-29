@@ -186,14 +186,32 @@ void CMainWindow::on_cPushButton_SetPartName_clicked()
 //----------------------------------------------------------------------------------------------------
 void CMainWindow::on_cAction_SaveMap_triggered(void)
 {
- ui->cMapEditor->SaveMap("map.bin");
+ if (CurrentFileName.empty()==false)
+ {
+  ui->cMapEditor->SaveMap(CurrentFileName);
+  return;
+ }
+ on_cAction_SaveMapAs_triggered();
+}
+//----------------------------------------------------------------------------------------------------
+//слот выбора пункта меню "сохранить карту как"
+//----------------------------------------------------------------------------------------------------
+void CMainWindow::on_cAction_SaveMapAs_triggered()
+{
+ QString file_name=QFileDialog::getSaveFileName(this,tr("Укажите сохраняемый файл карты"),".","*.bin");
+ if (file_name.isEmpty()) return;
+ CurrentFileName=file_name.toStdString();
+ ui->cMapEditor->SaveMap(CurrentFileName);
 }
 //----------------------------------------------------------------------------------------------------
 //слот выбора пункта меню "загрузить карту"
 //----------------------------------------------------------------------------------------------------
 void CMainWindow::on_cAction_LoadMap_triggered(void)
 {
- ui->cMapEditor->LoadMap("map.bin");
+ QString file_name=QFileDialog::getOpenFileName(this,tr("Укажите загружаемый файл карты"),".","*.bin");
+ if (file_name.isEmpty()) return;
+ CurrentFileName=file_name.toStdString();
+ ui->cMapEditor->LoadMap(CurrentFileName);
 }
 //----------------------------------------------------------------------------------------------------
 //слот выбора пункта меню "экспортировать карту"
@@ -235,6 +253,7 @@ void CMainWindow::On_ToolBar_Main_MoveMap(void)
 //****************************************************************************************************
 //открытые функции
 //****************************************************************************************************
+
 
 
 

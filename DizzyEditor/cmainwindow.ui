@@ -135,8 +135,11 @@
     <property name="title">
      <string>Файл</string>
     </property>
-    <addaction name="cAction_SaveMap"/>
     <addaction name="cAction_LoadMap"/>
+    <addaction name="separator"/>
+    <addaction name="cAction_SaveMap"/>
+    <addaction name="cAction_SaveMapAs"/>
+    <addaction name="separator"/>
     <addaction name="cAction_ExportMap"/>
    </widget>
    <addaction name="menu"/>
@@ -156,17 +159,22 @@
   </widget>
   <action name="cAction_SaveMap">
    <property name="text">
-    <string>Сохранить карту</string>
+    <string>Сохранить карту..</string>
    </property>
   </action>
   <action name="cAction_LoadMap">
    <property name="text">
-    <string>Открыть карту</string>
+    <string>Открыть карту..</string>
    </property>
   </action>
   <action name="cAction_ExportMap">
    <property name="text">
     <string>Экспортировать карту</string>
+   </property>
+  </action>
+  <action name="cAction_SaveMapAs">
+   <property name="text">
+    <string>Сохранить карту как..</string>
    </property>
   </action>
  </widget>
