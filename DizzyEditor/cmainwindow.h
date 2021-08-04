@@ -80,8 +80,8 @@ class CMainWindow:public QMainWindow
   void On_ToolBar_Main_SetPart(void);//слот выбора в панеле инструментов режима установки блоков
   void On_ToolBar_Main_SelectPart(void);//слот выбора в панеле инструментов режима выбора блоков
   void On_ToolBar_Main_MoveMap(void);//слот выбора в панеле инструментов режима перемещения по карте
-
-  void on_cAction_SaveMapAs_triggered();
+  void on_cAction_SaveMapAs_triggered();//слот выбора пункта меню "сохранить карту как"
+  void on_cComboBox_Scale_currentIndexChanged(int index);//слот смены выбора масштаба
 };
 
 #endif

@@ -49,6 +49,12 @@ CMainWindow::CMainWindow(QWidget *parent):QMainWindow(parent),ui(new Ui::CMainWi
  qAction_ModeMoveMap->setCheckable(true);
  connect(qAction_ModeMoveMap,SIGNAL(triggered()),this,SLOT(On_ToolBar_Main_MoveMap()));
 
+ ui->cComboBox_Scale->addItem("1:1");
+ ui->cComboBox_Scale->addItem("1:2");
+ ui->cComboBox_Scale->addItem("1:3");
+ ui->cComboBox_Scale->addItem("1:4");
+ ui->cComboBox_Scale->setCurrentIndex(0);
+
  ui->cToolBar_Main->addAction(qAction_ModeSetPart);
  ui->cToolBar_Main->addAction(qAction_ModeSelectPart);
  ui->cToolBar_Main->addAction(qAction_ModeMoveMap);
@@ -250,10 +256,16 @@ void CMainWindow::On_ToolBar_Main_MoveMap(void)
  qAction_ModeSelectPart->setChecked(false);
  qAction_ModeMoveMap->setChecked(true);
 }
+//----------------------------------------------------------------------------------------------------
+//слот смены выбора масштаба
+//----------------------------------------------------------------------------------------------------
+void CMainWindow::on_cComboBox_Scale_currentIndexChanged(int index)
+{
+ int32_t scale=ui->cComboBox_Scale->currentIndex()+1;
+ ui->cMapEditor->SetScale(scale);
+}
 //****************************************************************************************************
 //открытые функции
 //****************************************************************************************************
-
-
 
 

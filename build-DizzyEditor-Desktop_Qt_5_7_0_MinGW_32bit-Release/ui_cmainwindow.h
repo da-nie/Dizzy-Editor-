@@ -14,6 +14,8 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QCheckBox>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QFrame>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHeaderView>
@@ -41,6 +43,8 @@ public:
     QGridLayout *gridLayout;
     QGridLayout *gridLayout_basic;
     CMapEditor *cMapEditor;
+    QScrollArea *cScrollArea_Tiles;
+    QWidget *cScrollAreaWidgetContents_Tiles;
     QWidget *widget;
     QGridLayout *gridLayout_3;
     QGroupBox *groupBox;
@@ -49,8 +53,9 @@ public:
     QLineEdit *cLineEdit_PartName;
     QPushButton *cPushButton_SetPartName;
     QCheckBox *cCheckBox_Matherial_BeforeBackground;
-    QScrollArea *cScrollArea_Tiles;
-    QWidget *cScrollAreaWidgetContents_Tiles;
+    QFrame *frame;
+    QGroupBox *groupBox_2;
+    QComboBox *cComboBox_Scale;
     QMenuBar *menuBar;
     QMenu *menu;
     QStatusBar *statusBar;
@@ -81,7 +86,19 @@ public:
         cMapEditor = new CMapEditor(centralWidget);
         cMapEditor->setObjectName(QStringLiteral("cMapEditor"));
 
-        gridLayout_basic->addWidget(cMapEditor, 0, 1, 3, 1);
+        gridLayout_basic->addWidget(cMapEditor, 0, 1, 4, 1);
+
+        cScrollArea_Tiles = new QScrollArea(centralWidget);
+        cScrollArea_Tiles->setObjectName(QStringLiteral("cScrollArea_Tiles"));
+        cScrollArea_Tiles->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+        cScrollArea_Tiles->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+        cScrollArea_Tiles->setWidgetResizable(true);
+        cScrollAreaWidgetContents_Tiles = new QWidget();
+        cScrollAreaWidgetContents_Tiles->setObjectName(QStringLiteral("cScrollAreaWidgetContents_Tiles"));
+        cScrollAreaWidgetContents_Tiles->setGeometry(QRect(0, 0, 198, 222));
+        cScrollArea_Tiles->setWidget(cScrollAreaWidgetContents_Tiles);
+
+        gridLayout_basic->addWidget(cScrollArea_Tiles, 0, 0, 2, 1);
 
         widget = new QWidget(centralWidget);
         widget->setObjectName(QStringLiteral("widget"));
@@ -107,26 +124,29 @@ public:
         cCheckBox_Matherial_BeforeBackground->setObjectName(QStringLiteral("cCheckBox_Matherial_BeforeBackground"));
         cCheckBox_Matherial_BeforeBackground->setGeometry(QRect(10, 60, 181, 18));
 
-        gridLayout_3->addWidget(groupBox, 0, 0, 1, 1);
+        gridLayout_3->addWidget(groupBox, 1, 0, 1, 1);
 
 
-        gridLayout_basic->addWidget(widget, 2, 0, 1, 1);
+        gridLayout_basic->addWidget(widget, 3, 0, 1, 1);
 
-        cScrollArea_Tiles = new QScrollArea(centralWidget);
-        cScrollArea_Tiles->setObjectName(QStringLiteral("cScrollArea_Tiles"));
-        cScrollArea_Tiles->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-        cScrollArea_Tiles->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-        cScrollArea_Tiles->setWidgetResizable(true);
-        cScrollAreaWidgetContents_Tiles = new QWidget();
-        cScrollAreaWidgetContents_Tiles->setObjectName(QStringLiteral("cScrollAreaWidgetContents_Tiles"));
-        cScrollAreaWidgetContents_Tiles->setGeometry(QRect(0, 0, 198, 299));
-        cScrollArea_Tiles->setWidget(cScrollAreaWidgetContents_Tiles);
+        frame = new QFrame(centralWidget);
+        frame->setObjectName(QStringLiteral("frame"));
+        frame->setFrameShape(QFrame::StyledPanel);
+        frame->setFrameShadow(QFrame::Raised);
+        groupBox_2 = new QGroupBox(frame);
+        groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
+        groupBox_2->setGeometry(QRect(9, 9, 201, 51));
+        groupBox_2->setAlignment(Qt::AlignCenter);
+        cComboBox_Scale = new QComboBox(groupBox_2);
+        cComboBox_Scale->setObjectName(QStringLiteral("cComboBox_Scale"));
+        cComboBox_Scale->setGeometry(QRect(10, 20, 181, 22));
 
-        gridLayout_basic->addWidget(cScrollArea_Tiles, 0, 0, 2, 1);
+        gridLayout_basic->addWidget(frame, 2, 0, 1, 1);
 
         gridLayout_basic->setRowStretch(0, 10);
         gridLayout_basic->setRowStretch(1, 10);
-        gridLayout_basic->setRowStretch(2, 10);
+        gridLayout_basic->setRowStretch(2, 6);
+        gridLayout_basic->setRowStretch(3, 13);
         gridLayout_basic->setColumnStretch(0, 5);
         gridLayout_basic->setColumnStretch(1, 10);
 
@@ -173,6 +193,7 @@ public:
         cCheckBox_Matherial_FirstPlane->setText(QApplication::translate("CMainWindow", "\320\237\320\265\321\200\320\265\320\264\320\275\320\270\320\271 \320\277\320\273\320\260\320\275", 0));
         cPushButton_SetPartName->setText(QApplication::translate("CMainWindow", "\320\227\320\260\320\264\320\260\321\202\321\214 \320\270\320\274\321\217 \320\274\320\260\321\202\320\265\321\200\320\270\320\260\320\273\321\203", 0));
         cCheckBox_Matherial_BeforeBackground->setText(QApplication::translate("CMainWindow", "\320\222\321\213\320\262\320\276\320\264\320\270\321\202\321\201\321\217 \320\277\320\265\321\200\320\265\320\264 \321\204\320\276\320\275\320\276\320\274", 0));
+        groupBox_2->setTitle(QApplication::translate("CMainWindow", "\320\234\320\260\321\201\321\210\321\202\320\260\320\261", 0));
         menu->setTitle(QApplication::translate("CMainWindow", "\320\244\320\260\320\271\320\273", 0));
         cToolBar_Main->setWindowTitle(QApplication::translate("CMainWindow", "toolBar", 0));
     } // retranslateUi

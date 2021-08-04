@@ -16,14 +16,37 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout" rowstretch="1">
     <item row="0" column="0">
-     <layout class="QGridLayout" name="gridLayout_basic" rowstretch="10,10,10" columnstretch="5,10">
-      <item row="0" column="1" rowspan="3">
+     <layout class="QGridLayout" name="gridLayout_basic" rowstretch="10,10,6,13" columnstretch="5,10">
+      <item row="0" column="1" rowspan="4">
        <widget class="CMapEditor" name="cMapEditor" native="true"/>
       </item>
-      <item row="2" column="0">
+      <item row="0" column="0" rowspan="2">
+       <widget class="QScrollArea" name="cScrollArea_Tiles">
+        <property name="verticalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOn</enum>
+        </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOn</enum>
+        </property>
+        <property name="widgetResizable">
+         <bool>true</bool>
+        </property>
+        <widget class="QWidget" name="cScrollAreaWidgetContents_Tiles">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>198</width>
+           <height>222</height>
+          </rect>
+         </property>
+        </widget>
+       </widget>
+      </item>
+      <item row="3" column="0">
        <widget class="QWidget" name="widget" native="true">
         <layout class="QGridLayout" name="gridLayout_3">
-         <item row="0" column="0">
+         <item row="1" column="0">
           <widget class="QGroupBox" name="groupBox">
            <property name="title">
             <string>Настройки блоков</string>
@@ -95,26 +118,39 @@
         </layout>
        </widget>
       </item>
-      <item row="0" column="0" rowspan="2">
-       <widget class="QScrollArea" name="cScrollArea_Tiles">
-        <property name="verticalScrollBarPolicy">
-         <enum>Qt::ScrollBarAlwaysOn</enum>
+      <item row="2" column="0">
+       <widget class="QFrame" name="frame">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
         </property>
-        <property name="horizontalScrollBarPolicy">
-         <enum>Qt::ScrollBarAlwaysOn</enum>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
         </property>
-        <property name="widgetResizable">
-         <bool>true</bool>
-        </property>
-        <widget class="QWidget" name="cScrollAreaWidgetContents_Tiles">
+        <widget class="QGroupBox" name="groupBox_2">
          <property name="geometry">
           <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>198</width>
-           <height>299</height>
+           <x>9</x>
+           <y>9</y>
+           <width>201</width>
+           <height>51</height>
           </rect>
          </property>
+         <property name="title">
+          <string>Масштаб</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <widget class="QComboBox" name="cComboBox_Scale">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>20</y>
+            <width>181</width>
+            <height>22</height>
+           </rect>
+          </property>
+         </widget>
         </widget>
        </widget>
       </item>

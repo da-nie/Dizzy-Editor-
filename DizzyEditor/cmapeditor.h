@@ -58,6 +58,9 @@ class CMapEditor:public QWidget
   static const uint32_t TIMER_CHANGE_TILE_DIVIDER=10;//делитель для анимации тайлов
  private:
   //-переменные-----------------------------------------------------------------------------------------
+
+  size_t Scale;
+
   int32_t TimerId;//идентификатор таймера
   QImage qImage_Map;//изображение поля
 
@@ -104,6 +107,7 @@ class CMapEditor:public QWidget
   void SetModeMoveMap(void);//установить режим перемещения карты
   void PressKey(QKeyEvent *pe);//нажатие клавиши
   void ReleaseKey(QKeyEvent *pe);//отпускание клавиши  
+  void SetScale(int32_t scale);//задать масштаб
  private:
   //-закрытые функции-----------------------------------------------------------------------------------  
   void timerEvent(QTimerEvent *qTimerEvent_Ptr);//обработчик таймера
@@ -136,7 +140,7 @@ class CMapEditor:public QWidget
   void ResetTilesFrame(void);//сбросить кадр на исходный для тайлов (нужно для синхронности анимации)
   void MouseToMap(int32_t mouse_x,int32_t mouse_y,int32_t &map_x,int32_t &map_y);//перевести координаты мыши в координаты блоков карты
   void SetMouseMode(MOUSE_MODE mouse_mode);//задать режим работы мышки
-  void GetStringImageSize(QPainter &qPainter,const std::string &string,uint32_t &width,uint32_t &height);//получить размер строки в пикселях
+  void GetStringImageSize(QPainter &qPainter,const std::string &string,uint32_t &width,uint32_t &height);//получить размер строки в пикселях  
  private slots:
   void on_ContextMenu_CopyPart(void);//слот выбора в контекстном меню пункта "скопировать"
   void on_ContextMenu_PastePart(void);//слот выбора в контекстном меню пункта "вставить"
