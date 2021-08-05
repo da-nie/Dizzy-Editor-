@@ -10,6 +10,7 @@
 //****************************************************************************************************
 #include <QMainWindow>
 #include "cimagestorage.h"
+#include <vector>
 
 //****************************************************************************************************
 //пространства имён
@@ -55,6 +56,8 @@ class CMainWindow:public QMainWindow
   int32_t SelectedTileIndexY;//позиция выбранного тайла по Y
 
   std::string CurrentFileName;//текущее имя файла карты
+
+  std::vector<std::pair<std::string,double>> ScaleTable;
  public:
   //-конструктор----------------------------------------------------------------------------------------
   explicit CMainWindow(QWidget *parent=0);

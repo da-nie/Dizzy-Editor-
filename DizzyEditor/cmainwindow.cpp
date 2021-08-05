@@ -16,6 +16,7 @@
 //****************************************************************************************************
 //константы
 //****************************************************************************************************
+static std::string CaptionName("Dizzy Map Editor v1.0");
 
 //****************************************************************************************************
 //макроопределения
@@ -49,10 +50,14 @@ CMainWindow::CMainWindow(QWidget *parent):QMainWindow(parent),ui(new Ui::CMainWi
  qAction_ModeMoveMap->setCheckable(true);
  connect(qAction_ModeMoveMap,SIGNAL(triggered()),this,SLOT(On_ToolBar_Main_MoveMap()));
 
- ui->cComboBox_Scale->addItem("1:1");
- ui->cComboBox_Scale->addItem("1:2");
- ui->cComboBox_Scale->addItem("1:3");
- ui->cComboBox_Scale->addItem("1:4");
+ ScaleTable.push_back(std::pair<std::string,double>("1",1));
+ ScaleTable.push_back(std::pair<std::string,double>("2",2));
+ ScaleTable.push_back(std::pair<std::string,double>("3",3));
+ ScaleTable.push_back(std::pair<std::string,double>("4",4));
+ ScaleTable.push_back(std::pair<std::string,double>("0.75",0.75));
+ ScaleTable.push_back(std::pair<std::string,double>("0.5",0.5));
+ size_t size=ScaleTable.size();
+ for(size_t n=0;n<size;n++) ui->cComboBox_Scale->addItem(ScaleTable[n].first.c_str());
  ui->cComboBox_Scale->setCurrentIndex(0);
 
  ui->cToolBar_Main->addAction(qAction_ModeSetPart);
@@ -194,7 +199,7 @@ void CMainWindow::on_cAction_SaveMap_triggered(void)
 {
  if (CurrentFileName.empty()==false)
  {
-  ui->cMapEditor->SaveMap(CurrentFileName);
+  ui->cMapEditor->SaveMap(CurrentFileName);  
   return;
  }
  on_cAction_SaveMapAs_triggered();
@@ -208,6 +213,7 @@ void CMainWindow::on_cAction_SaveMapAs_triggered()
  if (file_name.isEmpty()) return;
  CurrentFileName=file_name.toStdString();
  ui->cMapEditor->SaveMap(CurrentFileName);
+ setWindowTitle(tr((CaptionName+" "+CurrentFileName).c_str()));
 }
 //----------------------------------------------------------------------------------------------------
 //слот выбора пункта меню "загрузить карту"
@@ -217,7 +223,10 @@ void CMainWindow::on_cAction_LoadMap_triggered(void)
  QString file_name=QFileDialog::getOpenFileName(this,tr("Укажите загружаемый файл карты"),".","*.bin");
  if (file_name.isEmpty()) return;
  CurrentFileName=file_name.toStdString();
- ui->cMapEditor->LoadMap(CurrentFileName);
+ if (ui->cMapEditor->LoadMap(CurrentFileName)==true)
+ {
+  setWindowTitle(tr((CaptionName+" "+CurrentFileName).c_str()));
+ }
 }
 //----------------------------------------------------------------------------------------------------
 //слот выбора пункта меню "экспортировать карту"
@@ -261,7 +270,7 @@ void CMainWindow::On_ToolBar_Main_MoveMap(void)
 //----------------------------------------------------------------------------------------------------
 void CMainWindow::on_cComboBox_Scale_currentIndexChanged(int index)
 {
- int32_t scale=ui->cComboBox_Scale->currentIndex()+1;
+ double scale=ScaleTable[index].second;
  ui->cMapEditor->SetScale(scale);
 }
 //****************************************************************************************************

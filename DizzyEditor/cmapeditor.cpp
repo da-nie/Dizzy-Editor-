@@ -52,7 +52,11 @@ CMapEditor::CMapEditor(QWidget *parent):QWidget(parent)
  //создаём меню
  qMenu_Context=new QMenu(this); 
  qMenu_Context->addAction("Копировать",this,SLOT(on_ContextMenu_CopyPart()));
+ qMenu_Context->addSeparator();
  qMenu_Context->addAction("Вставить",this,SLOT(on_ContextMenu_PastePart()));
+ qMenu_Context->addSeparator();
+ qMenu_Context->addSeparator();
+ qMenu_Context->addAction("Удалить",this,SLOT(on_ContextMenu_DeletePart()));
 
  //подключим таймер обновления экрана
  TimerId=startTimer(TIMER_INTERVAL_MS); 
@@ -323,17 +327,17 @@ void CMapEditor::DrawGrid(QPainter &qPainter,int32_t w_width,int32_t w_height)
  qPainter.setPen(QPen(Qt::gray,1,Qt::SolidLine));
 
  int32_t py=qPoint_LeftTop.y()/(CImageStorage::TILE_HEIGHT*Scale);
- for(int32_t y_pos=CImageStorage::TILE_HEIGHT*Scale-qPoint_LeftTop.y()%(CImageStorage::TILE_HEIGHT*Scale)-(CImageStorage::TILE_HEIGHT*Scale);y_pos<w_height;y_pos+=CImageStorage::TILE_HEIGHT*Scale,py++)
+ for(int32_t y_pos=static_cast<int32_t>(CImageStorage::TILE_HEIGHT*Scale)-qPoint_LeftTop.y()%(static_cast<int32_t>(CImageStorage::TILE_HEIGHT*Scale))-static_cast<int32_t>(CImageStorage::TILE_HEIGHT*Scale);y_pos<w_height;y_pos+=static_cast<int32_t>(CImageStorage::TILE_HEIGHT*Scale),py++)
  {
-  if (py%(15*Scale)==0) qPainter.setPen(QPen(Qt::white,1,Qt::SolidLine));
-                   else qPainter.setPen(QPen(Qt::gray,1,Qt::SolidLine));
+  if (py%static_cast<int32_t>(15*Scale)==0) qPainter.setPen(QPen(Qt::white,1,Qt::SolidLine));
+                                       else qPainter.setPen(QPen(Qt::gray,1,Qt::SolidLine));
   qPainter.drawLine(0,y_pos,w_width,y_pos);
  }
  int32_t px=qPoint_LeftTop.x()/(CImageStorage::TILE_WIDTH*Scale);
- for(int32_t x_pos=CImageStorage::TILE_WIDTH*Scale-qPoint_LeftTop.x()%(CImageStorage::TILE_WIDTH*Scale)-CImageStorage::TILE_WIDTH*Scale;x_pos<w_width;x_pos+=CImageStorage::TILE_WIDTH*Scale,px++)
+ for(int32_t x_pos=static_cast<int32_t>(CImageStorage::TILE_WIDTH*Scale)-qPoint_LeftTop.x()%(static_cast<int32_t>(CImageStorage::TILE_WIDTH*Scale))-static_cast<int32_t>(CImageStorage::TILE_WIDTH*Scale);x_pos<w_width;x_pos+=static_cast<int32_t>(CImageStorage::TILE_WIDTH*Scale),px++)
  {
-  if (px%(20*Scale)==0) qPainter.setPen(QPen(Qt::white,1,Qt::SolidLine));
-                   else qPainter.setPen(QPen(Qt::gray,1,Qt::SolidLine));
+  if (px%static_cast<int32_t>(20*Scale)==0) qPainter.setPen(QPen(Qt::white,1,Qt::SolidLine));
+                                       else qPainter.setPen(QPen(Qt::gray,1,Qt::SolidLine));
   qPainter.drawLine(x_pos,0,x_pos,w_height);
  }
 }
@@ -880,6 +884,13 @@ void CMapEditor::on_ContextMenu_PastePart(void)
  SetMouseMode(MOUSE_MODE_PASTE);
 }
 //----------------------------------------------------------------------------------------------------
+//слот выбора в контекстном меню пункта "удалить"
+//----------------------------------------------------------------------------------------------------
+void CMapEditor::on_ContextMenu_DeletePart(void)
+{
+ DeleteSelectedTiles();
+}
+//----------------------------------------------------------------------------------------------------
 //получить размер строки в пикселях
 //----------------------------------------------------------------------------------------------------
 void CMapEditor::GetStringImageSize(QPainter &qPainter,const std::string &string,uint32_t &width,uint32_t &height)
@@ -1089,8 +1100,10 @@ void CMapEditor::ReleaseKey(QKeyEvent *pe)
 //----------------------------------------------------------------------------------------------------
 //задать масштаб
 //----------------------------------------------------------------------------------------------------
-void CMapEditor::SetScale(int32_t scale)
+void CMapEditor::SetScale(double scale)
 {
+ qPoint_LeftTop.setX(qPoint_LeftTop.x()/Scale*scale);
+ qPoint_LeftTop.setY(qPoint_LeftTop.y()/Scale*scale);
  Scale=scale;
  update();
 }

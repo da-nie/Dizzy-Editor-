@@ -59,7 +59,7 @@ class CMapEditor:public QWidget
  private:
   //-переменные-----------------------------------------------------------------------------------------
 
-  size_t Scale;
+  double Scale;//масштаб
 
   int32_t TimerId;//идентификатор таймера
   QImage qImage_Map;//изображение поля
@@ -107,7 +107,7 @@ class CMapEditor:public QWidget
   void SetModeMoveMap(void);//установить режим перемещения карты
   void PressKey(QKeyEvent *pe);//нажатие клавиши
   void ReleaseKey(QKeyEvent *pe);//отпускание клавиши  
-  void SetScale(int32_t scale);//задать масштаб
+  void SetScale(double scale);//задать масштаб
  private:
   //-закрытые функции-----------------------------------------------------------------------------------  
   void timerEvent(QTimerEvent *qTimerEvent_Ptr);//обработчик таймера
@@ -144,6 +144,7 @@ class CMapEditor:public QWidget
  private slots:
   void on_ContextMenu_CopyPart(void);//слот выбора в контекстном меню пункта "скопировать"
   void on_ContextMenu_PastePart(void);//слот выбора в контекстном меню пункта "вставить"
+  void on_ContextMenu_DeletePart(void);//слот выбора в контекстном меню пункта "удалить"
 };
 
 #endif
