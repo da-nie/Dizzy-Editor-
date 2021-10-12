@@ -233,7 +233,19 @@ void CMainWindow::on_cAction_LoadMap_triggered(void)
 //----------------------------------------------------------------------------------------------------
 void CMainWindow::on_cAction_ExportMap_triggered()
 {
- ui->cMapEditor->ExportMap("map.gam");
+ bool res=ui->cMapEditor->ExportMap("map.gam");
+ if (res==true)
+ {
+  QMessageBox *qMessageBox=new QMessageBox(QMessageBox::Information,"Сообщение","Экспорт карты в файл map.gam выполнен успешно.",QMessageBox::Yes);
+  qMessageBox->exec();
+  delete(qMessageBox);
+ }
+ else
+ {
+  QMessageBox *qMessageBox=new QMessageBox(QMessageBox::Information,"Ошибка!","Не удалось выполнить экспорт карты!",QMessageBox::Yes);
+  qMessageBox->exec();
+  delete(qMessageBox);
+ }
 }
 //----------------------------------------------------------------------------------------------------
 //слот выбора в панеле инструментов режима установки блоков

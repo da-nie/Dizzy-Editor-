@@ -53,6 +53,12 @@ class CMapEditor:public QWidget
    MOUSE_MODE_MOVE_MAP//перемещение поля
   };
   //-структуры------------------------------------------------------------------------------------------
+  //структура списка индекс<->указатель на элемент (используется для квадратичного дерева при экспорте)
+  struct SItem
+  {
+   std::shared_ptr<IPart> iPart_Ptr;//указатель на элемент
+   size_t Index;//индекс элемента
+  };
   //-константы------------------------------------------------------------------------------------------
   static const uint32_t TIMER_INTERVAL_MS=50;//интервал срабатывания таймера, мс
   static const uint32_t TIMER_CHANGE_TILE_DIVIDER=10;//делитель для анимации тайлов
@@ -141,6 +147,9 @@ class CMapEditor:public QWidget
   void MouseToMap(int32_t mouse_x,int32_t mouse_y,int32_t &map_x,int32_t &map_y);//перевести координаты мыши в координаты блоков карты
   void SetMouseMode(MOUSE_MODE mouse_mode);//задать режим работы мышки
   void GetStringImageSize(QPainter &qPainter,const std::string &string,uint32_t &width,uint32_t &height);//получить размер строки в пикселях  
+
+  bool SaveQuadricTree(std::ofstream &file,const std::vector<SItem> &item_list,size_t block_width,size_t block_height);//экспорт квадратичного дерева
+
  private slots:
   void on_ContextMenu_CopyPart(void);//слот выбора в контекстном меню пункта "скопировать"
   void on_ContextMenu_PastePart(void);//слот выбора в контекстном меню пункта "вставить"
