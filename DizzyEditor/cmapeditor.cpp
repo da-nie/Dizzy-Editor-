@@ -6,6 +6,7 @@
 #include "cpartunion.h"
 #include "cpart.h"
 #include <fstream>
+#include <deque>
 
 //****************************************************************************************************
 //глобальные переменные
@@ -914,105 +915,114 @@ bool CMapEditor::SaveQuadricTree(std::ofstream &file,const std::vector<SItem> &i
  static const uint8_t TREE_RIGHT_TOP_MASK=(1<<2);//есть правое верхнее поддерево
  static const uint8_t TREE_RIGHT_BOTTOM_MASK=(1<<3);//есть правое нижнее поддерево
 
- if (item_list.size()==0) return(true);//элементов нет
+ std::deque<const std::vector<SItem>&> deque_item;
 
- //ищем описывающий прямоугольник и его центр
- int32_t left=0;
- int32_t right=0;
- int32_t top=0;
- int32_t bottom=0;
- int32_t size=item_list.size();
- for(size_t n=0;n<size;n++)
+ deque_item.push_front(item_list);
+ while(deque_item.empty()==false)
  {
-  std::shared_ptr<IPart> iPart_Ptr=item_list[n].iPart_Ptr;
-  int32_t x=iPart_Ptr->BlockPosX;
-  int32_t y=iPart_Ptr->BlockPosY;
-  if (n==0)
-  {
-   left=x;
-   right=x;
-   top=y;
-   bottom=y;
-  }
-  if (x<left) left=x;
-  if (x>right) right=x;
-  if (y<top) top=y;
-  if (y>bottom) bottom=y;
- } 
- //добавляем к левой нижней границе размер блока
- bottom++;
- right++;
- //сохраняем тип элемента
- uint8_t state=STATE_TREE;//узел дерева
- //блоки меньше 2x2 считаем листами
- if ((right-left+1)<=2 && (bottom-top+1)<=2) state=STATE_LEAF;//лист дерева
- if (file.write(reinterpret_cast<char*>(&state),sizeof(state)).fail()==true) return(false);
- //переводим координаты в блоках в координаты в мировой системе координат
- left*=block_width;
- right*=block_width;
- top*=block_height;
- bottom*=block_height;
- //сохраняем описывающий прямоугольник
- if (file.write(reinterpret_cast<char*>(&left),sizeof(left)).fail()==true) return(false);
- if (file.write(reinterpret_cast<char*>(&right),sizeof(right)).fail()==true) return(false);
- if (file.write(reinterpret_cast<char*>(&top),sizeof(top)).fail()==true) return(false);
- if (file.write(reinterpret_cast<char*>(&bottom),sizeof(bottom)).fail()==true) return(false);
+  const std::vector<SItem> &item=deque_item[0];
+  deque_item.pop_front();
+  if (item.size()==0) continue;//элементов нет
 
- if (state==STATE_LEAF)
- {
-  //сохраняем элементы листа
-  size_t size=item_list.size();
-  if (file.write(reinterpret_cast<char*>(&size),sizeof(size)).fail()==true) return(false);
+  //ищем описывающий прямоугольник и его центр
+  int32_t left=0;
+  int32_t right=0;
+  int32_t top=0;
+  int32_t bottom=0;
+  int32_t size=item.size();
   for(size_t n=0;n<size;n++)
   {
-   size_t index=item_list[n].Index;
-   if (file.write(reinterpret_cast<char*>(&index),sizeof(index)).fail()==true) return(false);
+   std::shared_ptr<IPart> iPart_Ptr=item[n].iPart_Ptr;
+   int32_t x=iPart_Ptr->BlockPosX;
+   int32_t y=iPart_Ptr->BlockPosY;
+   if (n==0)
+   {
+    left=x;
+    right=x;
+    top=y;
+    bottom=y;
+   }
+   if (x<left) left=x;
+   if (x>right) right=x;
+   if (y<top) top=y;
+   if (y>bottom) bottom=y;
   }
-  return(true);
- }
+  //добавляем к левой нижней границе размер блока
+  bottom++;
+  right++;
+  //сохраняем тип элемента
+  uint8_t state=STATE_TREE;//узел дерева
+  //блоки меньше 2x2 считаем листами
+  if ((right-left+1)<=2 && (bottom-top+1)<=2) state=STATE_LEAF;//лист дерева
+  if (file.write(reinterpret_cast<char*>(&state),sizeof(state)).fail()==true) return(false);
+  //переводим координаты в блоках в координаты в мировой системе координат
+  left*=block_width;
+  right*=block_width;
+  top*=block_height;
+  bottom*=block_height;
+  //сохраняем описывающий прямоугольник
+  if (file.write(reinterpret_cast<char*>(&left),sizeof(left)).fail()==true) return(false);
+  if (file.write(reinterpret_cast<char*>(&right),sizeof(right)).fail()==true) return(false);
+  if (file.write(reinterpret_cast<char*>(&top),sizeof(top)).fail()==true) return(false);
+  if (file.write(reinterpret_cast<char*>(&bottom),sizeof(bottom)).fail()==true) return(false);
 
- int32_t center_x=(left+right)/2;
- int32_t center_y=(top+bottom)/2;
- //сохраняем центр
- if (file.write(reinterpret_cast<char*>(&center_x),sizeof(center_x)).fail()==true) return(false);
- if (file.write(reinterpret_cast<char*>(&center_y),sizeof(center_y)).fail()==true) return(false);
- //делим исходный набор на четыре квадранта
- std::vector<SItem> left_top;
- std::vector<SItem> right_top;
- std::vector<SItem> left_bottom;
- std::vector<SItem> right_bottom;
-
- size=item_list.size();
- for(size_t n=0;n<size;n++)
- {
-  const SItem &sItem=item_list[n];
-  std::shared_ptr<IPart> iPart_Ptr=sItem.iPart_Ptr;
-  int32_t x=iPart_Ptr->BlockPosX*block_width;
-  int32_t y=iPart_Ptr->BlockPosY*block_height;
-
-  if (x<center_x)//слева
+  if (state==STATE_LEAF)
   {
-   if (y<center_y) left_top.push_back(sItem);
-              else left_bottom.push_back(sItem);
+   //сохраняем элементы листа
+   size_t size=item.size();
+   if (file.write(reinterpret_cast<char*>(&size),sizeof(size)).fail()==true) return(false);
+   for(size_t n=0;n<size;n++)
+   {
+    size_t index=item[n].Index;
+    if (file.write(reinterpret_cast<char*>(&index),sizeof(index)).fail()==true) return(false);
+   }
+   return(true);
   }
-  else//справа
+
+  int32_t center_x=(left+right)/2;
+  int32_t center_y=(top+bottom)/2;
+  //сохраняем центр
+  if (file.write(reinterpret_cast<char*>(&center_x),sizeof(center_x)).fail()==true) return(false);
+  if (file.write(reinterpret_cast<char*>(&center_y),sizeof(center_y)).fail()==true) return(false);
+  //делим исходный набор на четыре квадранта
+  std::vector<SItem> left_top;
+  std::vector<SItem> right_top;
+  std::vector<SItem> left_bottom;
+  std::vector<SItem> right_bottom;
+
+  size=item.size();
+  for(size_t n=0;n<size;n++)
   {
-   if (y<center_y) right_top.push_back(sItem);
-              else right_bottom.push_back(sItem);
+   const SItem &sItem=item[n];
+   std::shared_ptr<IPart> iPart_Ptr=sItem.iPart_Ptr;
+   int32_t x=iPart_Ptr->BlockPosX*block_width;
+   int32_t y=iPart_Ptr->BlockPosY*block_height;
+
+   if (x<center_x)//слева
+   {
+    if (y<center_y) left_top.push_back(sItem);
+               else left_bottom.push_back(sItem);
+   }
+   else//справа
+   {
+    if (y<center_y) right_top.push_back(sItem);
+               else right_bottom.push_back(sItem);
+   }
   }
+  //сохраняем наличие элементов в поддеревьях
+  state=0;
+  if (left_top.size()>0) state|=TREE_LEFT_TOP_MASK;
+  if (left_bottom.size()>0) state|=TREE_LEFT_BOTTOM_MASK;
+  if (right_top.size()>0) state|=TREE_RIGHT_TOP_MASK;
+  if (right_bottom.size()>0) state|=TREE_RIGHT_BOTTOM_MASK;
+  if (file.write(reinterpret_cast<char*>(&state),sizeof(state)).fail()==true) return(false);
+
+  //рекурсивно вызываем для каждого поддерева
+  deque_item.push_front(left_top);
+  deque_item.push_front(left_bottom);
+  deque_item.push_front(right_top);
+  deque_item.push_front(right_bottom);
  }
- //сохраняем наличие элементов в поддеревьях
- state=0;
- if (left_top.size()>0) state|=TREE_LEFT_TOP_MASK;
- if (left_bottom.size()>0) state|=TREE_LEFT_BOTTOM_MASK;
- if (right_top.size()>0) state|=TREE_RIGHT_TOP_MASK;
- if (right_bottom.size()>0) state|=TREE_RIGHT_BOTTOM_MASK;
- if (file.write(reinterpret_cast<char*>(&state),sizeof(state)).fail()==true) return(false);
- //рекурсивно вызываем для каждого поддерева
- SaveQuadricTree(file,left_top,block_width,block_height);
- SaveQuadricTree(file,left_bottom,block_width,block_height);
- SaveQuadricTree(file,right_top,block_width,block_height);
- SaveQuadricTree(file,right_bottom,block_width,block_height);
  return(true);
 }
 

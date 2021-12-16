@@ -1037,6 +1037,9 @@ debug/moc_cmapeditor.cpp: E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QtWid
 		../DizzyEditor/ipart.h \
 		../DizzyEditor/ctilessequence.h \
 		../DizzyEditor/ctile.h \
+		../DizzyEditor/cdialog_animations.h \
+		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QDialog \
+		../DizzyEditor/cimagestorage.h \
 		../DizzyEditor/cmapeditor.h \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/bin/moc.exe
 	'E:\Lang\Qt5.7.0\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IE:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/win32-g++ -ID:/Working/FromQt/DizzyEditor/DizzyEditor -IE:/Lang/Qt5.7.0/5.7/mingw53_32/include -IE:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets -IE:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtGui -IE:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtANGLE -IE:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtCore -I. ../DizzyEditor/cmapeditor.h -o debug/moc_cmapeditor.cpp
@@ -1487,6 +1490,8 @@ debug/moc_cdialog_animations.cpp: E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidge
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qtoolbox.h \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qtoolbutton.h \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qtwidgetsversion.h \
+		../DizzyEditor/ctilessequence.h \
+		../DizzyEditor/ctile.h \
 		../DizzyEditor/cdialog_animations.h \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/bin/moc.exe
 	'E:\Lang\Qt5.7.0\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IE:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/win32-g++ -ID:/Working/FromQt/DizzyEditor/DizzyEditor -IE:/Lang/Qt5.7.0/5.7/mingw53_32/include -IE:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets -IE:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtGui -IE:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtANGLE -IE:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtCore -I. ../DizzyEditor/cdialog_animations.h -o debug/moc_cdialog_animations.cpp
@@ -1945,7 +1950,10 @@ ui_cmainwindow.h: ../DizzyEditor/cmainwindow.ui \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qtwidgetsversion.h \
 		../DizzyEditor/ipart.h \
 		../DizzyEditor/ctilessequence.h \
-		../DizzyEditor/ctile.h
+		../DizzyEditor/ctile.h \
+		../DizzyEditor/cdialog_animations.h \
+		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QDialog \
+		../DizzyEditor/cimagestorage.h
 	'E:\Lang\Qt5.7.0\5.7\mingw53_32\bin\uic.exe' ../DizzyEditor/cmainwindow.ui -o ui_cmainwindow.h
 
 ui_cdialog_animations.h: ../DizzyEditor/cdialog_animations.ui \
@@ -2866,11 +2874,15 @@ debug/cmainwindow.o: ../DizzyEditor/cmainwindow.cpp ../DizzyEditor/cmainwindow.h
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QApplication \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QButtonGroup \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QCheckBox \
+		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QComboBox \
+		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QFrame \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QGridLayout \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QGroupBox \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QHeaderView \
+		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QLineEdit \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QMenu \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QMenuBar \
+		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QPushButton \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QScrollArea \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QStatusBar \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QToolBar \
@@ -2878,6 +2890,8 @@ debug/cmainwindow.o: ../DizzyEditor/cmainwindow.cpp ../DizzyEditor/cmainwindow.h
 		../DizzyEditor/ipart.h \
 		../DizzyEditor/ctilessequence.h \
 		../DizzyEditor/ctile.h \
+		../DizzyEditor/cdialog_animations.h \
+		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QDialog \
 		../DizzyEditor/cpart.h \
 		../DizzyEditor/cpartunion.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/cmainwindow.o ../DizzyEditor/cmainwindow.cpp
@@ -3777,6 +3791,8 @@ debug/cmapeditor.o: ../DizzyEditor/cmapeditor.cpp ../DizzyEditor/cmapeditor.h \
 		../DizzyEditor/ipart.h \
 		../DizzyEditor/ctilessequence.h \
 		../DizzyEditor/ctile.h \
+		../DizzyEditor/cdialog_animations.h \
+		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QDialog \
 		../DizzyEditor/cimagestorage.h \
 		../DizzyEditor/cpartunion.h \
 		../DizzyEditor/cpart.h
@@ -4254,14 +4270,18 @@ debug/cdialog_animations.o: ../DizzyEditor/cdialog_animations.cpp ../DizzyEditor
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qtoolbox.h \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qtoolbutton.h \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/qtwidgetsversion.h \
+		../DizzyEditor/ctilessequence.h \
+		../DizzyEditor/ctile.h \
 		ui_cdialog_animations.h \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QAction \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QApplication \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QButtonGroup \
+		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QComboBox \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QGridLayout \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QHeaderView \
 		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QPushButton \
-		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QScrollArea
+		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QScrollArea \
+		E:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets/QSpacerItem
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o debug/cdialog_animations.o ../DizzyEditor/cdialog_animations.cpp
 
 debug/qrc_resource.o: debug/qrc_resource.cpp 
