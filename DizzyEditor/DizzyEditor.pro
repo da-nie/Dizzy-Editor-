@@ -11,6 +11,16 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = DizzyEditor
 TEMPLATE = app
 
+QMAKE_CFLAGS += -Wno-unused-parameter
+QMAKE_CFLAGS -= -Wunused-parameter
+QMAKE_CXXFLAGS += -Wno-unused-parameter
+QMAKE_CXXFLAGS -= -Wunused-parameter
+QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter
+QMAKE_CXXFLAGS_WARN_ON -= -Wunused-parameter
+QMAKE_CXXFLAGS_WARN_OFF += -Wunused-parameter
+QMAKE_CXXFLAGS_WARN_OFF -= -Wno-unused-parameter
+QMAKE_CXXFLAGS+= -std=c++11
+
 
 SOURCES += main.cpp\
         cmainwindow.cpp \

@@ -12,8 +12,8 @@ MAKEFILE      = Makefile.Release
 CC            = gcc
 CXX           = g++
 DEFINES       = -DUNICODE -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_NEEDS_QMAIN
-CFLAGS        = -pipe -fno-keep-inline-dllexport -O2 -Wall -Wextra $(DEFINES)
-CXXFLAGS      = -pipe -fno-keep-inline-dllexport -O2 -std=gnu++11 -frtti -Wall -Wextra -fexceptions -mthreads $(DEFINES)
+CFLAGS        = -pipe -fno-keep-inline-dllexport -Wno-unused-parameter -O2 -Wall -Wextra $(DEFINES)
+CXXFLAGS      = -pipe -fno-keep-inline-dllexport -Wno-unused-parameter -std=c++11 -O2 -std=gnu++11 -frtti -Wall -Wextra -Wno-unused-parameter -fexceptions -mthreads $(DEFINES)
 INCPATH       = -I../DizzyEditor -I. -IE:/Lang/Qt5.7.0/5.7/mingw53_32/include -IE:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtWidgets -IE:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtGui -IE:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtANGLE -IE:/Lang/Qt5.7.0/5.7/mingw53_32/include/QtCore -Irelease -I. -IE:/Lang/Qt5.7.0/5.7/mingw53_32/mkspecs/win32-g++ 
 LINKER      =        g++
 LFLAGS        =        -Wl,-s -Wl,-subsystem,windows -mthreads

@@ -88,7 +88,7 @@ class CMapEditor:public QWidget
 
   MODE Mode;//режим работы редактора
   MOUSE_MODE MouseMode;//режим работы мышки
-  bool CtrlOn;//нажата ли клавиша ctrl  
+  bool CtrlOn;//нажата ли клавиша ctrl
 
   QRect qRect_SelectedArea;//выбранная область
 
@@ -148,7 +148,7 @@ class CMapEditor:public QWidget
   void SetMouseMode(MOUSE_MODE mouse_mode);//задать режим работы мышки
   void GetStringImageSize(QPainter &qPainter,const std::string &string,uint32_t &width,uint32_t &height);//получить размер строки в пикселях  
 
-  bool SaveQuadricTree(std::ofstream &file,const std::vector<SItem> &item_list,size_t block_width,size_t block_height);//экспорт квадратичного дерева
+  bool SaveQuadricTree(std::ofstream &file,std::vector<SItem> &item_list,size_t block_width,size_t block_height);//экспорт квадратичного дерева
 
  private slots:
   void on_ContextMenu_CopyPart(void);//слот выбора в контекстном меню пункта "скопировать"

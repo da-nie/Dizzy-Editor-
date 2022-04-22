@@ -902,10 +902,11 @@ void CMapEditor::GetStringImageSize(QPainter &qPainter,const std::string &string
  width=qRect.width();
  height=qRect.height();
 }
+
 //----------------------------------------------------------------------------------------------------
 //экспорт квадратичного дерева
 //----------------------------------------------------------------------------------------------------
-bool CMapEditor::SaveQuadricTree(std::ofstream &file,const std::vector<SItem> &item_list,size_t block_width,size_t block_height)
+bool CMapEditor::SaveQuadricTree(std::ofstream &file,std::vector<SItem> &item_list,size_t block_width,size_t block_height)
 {
  static const uint8_t STATE_LEAF=0;//элемент является листом дерева
  static const uint8_t STATE_TREE=1;//элемент является узлом деревом
@@ -915,12 +916,12 @@ bool CMapEditor::SaveQuadricTree(std::ofstream &file,const std::vector<SItem> &i
  static const uint8_t TREE_RIGHT_TOP_MASK=(1<<2);//есть правое верхнее поддерево
  static const uint8_t TREE_RIGHT_BOTTOM_MASK=(1<<3);//есть правое нижнее поддерево
 
- std::deque<const std::vector<SItem>&> deque_item;
-
+ std::deque<std::vector<SItem>> deque_item;
  deque_item.push_front(item_list);
+
  while(deque_item.empty()==false)
  {
-  const std::vector<SItem> &item=deque_item[0];
+  std::vector<SItem> item=deque_item[0];
   deque_item.pop_front();
   if (item.size()==0) continue;//элементов нет
 
@@ -929,7 +930,7 @@ bool CMapEditor::SaveQuadricTree(std::ofstream &file,const std::vector<SItem> &i
   int32_t right=0;
   int32_t top=0;
   int32_t bottom=0;
-  int32_t size=item.size();
+  size_t size=item.size();
   for(size_t n=0;n<size;n++)
   {
    std::shared_ptr<IPart> iPart_Ptr=item[n].iPart_Ptr;
@@ -969,14 +970,14 @@ bool CMapEditor::SaveQuadricTree(std::ofstream &file,const std::vector<SItem> &i
   if (state==STATE_LEAF)
   {
    //сохраняем элементы листа
-   size_t size=item.size();
+   uint32_t size=item.size();
    if (file.write(reinterpret_cast<char*>(&size),sizeof(size)).fail()==true) return(false);
-   for(size_t n=0;n<size;n++)
+   for(uint32_t n=0;n<size;n++)
    {
-    size_t index=item[n].Index;
+    uint32_t index=item[n].Index;
     if (file.write(reinterpret_cast<char*>(&index),sizeof(index)).fail()==true) return(false);
    }
-   return(true);
+   continue;
   }
 
   int32_t center_x=(left+right)/2;
@@ -985,18 +986,19 @@ bool CMapEditor::SaveQuadricTree(std::ofstream &file,const std::vector<SItem> &i
   if (file.write(reinterpret_cast<char*>(&center_x),sizeof(center_x)).fail()==true) return(false);
   if (file.write(reinterpret_cast<char*>(&center_y),sizeof(center_y)).fail()==true) return(false);
   //делим исходный набор на четыре квадранта
+
   std::vector<SItem> left_top;
   std::vector<SItem> right_top;
   std::vector<SItem> left_bottom;
   std::vector<SItem> right_bottom;
 
-  size=item.size();
   for(size_t n=0;n<size;n++)
   {
-   const SItem &sItem=item[n];
+   SItem &sItem=item[n];
    std::shared_ptr<IPart> iPart_Ptr=sItem.iPart_Ptr;
+
    int32_t x=iPart_Ptr->BlockPosX*block_width;
-   int32_t y=iPart_Ptr->BlockPosY*block_height;
+   int32_t y=iPart_Ptr->BlockPosY*block_height;   
 
    if (x<center_x)//слева
    {
@@ -1009,6 +1011,7 @@ bool CMapEditor::SaveQuadricTree(std::ofstream &file,const std::vector<SItem> &i
                else right_bottom.push_back(sItem);
    }
   }
+
   //сохраняем наличие элементов в поддеревьях
   state=0;
   if (left_top.size()>0) state|=TREE_LEFT_TOP_MASK;
@@ -1016,13 +1019,14 @@ bool CMapEditor::SaveQuadricTree(std::ofstream &file,const std::vector<SItem> &i
   if (right_top.size()>0) state|=TREE_RIGHT_TOP_MASK;
   if (right_bottom.size()>0) state|=TREE_RIGHT_BOTTOM_MASK;
   if (file.write(reinterpret_cast<char*>(&state),sizeof(state)).fail()==true) return(false);
-
   //рекурсивно вызываем для каждого поддерева
+
   deque_item.push_front(left_top);
   deque_item.push_front(left_bottom);
   deque_item.push_front(right_top);
   deque_item.push_front(right_bottom);
  }
+
  return(true);
 }
 
@@ -1123,7 +1127,7 @@ bool CMapEditor::ExportMap(const std::string &file_name)
  //считаем количество блоков и собираем список указателей на элементы
  std::vector<SItem> item_unnamed_list;//список неименованных элементов
  std::vector<SItem> item_named_list;//список именованных элементов
- size_t counter=0;
+ uint32_t counter=0;
  auto counter_function=[this,&counter,&item_unnamed_list,&item_named_list](std::shared_ptr<IPart> iPart_Ptr)
  {
   if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
@@ -1152,11 +1156,11 @@ bool CMapEditor::ExportMap(const std::string &file_name)
  //--------------------------------------------------
 
  //сохраняем список индексов именованных элементов (они будут выводиться в игре "как есть", без использования дерева)
- counter=item_named_list.size();
+ counter=static_cast<uint32_t>(item_named_list.size());
  if (file.write(reinterpret_cast<char*>(&counter),sizeof(counter)).fail()==true) return(false);
- for(size_t n=0;n<counter;n++)
+ for(uint32_t n=0;n<counter;n++)
  {
-  size_t index=item_named_list[n].Index;
+  uint32_t index=item_named_list[n].Index;
   if (file.write(reinterpret_cast<char*>(&index),sizeof(index)).fail()==true) return(false);
  }
  //создаём квадратичное дерево неименованных элементов
