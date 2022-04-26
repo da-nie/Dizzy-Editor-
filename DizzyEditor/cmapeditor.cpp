@@ -92,7 +92,6 @@ void CMapEditor::timerEvent(QTimerEvent *qTimerEvent_Ptr)
  ChangeTileCounter++;
  ChangeTileCounter%=TIMER_CHANGE_TILE_DIVIDER;
  if (ChangeTileCounter==0) AnimationTiles();
-
  update();
 }
 
@@ -325,21 +324,39 @@ void CMapEditor::MouseMoveEvent_Mode_Select(const QPoint &qPoint)
 //----------------------------------------------------------------------------------------------------
 void CMapEditor::DrawGrid(QPainter &qPainter,int32_t w_width,int32_t w_height)
 {
- qPainter.setPen(QPen(Qt::gray,1,Qt::SolidLine));
+ static const int32_t area_width=20;//размер зоны экрана (условной) в блоках - она просто для удобства ориентирования на карте
+ static const int32_t area_height=15;
 
- int32_t py=qPoint_LeftTop.y()/(CImageStorage::TILE_HEIGHT*Scale);
- for(int32_t y_pos=static_cast<int32_t>(CImageStorage::TILE_HEIGHT*Scale)-qPoint_LeftTop.y()%(static_cast<int32_t>(CImageStorage::TILE_HEIGHT*Scale))-static_cast<int32_t>(CImageStorage::TILE_HEIGHT*Scale);y_pos<w_height;y_pos+=static_cast<int32_t>(CImageStorage::TILE_HEIGHT*Scale),py++)
+ int32_t tw=CImageStorage::TILE_WIDTH;
+ int32_t th=CImageStorage::TILE_HEIGHT;
+
+ int32_t bx=qPoint_LeftTop.x()/(tw*Scale)-1;
+ int32_t by=qPoint_LeftTop.y()/(th*Scale)-1;
+
+ int32_t bxe=(qPoint_LeftTop.x()+w_width)/(tw*Scale)+1;
+ int32_t bye=(qPoint_LeftTop.y()+w_height)/(th*Scale)+1;
+
+ for(int32_t block_x=bx;block_x<bxe;block_x++)
  {
-  if (py%static_cast<int32_t>(15*Scale)==0) qPainter.setPen(QPen(Qt::white,1,Qt::SolidLine));
-                                       else qPainter.setPen(QPen(Qt::gray,1,Qt::SolidLine));
-  qPainter.drawLine(0,y_pos,w_width,y_pos);
+  int32_t screen_x=block_x*tw*Scale;
+  int32_t screen_y=0;
+  screen_x-=qPoint_LeftTop.x();
+  screen_y-=qPoint_LeftTop.y();
+  if (block_x%area_width==0) qPainter.setPen(QPen(Qt::white,1,Qt::SolidLine));
+                        else qPainter.setPen(QPen(Qt::gray,1,Qt::SolidLine));
+  qPainter.drawLine(screen_x,0,screen_x,w_height);
  }
- int32_t px=qPoint_LeftTop.x()/(CImageStorage::TILE_WIDTH*Scale);
- for(int32_t x_pos=static_cast<int32_t>(CImageStorage::TILE_WIDTH*Scale)-qPoint_LeftTop.x()%(static_cast<int32_t>(CImageStorage::TILE_WIDTH*Scale))-static_cast<int32_t>(CImageStorage::TILE_WIDTH*Scale);x_pos<w_width;x_pos+=static_cast<int32_t>(CImageStorage::TILE_WIDTH*Scale),px++)
+
+
+ for(int32_t block_y=by;block_y<bye;block_y++)
  {
-  if (px%static_cast<int32_t>(20*Scale)==0) qPainter.setPen(QPen(Qt::white,1,Qt::SolidLine));
-                                       else qPainter.setPen(QPen(Qt::gray,1,Qt::SolidLine));
-  qPainter.drawLine(x_pos,0,x_pos,w_height);
+  int32_t screen_x=0;
+  int32_t screen_y=block_y*th*Scale;
+  screen_x-=qPoint_LeftTop.x();
+  screen_y-=qPoint_LeftTop.y();
+  if (block_y%area_height==0) qPainter.setPen(QPen(Qt::white,1,Qt::SolidLine));
+                         else qPainter.setPen(QPen(Qt::gray,1,Qt::SolidLine));
+  qPainter.drawLine(0,screen_y,w_width,screen_y);
  }
 }
 //----------------------------------------------------------------------------------------------------
@@ -360,8 +377,8 @@ void CMapEditor::DrawMap(QPainter &qPainter)
   int32_t block_x=iPart_Ptr->BlockPosX;
   int32_t block_y=iPart_Ptr->BlockPosY;
 
-  int32_t screen_x=block_x*CImageStorage::TILE_WIDTH*Scale;
-  int32_t screen_y=block_y*CImageStorage::TILE_HEIGHT*Scale;
+  int32_t screen_x=block_x*tw*Scale;
+  int32_t screen_y=block_y*th*Scale;
   screen_x-=qPoint_LeftTop.x();
   screen_y-=qPoint_LeftTop.y();
 
@@ -395,8 +412,8 @@ void CMapEditor::DrawFrameSelectedPartAndBarrierAndFirstPlane(QPainter &qPainter
   int32_t block_x=iPart_Ptr->BlockPosX;
   int32_t block_y=iPart_Ptr->BlockPosY;
 
-  int32_t screen_x=block_x*CImageStorage::TILE_WIDTH*Scale;
-  int32_t screen_y=block_y*CImageStorage::TILE_HEIGHT*Scale;
+  int32_t screen_x=block_x*tw*Scale;
+  int32_t screen_y=block_y*th*Scale;
   screen_x-=qPoint_LeftTop.x();
   screen_y-=qPoint_LeftTop.y();
 
@@ -415,8 +432,8 @@ void CMapEditor::DrawFrameSelectedPartAndBarrierAndFirstPlane(QPainter &qPainter
   int32_t block_x=iPart_Ptr->BlockPosX;
   int32_t block_y=iPart_Ptr->BlockPosY;
 
-  int32_t screen_x=block_x*CImageStorage::TILE_WIDTH*Scale;
-  int32_t screen_y=block_y*CImageStorage::TILE_HEIGHT*Scale;
+  int32_t screen_x=block_x*tw*Scale;
+  int32_t screen_y=block_y*th*Scale;
   screen_x-=qPoint_LeftTop.x();
   screen_y-=qPoint_LeftTop.y();
 
@@ -435,8 +452,8 @@ void CMapEditor::DrawFrameSelectedPartAndBarrierAndFirstPlane(QPainter &qPainter
   int32_t block_x=iPart_Ptr->BlockPosX;
   int32_t block_y=iPart_Ptr->BlockPosY;
 
-  int32_t screen_x=block_x*CImageStorage::TILE_WIDTH*Scale;
-  int32_t screen_y=block_y*CImageStorage::TILE_HEIGHT*Scale;
+  int32_t screen_x=block_x*tw*Scale;
+  int32_t screen_y=block_y*th*Scale;
   screen_x-=qPoint_LeftTop.x();
   screen_y-=qPoint_LeftTop.y();
 
@@ -455,8 +472,8 @@ void CMapEditor::DrawFrameSelectedPartAndBarrierAndFirstPlane(QPainter &qPainter
   int32_t block_x=iPart_Ptr->BlockPosX;
   int32_t block_y=iPart_Ptr->BlockPosY;
 
-  int32_t screen_x=block_x*CImageStorage::TILE_WIDTH*Scale;
-  int32_t screen_y=block_y*CImageStorage::TILE_HEIGHT*Scale;
+  int32_t screen_x=block_x*tw*Scale;
+  int32_t screen_y=block_y*th*Scale;
   screen_x-=qPoint_LeftTop.x();
   screen_y-=qPoint_LeftTop.y();
 

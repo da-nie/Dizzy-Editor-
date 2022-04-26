@@ -14,7 +14,6 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QCheckBox>
-#include <QtWidgets/QComboBox>
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QGroupBox>
@@ -52,15 +51,21 @@ public:
     QCheckBox *cCheckBox_Matherial_BeforeBackground;
     QFrame *frame;
     QGroupBox *groupBox_2;
-    QComboBox *cComboBox_Scale;
+    QPushButton *cPushButton_MapX2;
+    QPushButton *cPushButton_MapX1;
+    QPushButton *cPushButton_MapX3;
+    QPushButton *cPushButton_MapX05;
+    QPushButton *cPushButton_MapX4;
+    QPushButton *cPushButton_MapX5;
     CMapEditor *cMapEditor;
     QScrollArea *cScrollArea_Tiles;
     QWidget *cScrollAreaWidgetContents_Tiles;
     QFrame *frame_2;
-    QPushButton *cPushButton_ImageX1;
-    QPushButton *cPushButton_ImageX2;
-    QPushButton *cPushButton_ImageX3;
+    QGroupBox *groupBox_3;
     QPushButton *cPushButton_ImageX4;
+    QPushButton *cPushButton_ImageX3;
+    QPushButton *cPushButton_ImageX2;
+    QPushButton *cPushButton_ImageX1;
     QMenuBar *menuBar;
     QMenu *menu;
     QStatusBar *statusBar;
@@ -123,11 +128,33 @@ public:
         frame->setFrameShadow(QFrame::Raised);
         groupBox_2 = new QGroupBox(frame);
         groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
-        groupBox_2->setGeometry(QRect(9, 9, 201, 51));
+        groupBox_2->setGeometry(QRect(9, 9, 271, 61));
         groupBox_2->setAlignment(Qt::AlignCenter);
-        cComboBox_Scale = new QComboBox(groupBox_2);
-        cComboBox_Scale->setObjectName(QStringLiteral("cComboBox_Scale"));
-        cComboBox_Scale->setGeometry(QRect(10, 20, 181, 22));
+        cPushButton_MapX2 = new QPushButton(groupBox_2);
+        cPushButton_MapX2->setObjectName(QStringLiteral("cPushButton_MapX2"));
+        cPushButton_MapX2->setGeometry(QRect(90, 20, 31, 31));
+        cPushButton_MapX2->setCheckable(false);
+        cPushButton_MapX1 = new QPushButton(groupBox_2);
+        cPushButton_MapX1->setObjectName(QStringLiteral("cPushButton_MapX1"));
+        cPushButton_MapX1->setGeometry(QRect(50, 20, 31, 31));
+        cPushButton_MapX1->setCheckable(false);
+        cPushButton_MapX3 = new QPushButton(groupBox_2);
+        cPushButton_MapX3->setObjectName(QStringLiteral("cPushButton_MapX3"));
+        cPushButton_MapX3->setGeometry(QRect(130, 20, 31, 31));
+        cPushButton_MapX3->setCheckable(false);
+        cPushButton_MapX05 = new QPushButton(groupBox_2);
+        cPushButton_MapX05->setObjectName(QStringLiteral("cPushButton_MapX05"));
+        cPushButton_MapX05->setGeometry(QRect(10, 20, 31, 31));
+        cPushButton_MapX05->setCheckable(false);
+        cPushButton_MapX05->setChecked(false);
+        cPushButton_MapX4 = new QPushButton(groupBox_2);
+        cPushButton_MapX4->setObjectName(QStringLiteral("cPushButton_MapX4"));
+        cPushButton_MapX4->setGeometry(QRect(170, 20, 31, 31));
+        cPushButton_MapX4->setCheckable(false);
+        cPushButton_MapX5 = new QPushButton(groupBox_2);
+        cPushButton_MapX5->setObjectName(QStringLiteral("cPushButton_MapX5"));
+        cPushButton_MapX5->setGeometry(QRect(210, 20, 31, 31));
+        cPushButton_MapX5->setCheckable(false);
 
         gridLayout_basic->addWidget(frame, 3, 0, 1, 1);
 
@@ -143,7 +170,7 @@ public:
         cScrollArea_Tiles->setWidgetResizable(true);
         cScrollAreaWidgetContents_Tiles = new QWidget();
         cScrollAreaWidgetContents_Tiles->setObjectName(QStringLiteral("cScrollAreaWidgetContents_Tiles"));
-        cScrollAreaWidgetContents_Tiles->setGeometry(QRect(0, 0, 277, 217));
+        cScrollAreaWidgetContents_Tiles->setGeometry(QRect(0, 0, 277, 204));
         cScrollArea_Tiles->setWidget(cScrollAreaWidgetContents_Tiles);
 
         gridLayout_basic->addWidget(cScrollArea_Tiles, 0, 0, 2, 1);
@@ -152,31 +179,43 @@ public:
         frame_2->setObjectName(QStringLiteral("frame_2"));
         frame_2->setFrameShape(QFrame::StyledPanel);
         frame_2->setFrameShadow(QFrame::Raised);
-        cPushButton_ImageX1 = new QPushButton(frame_2);
+        groupBox_3 = new QGroupBox(frame_2);
+        groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
+        groupBox_3->setGeometry(QRect(10, 10, 271, 61));
+        groupBox_3->setAlignment(Qt::AlignCenter);
+        cPushButton_ImageX4 = new QPushButton(groupBox_3);
+        cPushButton_ImageX4->setObjectName(QStringLiteral("cPushButton_ImageX4"));
+        cPushButton_ImageX4->setGeometry(QRect(130, 20, 31, 31));
+        cPushButton_ImageX4->setCheckable(true);
+        cPushButton_ImageX3 = new QPushButton(groupBox_3);
+        cPushButton_ImageX3->setObjectName(QStringLiteral("cPushButton_ImageX3"));
+        cPushButton_ImageX3->setGeometry(QRect(90, 20, 31, 31));
+        cPushButton_ImageX3->setCheckable(true);
+        cPushButton_ImageX2 = new QPushButton(groupBox_3);
+        cPushButton_ImageX2->setObjectName(QStringLiteral("cPushButton_ImageX2"));
+        cPushButton_ImageX2->setGeometry(QRect(50, 20, 31, 31));
+        cPushButton_ImageX2->setCheckable(true);
+        cPushButton_ImageX1 = new QPushButton(groupBox_3);
         cPushButton_ImageX1->setObjectName(QStringLiteral("cPushButton_ImageX1"));
-        cPushButton_ImageX1->setGeometry(QRect(10, 10, 31, 31));
+        cPushButton_ImageX1->setGeometry(QRect(10, 20, 31, 31));
         cPushButton_ImageX1->setCheckable(true);
         cPushButton_ImageX1->setChecked(false);
-        cPushButton_ImageX2 = new QPushButton(frame_2);
-        cPushButton_ImageX2->setObjectName(QStringLiteral("cPushButton_ImageX2"));
-        cPushButton_ImageX2->setGeometry(QRect(50, 10, 31, 31));
-        cPushButton_ImageX2->setCheckable(true);
-        cPushButton_ImageX3 = new QPushButton(frame_2);
-        cPushButton_ImageX3->setObjectName(QStringLiteral("cPushButton_ImageX3"));
-        cPushButton_ImageX3->setGeometry(QRect(90, 10, 31, 31));
-        cPushButton_ImageX3->setCheckable(true);
-        cPushButton_ImageX4 = new QPushButton(frame_2);
-        cPushButton_ImageX4->setObjectName(QStringLiteral("cPushButton_ImageX4"));
-        cPushButton_ImageX4->setGeometry(QRect(130, 10, 31, 31));
-        cPushButton_ImageX4->setCheckable(true);
+        cPushButton_ImageX4->raise();
+        cPushButton_ImageX3->raise();
+        cPushButton_ImageX2->raise();
+        cPushButton_ImageX1->raise();
+        cPushButton_ImageX4->raise();
+        cPushButton_ImageX3->raise();
+        cPushButton_ImageX2->raise();
+        cPushButton_ImageX1->raise();
 
         gridLayout_basic->addWidget(frame_2, 2, 0, 1, 1);
 
         gridLayout_basic->setRowStretch(0, 10);
         gridLayout_basic->setRowStretch(1, 10);
-        gridLayout_basic->setRowStretch(2, 6);
-        gridLayout_basic->setRowStretch(3, 13);
-        gridLayout_basic->setRowStretch(4, 14);
+        gridLayout_basic->setRowStretch(2, 8);
+        gridLayout_basic->setRowStretch(3, 8);
+        gridLayout_basic->setRowStretch(4, 20);
         gridLayout_basic->setColumnStretch(0, 5);
         gridLayout_basic->setColumnStretch(1, 10);
 
@@ -223,11 +262,18 @@ public:
         cCheckBox_Matherial_FirstPlane->setText(QApplication::translate("CMainWindow", "\320\237\320\265\321\200\320\265\320\264\320\275\320\270\320\271 \320\277\320\273\320\260\320\275", 0));
         cPushButton_SetPartName->setText(QApplication::translate("CMainWindow", "\320\227\320\260\320\264\320\260\321\202\321\214 \320\270\320\274\321\217 \320\274\320\260\321\202\320\265\321\200\320\270\320\260\320\273\321\203", 0));
         cCheckBox_Matherial_BeforeBackground->setText(QApplication::translate("CMainWindow", "\320\222\321\213\320\262\320\276\320\264\320\270\321\202\321\201\321\217 \320\277\320\265\321\200\320\265\320\264 \321\204\320\276\320\275\320\276\320\274", 0));
-        groupBox_2->setTitle(QApplication::translate("CMainWindow", "\320\234\320\260\321\201\321\210\321\202\320\260\320\261", 0));
-        cPushButton_ImageX1->setText(QApplication::translate("CMainWindow", "X1", 0));
-        cPushButton_ImageX2->setText(QApplication::translate("CMainWindow", "X2", 0));
-        cPushButton_ImageX3->setText(QApplication::translate("CMainWindow", "X3", 0));
+        groupBox_2->setTitle(QApplication::translate("CMainWindow", "\320\234\320\260\321\201\321\210\321\202\320\260\320\261 \320\272\320\260\321\200\321\202\321\213", 0));
+        cPushButton_MapX2->setText(QApplication::translate("CMainWindow", "X2", 0));
+        cPushButton_MapX1->setText(QApplication::translate("CMainWindow", "X1", 0));
+        cPushButton_MapX3->setText(QApplication::translate("CMainWindow", "X3", 0));
+        cPushButton_MapX05->setText(QApplication::translate("CMainWindow", "X0.5", 0));
+        cPushButton_MapX4->setText(QApplication::translate("CMainWindow", "X4", 0));
+        cPushButton_MapX5->setText(QApplication::translate("CMainWindow", "X5", 0));
+        groupBox_3->setTitle(QApplication::translate("CMainWindow", "\320\234\320\260\321\201\321\210\321\202\320\260\320\261 \321\202\320\260\320\271\320\273\320\276\320\262", 0));
         cPushButton_ImageX4->setText(QApplication::translate("CMainWindow", "X4", 0));
+        cPushButton_ImageX3->setText(QApplication::translate("CMainWindow", "X3", 0));
+        cPushButton_ImageX2->setText(QApplication::translate("CMainWindow", "X2", 0));
+        cPushButton_ImageX1->setText(QApplication::translate("CMainWindow", "X1", 0));
         menu->setTitle(QApplication::translate("CMainWindow", "\320\244\320\260\320\271\320\273", 0));
         cToolBar_Main->setWindowTitle(QApplication::translate("CMainWindow", "toolBar", 0));
     } // retranslateUi

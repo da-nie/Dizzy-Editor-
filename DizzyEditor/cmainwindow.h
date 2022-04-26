@@ -57,9 +57,8 @@ class CMainWindow:public QMainWindow
 
   std::string CurrentFileName;//текущее имя файла карты
 
-  std::vector<std::pair<std::string,double>> ScaleTable;
-
   int32_t TilesScale;//масштабный коэффициент набора тайлов
+  double MapScale;//масштабный коэффициент карты
  public:
   //-конструктор----------------------------------------------------------------------------------------
   explicit CMainWindow(QWidget *parent=0);
@@ -74,6 +73,7 @@ class CMainWindow:public QMainWindow
   void mouseReleaseEvent(QMouseEvent *qMouseEvent_Ptr);//обработчик отпускания кнопки мышки  
   void keyPressEvent(QKeyEvent *pe);//обработчик нажатия клавиши
   void keyReleaseEvent(QKeyEvent *event);//обработчик отпускания клавиши
+  void wheelEvent(QWheelEvent *event);//событие вращения колёсика мышки
  private slots:
   void on_cCheckBox_Matherial_Barrier_clicked(void);//слот нажатия на кнопку проницаемости материала
   void on_cCheckBox_Matherial_FirstPlane_clicked();//слот нажатия на кнопку переднего плана материала
@@ -86,11 +86,16 @@ class CMainWindow:public QMainWindow
   void On_ToolBar_Main_SelectPart(void);//слот выбора в панеле инструментов режима выбора блоков
   void On_ToolBar_Main_MoveMap(void);//слот выбора в панеле инструментов режима перемещения по карте
   void on_cAction_SaveMapAs_triggered();//слот выбора пункта меню "сохранить карту как"
-  void on_cComboBox_Scale_currentIndexChanged(int index);//слот смены выбора масштаба
   void on_cPushButton_ImageX1_released();//слот выбора режима масштабирования поля тайлов 1:1
   void on_cPushButton_ImageX2_released();//слот выбора режима масштабирования поля тайлов 2:1
   void on_cPushButton_ImageX3_released();//слот выбора режима масштабирования поля тайлов 3:1
   void on_cPushButton_ImageX4_released();//слот выбора режима масштабирования поля тайлов 4:1
+  void on_cPushButton_MapX05_released();//слот выбора режима масштабирования поля карты x0.5
+  void on_cPushButton_MapX1_released();//слот выбора режима масштабирования поля карты x1
+  void on_cPushButton_MapX2_released();//слот выбора режима масштабирования поля карты x2
+  void on_cPushButton_MapX3_released();//слот выбора режима масштабирования поля карты x3
+  void on_cPushButton_MapX4_released();//слот выбора режима масштабирования поля карты x4
+  void on_cPushButton_MapX5_released();//слот выбора режима масштабирования поля карты x5
 };
 
 #endif
