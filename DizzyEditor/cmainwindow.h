@@ -58,6 +58,8 @@ class CMainWindow:public QMainWindow
   std::string CurrentFileName;//текущее имя файла карты
 
   std::vector<std::pair<std::string,double>> ScaleTable;
+
+  int32_t TilesScale;//масштабный коэффициент набора тайлов
  public:
   //-конструктор----------------------------------------------------------------------------------------
   explicit CMainWindow(QWidget *parent=0);
@@ -85,6 +87,10 @@ class CMainWindow:public QMainWindow
   void On_ToolBar_Main_MoveMap(void);//слот выбора в панеле инструментов режима перемещения по карте
   void on_cAction_SaveMapAs_triggered();//слот выбора пункта меню "сохранить карту как"
   void on_cComboBox_Scale_currentIndexChanged(int index);//слот смены выбора масштаба
+  void on_cPushButton_ImageX1_released();//слот выбора режима масштабирования поля тайлов 1:1
+  void on_cPushButton_ImageX2_released();//слот выбора режима масштабирования поля тайлов 2:1
+  void on_cPushButton_ImageX3_released();//слот выбора режима масштабирования поля тайлов 3:1
+  void on_cPushButton_ImageX4_released();//слот выбора режима масштабирования поля тайлов 4:1
 };
 
 #endif

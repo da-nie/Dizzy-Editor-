@@ -64,6 +64,9 @@ CMainWindow::CMainWindow(QWidget *parent):QMainWindow(parent),ui(new Ui::CMainWi
  ui->cToolBar_Main->addAction(qAction_ModeSelectPart);
  ui->cToolBar_Main->addAction(qAction_ModeMoveMap);
 
+ TilesScale=1;
+ on_cPushButton_ImageX1_released();//выберем масштаб поля тайлов 1:1
+
  UpdateTilesImage();
 
  On_ToolBar_Main_MoveMap();
@@ -86,17 +89,20 @@ CMainWindow::~CMainWindow()
 void CMainWindow::UpdateTilesImage(void)
 {
  QPainter qPainter;
- QPixmap qPixmap_Local=CImageStorage::GetPtr()->GetTiles();
+ uint32_t width=CImageStorage::GetPtr()->GetTiles().width();
+ uint32_t height=CImageStorage::GetPtr()->GetTiles().height();
+ QPixmap qPixmap_Local=CImageStorage::GetPtr()->GetTiles().scaled(width*TilesScale,height*TilesScale);;
+
  qPainter.begin(&qPixmap_Local);
  qPainter.setPen(QPen(Qt::yellow,1,Qt::SolidLine));
- qPainter.drawRect(QRect(SelectedTileIndexX*CImageStorage::TILE_WITH_BORDER_WIDTH,SelectedTileIndexY*CImageStorage::TILE_WITH_BORDER_HEIGHT,CImageStorage::TILE_WITH_BORDER_WIDTH-1,CImageStorage::TILE_WITH_BORDER_HEIGHT-1));
+ qPainter.drawRect(QRect(SelectedTileIndexX*CImageStorage::TILE_WITH_BORDER_WIDTH*TilesScale,SelectedTileIndexY*CImageStorage::TILE_WITH_BORDER_HEIGHT*TilesScale,CImageStorage::TILE_WITH_BORDER_WIDTH*TilesScale-1,CImageStorage::TILE_WITH_BORDER_HEIGHT*TilesScale-1));
  qPainter.end();
 
  QPalette qPalette;
  qPalette.setBrush(backgroundRole(),QBrush(qPixmap_Local));
  ui->cScrollAreaWidgetContents_Tiles->setPalette(qPalette);
  ui->cScrollAreaWidgetContents_Tiles->setAutoFillBackground(true);
- ui->cScrollAreaWidgetContents_Tiles->setFixedSize(qPixmap_Local.width(),qPixmap_Local.height());  
+ ui->cScrollAreaWidgetContents_Tiles->setFixedSize(qPixmap_Local.width(),qPixmap_Local.height());
 }
 //----------------------------------------------------------------------------------------------------
 //обработчик нажатия на кнопку мышки
@@ -120,8 +126,8 @@ void CMainWindow::mousePressEvent(QMouseEvent *qMouseEvent_Ptr)
   if (mpoint.x()>qRect_image.width()) return;
   if (mpoint.y()>qRect_image.height()) return;
 
-  int32_t tx=mpoint.x()/CImageStorage::TILE_WITH_BORDER_WIDTH;
-  int32_t ty=mpoint.y()/CImageStorage::TILE_WITH_BORDER_HEIGHT;
+  int32_t tx=mpoint.x()/(CImageStorage::TILE_WITH_BORDER_WIDTH*TilesScale);
+  int32_t ty=mpoint.y()/(CImageStorage::TILE_WITH_BORDER_HEIGHT*TilesScale);
 
   SelectedTileIndexX=tx;
   SelectedTileIndexY=ty;
@@ -285,8 +291,62 @@ void CMainWindow::on_cComboBox_Scale_currentIndexChanged(int index)
  double scale=ScaleTable[index].second;
  ui->cMapEditor->SetScale(scale);
 }
+//----------------------------------------------------------------------------------------------------
+//слот выбора режима масштабирования поля тайлов 1:1
+//----------------------------------------------------------------------------------------------------
+void CMainWindow::on_cPushButton_ImageX1_released()
+{
+ ui->cPushButton_ImageX1->setChecked(true);
+ ui->cPushButton_ImageX2->setChecked(false);
+ ui->cPushButton_ImageX3->setChecked(false);
+ ui->cPushButton_ImageX4->setChecked(false);
+
+ TilesScale=1;
+ UpdateTilesImage();
+}
+//----------------------------------------------------------------------------------------------------
+//слот выбора режима масштабирования поля тайлов 2:1
+//----------------------------------------------------------------------------------------------------
+void CMainWindow::on_cPushButton_ImageX2_released()
+{
+ ui->cPushButton_ImageX1->setChecked(false);
+ ui->cPushButton_ImageX2->setChecked(true);
+ ui->cPushButton_ImageX3->setChecked(false);
+ ui->cPushButton_ImageX4->setChecked(false);
+
+ TilesScale=2;
+ UpdateTilesImage();
+}
+//----------------------------------------------------------------------------------------------------
+//слот выбора режима масштабирования поля тайлов 3:1
+//----------------------------------------------------------------------------------------------------
+void CMainWindow::on_cPushButton_ImageX3_released()
+{
+ ui->cPushButton_ImageX1->setChecked(false);
+ ui->cPushButton_ImageX2->setChecked(false);
+ ui->cPushButton_ImageX3->setChecked(true);
+ ui->cPushButton_ImageX4->setChecked(false);
+
+ TilesScale=3;
+ UpdateTilesImage();
+}
+//----------------------------------------------------------------------------------------------------
+//слот выбора режима масштабирования поля тайлов 4:1
+//----------------------------------------------------------------------------------------------------
+void CMainWindow::on_cPushButton_ImageX4_released()
+{
+ ui->cPushButton_ImageX1->setChecked(false);
+ ui->cPushButton_ImageX2->setChecked(false);
+ ui->cPushButton_ImageX3->setChecked(false);
+ ui->cPushButton_ImageX4->setChecked(true);
+
+ TilesScale=4;
+ UpdateTilesImage();
+}
 //****************************************************************************************************
 //открытые функции
 //****************************************************************************************************
+
+
 
 
