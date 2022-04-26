@@ -57,7 +57,7 @@ bool CPartUnion::Save(std::ofstream &file)
  type|=MASK_PART_IS_UNION;
  if (file.write(reinterpret_cast<char*>(&type),sizeof(type)).fail()==true) return(false);
 
- size_t part=Item.size();
+ uint32_t part=Item.size();
  if (file.write(reinterpret_cast<char*>(&part),sizeof(part)).fail()==true) return(false);
 
  auto save_function=[&file](std::shared_ptr<IPart> iPart_Ptr)
@@ -78,7 +78,7 @@ bool CPartUnion::Load(std::ifstream &file)
 
  if (!(type&MASK_PART_IS_UNION)) return(false);//неверный тип
 
- size_t part;
+ uint32_t part;
  if (file.read(reinterpret_cast<char*>(&part),sizeof(part)).fail()==true) return(false);
  for(size_t n=0;n<part;n++)
  {
