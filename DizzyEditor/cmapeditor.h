@@ -90,6 +90,9 @@ class CMapEditor:public QWidget
   MOUSE_MODE MouseMode;//режим работы мышки
   bool CtrlOn;//нажата ли клавиша ctrl
 
+  bool EnabledDrawGrid;//нужно ли рисовать сетку
+  bool EnabledDrawArea;//нужно ли рисовать области
+
   QRect qRect_SelectedArea;//выбранная область
 
   QMenu *qMenu_Context;//контекстное меню
@@ -115,12 +118,15 @@ class CMapEditor:public QWidget
   void ReleaseKey(QKeyEvent *pe);//отпускание клавиши  
   void SetScale(double scale);//задать масштаб
   void ClearMap(void);//очистить карту
+  void SetDrawGrid(bool state);//задать, нужно ли рисовать сетку
+  void SetDrawArea(bool state);//задать, нужно ли рисовать области
  private:
   //-закрытые функции-----------------------------------------------------------------------------------  
   void timerEvent(QTimerEvent *qTimerEvent_Ptr);//обработчик таймера
   void mouseMoveEvent(QMouseEvent *qMouseEvent_Ptr);//обработчик перемещения мышки
   void mousePressEvent(QMouseEvent *qMouseEvent_Ptr);//обработчик нажатия на кнопку мышки
   void mouseReleaseEvent(QMouseEvent *qMouseEvent_Ptr);//обработчик отпускания кнопки мышки
+  void wheelEvent(QWheelEvent *event);//событие вращения колёсика мышки
   void paintEvent(QPaintEvent *qPaintEvent_Ptr);//обработчик события перерисовки
 
   void TimerEvent_Mode_MoveMap(const QPoint &qPoint);//обработчик таймера в режиме перемещения карты
@@ -147,10 +153,9 @@ class CMapEditor:public QWidget
   void ResetTilesFrame(void);//сбросить кадр на исходный для тайлов (нужно для синхронности анимации)
   void MouseToMap(int32_t mouse_x,int32_t mouse_y,int32_t &map_x,int32_t &map_y);//перевести координаты мыши в координаты блоков карты
   void SetMouseMode(MOUSE_MODE mouse_mode);//задать режим работы мышки
-  void GetStringImageSize(QPainter &qPainter,const std::string &string,uint32_t &width,uint32_t &height);//получить размер строки в пикселях  
-
-  bool SaveQuadricTree(std::ofstream &file,std::vector<SItem> &item_list,size_t block_width,size_t block_height);//экспорт квадратичного дерева
-
+  void GetStringImageSize(QPainter &qPainter,const std::string &string,uint32_t &width,uint32_t &height);//получить размер строки в пикселях
+  bool SaveQuadricTree(std::ofstream &file,std::vector<SItem> &item_list,size_t block_width,size_t block_height);//экспорт квадратичного дерева  
+  void ScaleSize(int32_t &tw,int32_t &th,double scale);//выполнить масштабирование размеров
  private slots:
   void on_ContextMenu_CopyPart(void);//слот выбора в контекстном меню пункта "скопировать"
   void on_ContextMenu_PastePart(void);//слот выбора в контекстном меню пункта "вставить"

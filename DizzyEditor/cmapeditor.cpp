@@ -38,6 +38,9 @@ CMapEditor::CMapEditor(QWidget *parent):QWidget(parent)
 
  CtrlOn=false;
 
+ EnabledDrawGrid=false;
+ EnabledDrawArea=false;
+
  qPoint_LeftTop=QPoint(0,0); 
  qPoint_MousePos=QPoint(0,0);
 
@@ -209,6 +212,42 @@ void CMapEditor::mouseReleaseEvent(QMouseEvent *qMouseEvent_Ptr)
  }
 }
 //----------------------------------------------------------------------------------------------------
+//событие вращения колёсика мышки
+//----------------------------------------------------------------------------------------------------
+void CMapEditor::wheelEvent(QWheelEvent *event)
+{
+ static const double MIN_MAP_SCALE=0.5;
+ static const double MAX_MAP_SCALE=8;
+ static const double ANGLE_DIVIDER=720.0;
+ static const double PIXEL_DIVIDER=100.0;
+
+ QPoint angle=event->angleDelta();
+ QPoint pixel=event->pixelDelta();
+
+ double ds=0;
+ if (!(angle.isNull()))
+ {
+  ds=angle.y()/ANGLE_DIVIDER;
+ }
+ else
+ {
+  if (!(pixel.isNull()))
+  {
+   ds=pixel.y()/PIXEL_DIVIDER;
+  }
+ }
+ //приводим к точности в один знак после запятой
+ ds*=10.0;
+ ds=static_cast<int32_t>(ds);
+ ds/=10.0;
+ //корректируем масштаб
+ double scale=Scale+ds;
+ if (scale<MIN_MAP_SCALE) scale=MIN_MAP_SCALE;
+ if (scale>MAX_MAP_SCALE) scale=MAX_MAP_SCALE;
+ SetScale(scale);
+}
+
+//----------------------------------------------------------------------------------------------------
 //обработчик события перерисовки
 //----------------------------------------------------------------------------------------------------
 void CMapEditor::paintEvent(QPaintEvent *qPaintEvent_Ptr)
@@ -342,8 +381,16 @@ void CMapEditor::DrawGrid(QPainter &qPainter,int32_t w_width,int32_t w_height)
   int32_t screen_y=0;
   screen_x-=qPoint_LeftTop.x();
   screen_y-=qPoint_LeftTop.y();
-  if (block_x%area_width==0) qPainter.setPen(QPen(Qt::white,1,Qt::SolidLine));
-                        else qPainter.setPen(QPen(Qt::gray,1,Qt::SolidLine));
+  if (block_x%area_width==0)
+  {
+   qPainter.setPen(QPen(Qt::white,1,Qt::SolidLine));
+   if (EnabledDrawArea==false) continue;
+  }
+  else
+  {
+   qPainter.setPen(QPen(Qt::gray,1,Qt::SolidLine));
+   if (EnabledDrawGrid==false) continue;
+  }
   qPainter.drawLine(screen_x,0,screen_x,w_height);
  }
 
@@ -354,8 +401,16 @@ void CMapEditor::DrawGrid(QPainter &qPainter,int32_t w_width,int32_t w_height)
   int32_t screen_y=block_y*th*Scale;
   screen_x-=qPoint_LeftTop.x();
   screen_y-=qPoint_LeftTop.y();
-  if (block_y%area_height==0) qPainter.setPen(QPen(Qt::white,1,Qt::SolidLine));
-                         else qPainter.setPen(QPen(Qt::gray,1,Qt::SolidLine));
+  if (block_y%area_height==0)
+  {
+   qPainter.setPen(QPen(Qt::white,1,Qt::SolidLine));
+   if (EnabledDrawArea==false) continue;
+  }
+  else
+  {
+   qPainter.setPen(QPen(Qt::gray,1,Qt::SolidLine));
+   if (EnabledDrawGrid==false) continue;
+  }
   qPainter.drawLine(0,screen_y,w_width,screen_y);
  }
 }
@@ -369,16 +424,24 @@ void CMapEditor::DrawMap(QPainter &qPainter)
  int32_t tw=CImageStorage::TILE_WIDTH;
  int32_t th=CImageStorage::TILE_HEIGHT;
 
+ int32_t size_w=tw;
+ int32_t size_h=th;
+ ScaleSize(size_w,size_h,Scale);
+
  //выводим карту
- auto output_function=[this,&tw,&th,&qPainter,&qPixmap_Tiles](std::shared_ptr<IPart> iPart_Ptr)
+ auto output_function=[this,&tw,&th,&size_w,&size_h,&qPainter,&qPixmap_Tiles](std::shared_ptr<IPart> iPart_Ptr)
  {
   if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
 
   int32_t block_x=iPart_Ptr->BlockPosX;
   int32_t block_y=iPart_Ptr->BlockPosY;
 
-  int32_t screen_x=block_x*tw*Scale;
-  int32_t screen_y=block_y*th*Scale;
+  float sx=block_x*tw*Scale;
+  float sy=block_y*th*Scale;
+
+  int32_t screen_x=static_cast<int32_t>(sx);
+  int32_t screen_y=static_cast<int32_t>(sy);
+
   screen_x-=qPoint_LeftTop.x();
   screen_y-=qPoint_LeftTop.y();
 
@@ -389,7 +452,7 @@ void CMapEditor::DrawMap(QPainter &qPainter)
   int32_t ty=cTile.Y*CImageStorage::TILE_WITH_BORDER_HEIGHT+CImageStorage::TILE_BORDER_HEIGHT;
 
   //qPainter.drawPixmap(screen_x,screen_y,qPixmap_Tiles.copy(tx,ty,tw,th));
-  qPainter.drawPixmap(screen_x,screen_y,tw*Scale,tw*Scale,qPixmap_Tiles.copy(tx,ty,tw,th));
+  qPainter.drawPixmap(screen_x,screen_y,size_w,size_h,qPixmap_Tiles.copy(tx,ty,tw,th));
  };
  Map_Ptr->Visit(output_function);
 }
@@ -404,8 +467,12 @@ void CMapEditor::DrawFrameSelectedPartAndBarrierAndFirstPlane(QPainter &qPainter
  int32_t tw=CImageStorage::TILE_WIDTH;
  int32_t th=CImageStorage::TILE_HEIGHT;
 
+ int32_t size_w=tw;
+ int32_t size_h=th;
+ ScaleSize(size_w,size_h,Scale);
+
  //выводим рамки
- auto output_barrier_function=[this,&tw,&th,&qPainter,&qPixmap_Tiles](std::shared_ptr<IPart> iPart_Ptr)
+ auto output_barrier_function=[this,&tw,&th,&size_w,&size_h,&qPainter,&qPixmap_Tiles](std::shared_ptr<IPart> iPart_Ptr)
  {
   if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
 
@@ -420,12 +487,12 @@ void CMapEditor::DrawFrameSelectedPartAndBarrierAndFirstPlane(QPainter &qPainter
   if (iPart_Ptr->Barrier==true)
   {
    qPainter.setPen(QPen(Qt::red,1,Qt::SolidLine));
-   qPainter.drawRect(screen_x,screen_y,tw*Scale,th*Scale);
+   qPainter.drawRect(screen_x,screen_y,size_w,size_h);
   }
  };
  Map_Ptr->Visit(output_barrier_function);
 
- auto output_firstplane_function=[this,&tw,&th,&qPainter,&qPixmap_Tiles](std::shared_ptr<IPart> iPart_Ptr)
+ auto output_firstplane_function=[this,&tw,&th,&size_w,&size_h,&qPainter,&qPixmap_Tiles](std::shared_ptr<IPart> iPart_Ptr)
  {
   if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
 
@@ -440,12 +507,12 @@ void CMapEditor::DrawFrameSelectedPartAndBarrierAndFirstPlane(QPainter &qPainter
   if (iPart_Ptr->FirstPlane==true)
   {
    qPainter.setPen(QPen(Qt::green,1,Qt::DotLine));
-   qPainter.drawRect(screen_x,screen_y,tw*Scale,th*Scale);
+   qPainter.drawRect(screen_x,screen_y,size_w,size_h);
   }
  };
  Map_Ptr->Visit(output_firstplane_function);
 
- auto output_beforebackground_function=[this,&tw,&th,&qPainter,&qPixmap_Tiles](std::shared_ptr<IPart> iPart_Ptr)
+ auto output_beforebackground_function=[this,&tw,&th,&size_w,&size_h,&qPainter,&qPixmap_Tiles](std::shared_ptr<IPart> iPart_Ptr)
  {
   if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
 
@@ -460,12 +527,12 @@ void CMapEditor::DrawFrameSelectedPartAndBarrierAndFirstPlane(QPainter &qPainter
   if (iPart_Ptr->BeforeBackground==true)
   {
    qPainter.setPen(QPen(Qt::blue,1,Qt::SolidLine));
-   qPainter.drawRect(screen_x+1,screen_y+1,tw*Scale-2,th*Scale-2);
+   qPainter.drawRect(screen_x+1,screen_y+1,size_w-2,size_h-2);
   }
  };
  Map_Ptr->Visit(output_beforebackground_function);
 
- auto output_selected_function=[this,&tw,&th,&qPainter,&qPixmap_Tiles](std::shared_ptr<IPart> iPart_Ptr)
+ auto output_selected_function=[this,&tw,&th,&size_w,&size_h,&qPainter,&qPixmap_Tiles](std::shared_ptr<IPart> iPart_Ptr)
  {
   if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
 
@@ -480,8 +547,8 @@ void CMapEditor::DrawFrameSelectedPartAndBarrierAndFirstPlane(QPainter &qPainter
   if (iPart_Ptr->Selected==true)
   {
    qPainter.setPen(QPen(Qt::yellow,1,Qt::SolidLine));
-   qPainter.drawRect(screen_x,screen_y,tw*Scale,th*Scale);
-   qPainter.drawRect(screen_x+1,screen_y+1,tw*Scale-2,th*Scale-2);
+   qPainter.drawRect(screen_x,screen_y,size_w,size_h);
+   qPainter.drawRect(screen_x+1,screen_y+1,size_w-2,size_h-2);
    //рисуем имена выбранных элементов
 
    qPainter.setPen(QPen(Qt::green,1,Qt::SolidLine));
@@ -506,6 +573,10 @@ void CMapEditor::DrawCursor(QPainter &qPainter,std::shared_ptr<IPart> MousePart_
  int32_t tw=CImageStorage::TILE_WIDTH;
  int32_t th=CImageStorage::TILE_HEIGHT;
 
+ int32_t size_w=tw;
+ int32_t size_h=th;
+ ScaleSize(size_w,size_h,Scale);
+
  //координаты в общем пространстве
  int32_t block_x;
  int32_t block_y;
@@ -517,7 +588,7 @@ void CMapEditor::DrawCursor(QPainter &qPainter,std::shared_ptr<IPart> MousePart_
  screen_x-=qPoint_LeftTop.x();
  screen_y-=qPoint_LeftTop.y();
 
- auto cursoroutput_function=[this,&screen_x,&screen_y,&tw,&th,&qPainter,&qPixmap_Tiles](std::shared_ptr<IPart> iPart_Ptr)
+ auto cursoroutput_function=[this,&screen_x,&screen_y,&tw,&th,&size_w,&size_h,&qPainter,&qPixmap_Tiles](std::shared_ptr<IPart> iPart_Ptr)
  {
   if (iPart_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
 
@@ -530,7 +601,7 @@ void CMapEditor::DrawCursor(QPainter &qPainter,std::shared_ptr<IPart> MousePart_
   int32_t ox=iPart_Ptr->BlockPosX*CImageStorage::TILE_WIDTH*Scale;
   int32_t oy=iPart_Ptr->BlockPosY*CImageStorage::TILE_HEIGHT*Scale;
 
-  qPainter.drawPixmap(screen_x+ox,screen_y+oy,tw*Scale,th*Scale,qPixmap_Tiles.copy(tx,ty,tw,th));
+  qPainter.drawPixmap(screen_x+ox,screen_y+oy,size_w,size_h,qPixmap_Tiles.copy(tx,ty,tw,th));
  };
  MousePart_Ptr->Visit(cursoroutput_function);
 }
@@ -1047,6 +1118,27 @@ bool CMapEditor::SaveQuadricTree(std::ofstream &file,std::vector<SItem> &item_li
  return(true);
 }
 
+//----------------------------------------------------------------------------------------------------
+//выполнить масштабирование размеров
+//----------------------------------------------------------------------------------------------------
+void CMapEditor::ScaleSize(int32_t &tw,int32_t &th,double scale)
+{
+ double sw=tw*scale;
+ double sh=th*scale;
+
+ int32_t size_w=static_cast<int32_t>(sw);
+ int32_t size_h=static_cast<int32_t>(sh);
+
+ if (sw<0 && size_w>sw) size_w--;
+ if (sw>=0 && size_w<sw) size_w++;
+
+ if (sh<0 && size_h>sh) size_h--;
+ if (sh>=0 && size_h<sh) size_h++;
+
+ tw=size_w;
+ th=size_h;
+}
+
 //****************************************************************************************************
 //открытые функции
 //****************************************************************************************************
@@ -1290,5 +1382,21 @@ void CMapEditor::ClearMap(void)
  Map_Ptr.reset(new CPartUnion());
  CursorPart_Ptr.reset(new CPartUnion());
  CopyPart_Ptr.reset(new CPartUnion());
+ update();
+}
+//----------------------------------------------------------------------------------------------------
+//задать, нужно ли рисовать сетку
+//----------------------------------------------------------------------------------------------------
+void CMapEditor::SetDrawGrid(bool state)
+{
+ EnabledDrawGrid=state;
+ update();
+}
+//----------------------------------------------------------------------------------------------------
+//задать, нужно ли рисовать области
+//----------------------------------------------------------------------------------------------------
+void CMapEditor::SetDrawArea(bool state)
+{
+ EnabledDrawArea=state;
  update();
 }

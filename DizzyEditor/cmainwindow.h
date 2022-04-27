@@ -58,7 +58,6 @@ class CMainWindow:public QMainWindow
   std::string CurrentFileName;//текущее имя файла карты
 
   int32_t TilesScale;//масштабный коэффициент набора тайлов
-  double MapScale;//масштабный коэффициент карты
  public:
   //-конструктор----------------------------------------------------------------------------------------
   explicit CMainWindow(QWidget *parent=0);
@@ -73,7 +72,6 @@ class CMainWindow:public QMainWindow
   void mouseReleaseEvent(QMouseEvent *qMouseEvent_Ptr);//обработчик отпускания кнопки мышки  
   void keyPressEvent(QKeyEvent *pe);//обработчик нажатия клавиши
   void keyReleaseEvent(QKeyEvent *event);//обработчик отпускания клавиши
-  void wheelEvent(QWheelEvent *event);//событие вращения колёсика мышки
  private slots:
   void on_cCheckBox_Matherial_Barrier_clicked(void);//слот нажатия на кнопку проницаемости материала
   void on_cCheckBox_Matherial_FirstPlane_clicked();//слот нажатия на кнопку переднего плана материала
@@ -97,6 +95,8 @@ class CMainWindow:public QMainWindow
   void on_cPushButton_MapX3_released();//слот выбора режима масштабирования поля карты x3
   void on_cPushButton_MapX4_released();//слот выбора режима масштабирования поля карты x4
   void on_cPushButton_MapX5_released();//слот выбора режима масштабирования поля карты x5
+  void on_cPushButton_MapGrid_toggled(bool checked);//слот включения/отключения сетки на карте
+  void on_cPushButton_MapGridArea_toggled(bool checked);//слот включения/отключения областей на карте
 };
 
 #endif

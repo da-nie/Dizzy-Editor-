@@ -55,8 +55,13 @@ CMainWindow::CMainWindow(QWidget *parent):QMainWindow(parent),ui(new Ui::CMainWi
  ui->cToolBar_Main->addAction(qAction_ModeMoveMap);
 
  TilesScale=1;
- MapScale=1;
  on_cPushButton_ImageX1_released();//выберем масштаб поля тайлов 1:1
+
+ //включим рисование сетки и областей
+ ui->cPushButton_MapGrid->setChecked(true);
+ ui->cPushButton_MapGridArea->setChecked(true);
+ ui->cMapEditor->SetDrawGrid(true);
+ ui->cMapEditor->SetDrawArea(true);
 
  UpdateTilesImage();
 
@@ -155,41 +160,6 @@ void CMainWindow::keyPressEvent(QKeyEvent *pe)
 void CMainWindow::keyReleaseEvent(QKeyEvent *pe)
 {
  ui->cMapEditor->ReleaseKey(pe);
-}
-//----------------------------------------------------------------------------------------------------
-//событие вращения колёсика мышки
-//----------------------------------------------------------------------------------------------------
-void CMainWindow::wheelEvent(QWheelEvent *event)
-{
- static const double MIN_MAP_SCALE=0.5;
- static const double MAX_MAP_SCALE=8;
- static const double ANGLE_DIVIDER=720.0;
- static const double PIXEL_DIVIDER=100.0;
-
- QPoint angle=event->angleDelta();
- QPoint pixel=event->pixelDelta();
-
- double ds=0;
- if (!(angle.isNull()))
- {       
-  ds=angle.y()/ANGLE_DIVIDER;
- }
- else
- {
-  if (!(pixel.isNull()))
-  {
-   ds=pixel.y()/PIXEL_DIVIDER;
-  }
- }
- //приводим к точности в один знак после запятой
- ds*=10.0;
- ds=static_cast<int32_t>(ds);
- ds/=10.0;
- //корректируем масштаб
- MapScale+=ds;
- if (MapScale<MIN_MAP_SCALE) MapScale=MIN_MAP_SCALE;
- if (MapScale>MAX_MAP_SCALE) MapScale=MAX_MAP_SCALE;
- ui->cMapEditor->SetScale(MapScale);
 }
 //----------------------------------------------------------------------------------------------------
 //слот нажатия на кнопку проницаемости материала
@@ -376,50 +346,59 @@ void CMainWindow::on_cPushButton_ImageX4_released()
 //----------------------------------------------------------------------------------------------------
 void CMainWindow::on_cPushButton_MapX05_released()
 {
- MapScale=0.5;
- ui->cMapEditor->SetScale(MapScale);
+ ui->cMapEditor->SetScale(0.5);
 }
 //----------------------------------------------------------------------------------------------------
 //слот выбора режима масштабирования поля карты x1
 //----------------------------------------------------------------------------------------------------
 void CMainWindow::on_cPushButton_MapX1_released()
 {
- MapScale=1;
- ui->cMapEditor->SetScale(MapScale);
+ ui->cMapEditor->SetScale(1);
 }
 //----------------------------------------------------------------------------------------------------
 //слот выбора режима масштабирования поля карты x2
 //----------------------------------------------------------------------------------------------------
 void CMainWindow::on_cPushButton_MapX2_released()
 {
- MapScale=2;
- ui->cMapEditor->SetScale(MapScale);
+ ui->cMapEditor->SetScale(2);
 }
 //----------------------------------------------------------------------------------------------------
 //слот выбора режима масштабирования поля карты x3
 //----------------------------------------------------------------------------------------------------
 void CMainWindow::on_cPushButton_MapX3_released()
 {
- MapScale=3;
- ui->cMapEditor->SetScale(MapScale);
+ ui->cMapEditor->SetScale(3);
 }
 //----------------------------------------------------------------------------------------------------
 //слот выбора режима масштабирования поля карты x4
 //----------------------------------------------------------------------------------------------------
 void CMainWindow::on_cPushButton_MapX4_released()
 {
- MapScale=4;
- ui->cMapEditor->SetScale(MapScale);
+ ui->cMapEditor->SetScale(4);
 }
 //----------------------------------------------------------------------------------------------------
 //слот выбора режима масштабирования поля карты x5
 //----------------------------------------------------------------------------------------------------
 void CMainWindow::on_cPushButton_MapX5_released()
 {
- MapScale=5;
- ui->cMapEditor->SetScale(MapScale);
+ ui->cMapEditor->SetScale(5);
+}
+//----------------------------------------------------------------------------------------------------
+//слот включения/отключения сетки на карте
+//----------------------------------------------------------------------------------------------------
+void CMainWindow::on_cPushButton_MapGrid_toggled(bool checked)
+{
+ ui->cMapEditor->SetDrawGrid(checked);
+}
+//----------------------------------------------------------------------------------------------------
+//слот включения/отключения областей на карте
+//----------------------------------------------------------------------------------------------------
+void CMainWindow::on_cPushButton_MapGridArea_toggled(bool checked)
+{
+ ui->cMapEditor->SetDrawArea(checked);
 }
 //****************************************************************************************************
 //открытые функции
 //****************************************************************************************************
+
 

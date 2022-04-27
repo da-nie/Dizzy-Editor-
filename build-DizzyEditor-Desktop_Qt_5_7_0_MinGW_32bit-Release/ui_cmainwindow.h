@@ -58,6 +58,8 @@ public:
     QPushButton *cPushButton_MapX05;
     QPushButton *cPushButton_MapX4;
     QPushButton *cPushButton_MapX5;
+    QPushButton *cPushButton_MapGrid;
+    QPushButton *cPushButton_MapGridArea;
     CMapEditor *cMapEditor;
     QScrollArea *cScrollArea_Tiles;
     QWidget *cScrollAreaWidgetContents_Tiles;
@@ -76,7 +78,7 @@ public:
     {
         if (CMainWindow->objectName().isEmpty())
             CMainWindow->setObjectName(QStringLiteral("CMainWindow"));
-        CMainWindow->resize(916, 715);
+        CMainWindow->resize(1052, 894);
         cAction_SaveMap = new QAction(CMainWindow);
         cAction_SaveMap->setObjectName(QStringLiteral("cAction_SaveMap"));
         cAction_LoadMap = new QAction(CMainWindow);
@@ -131,7 +133,7 @@ public:
         frame->setFrameShadow(QFrame::Raised);
         groupBox_2 = new QGroupBox(frame);
         groupBox_2->setObjectName(QStringLiteral("groupBox_2"));
-        groupBox_2->setGeometry(QRect(9, 9, 271, 61));
+        groupBox_2->setGeometry(QRect(9, 9, 251, 61));
         groupBox_2->setAlignment(Qt::AlignCenter);
         cPushButton_MapX2 = new QPushButton(groupBox_2);
         cPushButton_MapX2->setObjectName(QStringLiteral("cPushButton_MapX2"));
@@ -158,6 +160,14 @@ public:
         cPushButton_MapX5->setObjectName(QStringLiteral("cPushButton_MapX5"));
         cPushButton_MapX5->setGeometry(QRect(210, 20, 31, 31));
         cPushButton_MapX5->setCheckable(false);
+        cPushButton_MapGrid = new QPushButton(frame);
+        cPushButton_MapGrid->setObjectName(QStringLiteral("cPushButton_MapGrid"));
+        cPushButton_MapGrid->setGeometry(QRect(270, 20, 61, 21));
+        cPushButton_MapGrid->setCheckable(true);
+        cPushButton_MapGridArea = new QPushButton(frame);
+        cPushButton_MapGridArea->setObjectName(QStringLiteral("cPushButton_MapGridArea"));
+        cPushButton_MapGridArea->setGeometry(QRect(270, 50, 61, 21));
+        cPushButton_MapGridArea->setCheckable(true);
 
         gridLayout_basic->addWidget(frame, 3, 0, 1, 1);
 
@@ -173,7 +183,7 @@ public:
         cScrollArea_Tiles->setWidgetResizable(true);
         cScrollAreaWidgetContents_Tiles = new QWidget();
         cScrollAreaWidgetContents_Tiles->setObjectName(QStringLiteral("cScrollAreaWidgetContents_Tiles"));
-        cScrollAreaWidgetContents_Tiles->setGeometry(QRect(0, 0, 282, 311));
+        cScrollAreaWidgetContents_Tiles->setGeometry(QRect(0, 0, 322, 404));
         cScrollArea_Tiles->setWidget(cScrollAreaWidgetContents_Tiles);
 
         gridLayout_basic->addWidget(cScrollArea_Tiles, 0, 0, 2, 1);
@@ -184,7 +194,7 @@ public:
         frame_2->setFrameShadow(QFrame::Raised);
         groupBox_3 = new QGroupBox(frame_2);
         groupBox_3->setObjectName(QStringLiteral("groupBox_3"));
-        groupBox_3->setGeometry(QRect(10, 10, 271, 61));
+        groupBox_3->setGeometry(QRect(10, 10, 171, 61));
         groupBox_3->setAlignment(Qt::AlignCenter);
         cPushButton_ImageX4 = new QPushButton(groupBox_3);
         cPushButton_ImageX4->setObjectName(QStringLiteral("cPushButton_ImageX4"));
@@ -220,7 +230,7 @@ public:
         CMainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(CMainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 916, 21));
+        menuBar->setGeometry(QRect(0, 0, 1052, 18));
         menu = new QMenu(menuBar);
         menu->setObjectName(QStringLiteral("menu"));
         CMainWindow->setMenuBar(menuBar);
@@ -267,6 +277,8 @@ public:
         cPushButton_MapX05->setText(QApplication::translate("CMainWindow", "X0.5", 0));
         cPushButton_MapX4->setText(QApplication::translate("CMainWindow", "X4", 0));
         cPushButton_MapX5->setText(QApplication::translate("CMainWindow", "X5", 0));
+        cPushButton_MapGrid->setText(QApplication::translate("CMainWindow", "\320\241\320\265\321\202\320\272\320\260", 0));
+        cPushButton_MapGridArea->setText(QApplication::translate("CMainWindow", "\320\236\320\261\320\273\320\260\321\201\321\202\320\270", 0));
         groupBox_3->setTitle(QApplication::translate("CMainWindow", "\320\234\320\260\321\201\321\210\321\202\320\260\320\261 \321\202\320\260\320\271\320\273\320\276\320\262", 0));
         cPushButton_ImageX4->setText(QApplication::translate("CMainWindow", "X4", 0));
         cPushButton_ImageX3->setText(QApplication::translate("CMainWindow", "X3", 0));
