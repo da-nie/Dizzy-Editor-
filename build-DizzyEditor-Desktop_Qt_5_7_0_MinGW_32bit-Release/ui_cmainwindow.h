@@ -38,6 +38,7 @@ public:
     QAction *cAction_LoadMap;
     QAction *cAction_ExportMap;
     QAction *cAction_SaveMapAs;
+    QAction *cAction_ClearMap;
     QWidget *centralWidget;
     QGridLayout *gridLayout;
     QGridLayout *gridLayout_basic;
@@ -84,6 +85,8 @@ public:
         cAction_ExportMap->setObjectName(QStringLiteral("cAction_ExportMap"));
         cAction_SaveMapAs = new QAction(CMainWindow);
         cAction_SaveMapAs->setObjectName(QStringLiteral("cAction_SaveMapAs"));
+        cAction_ClearMap = new QAction(CMainWindow);
+        cAction_ClearMap->setObjectName(QStringLiteral("cAction_ClearMap"));
         centralWidget = new QWidget(CMainWindow);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         gridLayout = new QGridLayout(centralWidget);
@@ -170,7 +173,7 @@ public:
         cScrollArea_Tiles->setWidgetResizable(true);
         cScrollAreaWidgetContents_Tiles = new QWidget();
         cScrollAreaWidgetContents_Tiles->setObjectName(QStringLiteral("cScrollAreaWidgetContents_Tiles"));
-        cScrollAreaWidgetContents_Tiles->setGeometry(QRect(0, 0, 277, 204));
+        cScrollAreaWidgetContents_Tiles->setGeometry(QRect(0, 0, 282, 311));
         cScrollArea_Tiles->setWidget(cScrollAreaWidgetContents_Tiles);
 
         gridLayout_basic->addWidget(cScrollArea_Tiles, 0, 0, 2, 1);
@@ -200,18 +203,10 @@ public:
         cPushButton_ImageX1->setGeometry(QRect(10, 20, 31, 31));
         cPushButton_ImageX1->setCheckable(true);
         cPushButton_ImageX1->setChecked(false);
-        cPushButton_ImageX4->raise();
-        cPushButton_ImageX3->raise();
-        cPushButton_ImageX2->raise();
-        cPushButton_ImageX1->raise();
-        cPushButton_ImageX4->raise();
-        cPushButton_ImageX3->raise();
-        cPushButton_ImageX2->raise();
-        cPushButton_ImageX1->raise();
 
         gridLayout_basic->addWidget(frame_2, 2, 0, 1, 1);
 
-        gridLayout_basic->setRowStretch(0, 10);
+        gridLayout_basic->setRowStretch(0, 30);
         gridLayout_basic->setRowStretch(1, 10);
         gridLayout_basic->setRowStretch(2, 8);
         gridLayout_basic->setRowStretch(3, 8);
@@ -225,7 +220,7 @@ public:
         CMainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(CMainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 916, 18));
+        menuBar->setGeometry(QRect(0, 0, 916, 21));
         menu = new QMenu(menuBar);
         menu->setObjectName(QStringLiteral("menu"));
         CMainWindow->setMenuBar(menuBar);
@@ -243,6 +238,8 @@ public:
         menu->addAction(cAction_SaveMapAs);
         menu->addSeparator();
         menu->addAction(cAction_ExportMap);
+        menu->addSeparator();
+        menu->addAction(cAction_ClearMap);
         cToolBar_Main->addSeparator();
 
         retranslateUi(CMainWindow);
@@ -257,6 +254,7 @@ public:
         cAction_LoadMap->setText(QApplication::translate("CMainWindow", "\320\236\321\202\320\272\321\200\321\213\321\202\321\214 \320\272\320\260\321\200\321\202\321\203..", 0));
         cAction_ExportMap->setText(QApplication::translate("CMainWindow", "\320\255\320\272\321\201\320\277\320\276\321\200\321\202\320\270\321\200\320\276\320\262\320\260\321\202\321\214 \320\272\320\260\321\200\321\202\321\203", 0));
         cAction_SaveMapAs->setText(QApplication::translate("CMainWindow", "\320\241\320\276\321\205\321\200\320\260\320\275\320\270\321\202\321\214 \320\272\320\260\321\200\321\202\321\203 \320\272\320\260\320\272..", 0));
+        cAction_ClearMap->setText(QApplication::translate("CMainWindow", "\320\236\321\207\320\270\321\201\321\202\320\270\321\202\321\214 \320\272\320\260\321\200\321\202\321\203", 0));
         groupBox->setTitle(QApplication::translate("CMainWindow", "\320\235\320\260\321\201\321\202\321\200\320\276\320\271\320\272\320\270 \320\261\320\273\320\276\320\272\320\276\320\262", 0));
         cCheckBox_Matherial_Barrier->setText(QApplication::translate("CMainWindow", "\320\237\321\200\320\265\320\263\321\200\320\260\320\264\320\260", 0));
         cCheckBox_Matherial_FirstPlane->setText(QApplication::translate("CMainWindow", "\320\237\320\265\321\200\320\265\320\264\320\275\320\270\320\271 \320\277\320\273\320\260\320\275", 0));

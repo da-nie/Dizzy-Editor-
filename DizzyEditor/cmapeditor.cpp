@@ -1282,3 +1282,13 @@ void CMapEditor::SetScale(double scale)
  Scale=scale;
  update();
 }
+//----------------------------------------------------------------------------------------------------
+//очистить карту
+//----------------------------------------------------------------------------------------------------
+void CMapEditor::ClearMap(void)
+{
+ Map_Ptr.reset(new CPartUnion());
+ CursorPart_Ptr.reset(new CPartUnion());
+ CopyPart_Ptr.reset(new CPartUnion());
+ update();
+}

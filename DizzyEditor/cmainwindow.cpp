@@ -280,6 +280,16 @@ void CMainWindow::on_cAction_ExportMap_triggered()
  }
 }
 //----------------------------------------------------------------------------------------------------
+//слот выбора пункта меню "очистить карту"
+//----------------------------------------------------------------------------------------------------
+void CMainWindow::on_cAction_ClearMap_triggered()
+{
+ QMessageBox *qMessageBox=new QMessageBox(QMessageBox::Question,"Сообщение","Очистить карту?",QMessageBox::Yes|QMessageBox::No);
+ int reply=qMessageBox->exec();
+ if (reply==QMessageBox::Yes) ui->cMapEditor->ClearMap();
+}
+
+//----------------------------------------------------------------------------------------------------
 //слот выбора в панеле инструментов режима установки блоков
 //----------------------------------------------------------------------------------------------------
 void CMainWindow::On_ToolBar_Main_SetPart(void)

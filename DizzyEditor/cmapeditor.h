@@ -114,6 +114,7 @@ class CMapEditor:public QWidget
   void PressKey(QKeyEvent *pe);//нажатие клавиши
   void ReleaseKey(QKeyEvent *pe);//отпускание клавиши  
   void SetScale(double scale);//задать масштаб
+  void ClearMap(void);//очистить карту
  private:
   //-закрытые функции-----------------------------------------------------------------------------------  
   void timerEvent(QTimerEvent *qTimerEvent_Ptr);//обработчик таймера
