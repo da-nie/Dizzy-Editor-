@@ -50,7 +50,7 @@ CImageStorage::~CImageStorage()
 //----------------------------------------------------------------------------------------------------
 //получить указатель на класс CImageStorage
 //----------------------------------------------------------------------------------------------------
-std::shared_ptr<CImageStorage> CImageStorage::GetPtr(void)
+std::shared_ptr<CImageStorage> CImageStorage::GetInstance(void)
 {
  if (cImageStorage_Ptr.get()==NULL) cImageStorage_Ptr.reset(new CImageStorage());
  return(cImageStorage_Ptr);

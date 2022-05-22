@@ -120,6 +120,8 @@ class CMapEditor:public QWidget
   void ClearMap(void);//очистить карту
   void SetDrawGrid(bool state);//задать, нужно ли рисовать сетку
   void SetDrawArea(bool state);//задать, нужно ли рисовать области
+  void SetTileAnimation(void);//задать анимацию тайла
+  void DeleteSelectedTiles(void);//удалить выбранные тайлы
  private:
   //-закрытые функции-----------------------------------------------------------------------------------  
   void timerEvent(QTimerEvent *qTimerEvent_Ptr);//обработчик таймера
@@ -145,7 +147,6 @@ class CMapEditor:public QWidget
   void SelectTiles(QRect &qRect_Area);//выбрать область тайлов
   void UnselectTiles(void);//отменить выбор тайлов
   void SelectTile(int32_t mouse_x,int32_t mouse_y);//выбрать тайл
-  void DeleteSelectedTiles(void);//удалить выбранные тайлы
   bool IsTileSelected(int32_t mouse_x,int32_t mouse_y);//проверить, что по данным координатам мышки тайл выбран
   void ConnectSelectedTiles(void);//объединить выбранные тайлы и установить результат в качестве курсора
   void MoveMap(int32_t dx,int32_t dy);//переместить поле

@@ -71,7 +71,7 @@ void CDialog_Animations::UpdateTilesImage(void)
 {
  //обновляем список тайлов
  QPainter qPainter;
- QPixmap qPixmap_Local=CImageStorage::GetPtr()->GetTiles();
+ QPixmap qPixmap_Local=CImageStorage::GetInstance()->GetTiles();
  qPainter.begin(&qPixmap_Local);
  qPainter.setPen(QPen(Qt::yellow,1,Qt::SolidLine));
  qPainter.drawRect(QRect(SelectedTileIndexX*CImageStorage::TILE_WITH_BORDER_WIDTH,SelectedTileIndexY*CImageStorage::TILE_WITH_BORDER_HEIGHT,CImageStorage::TILE_WITH_BORDER_WIDTH-1,CImageStorage::TILE_WITH_BORDER_HEIGHT-1));
@@ -88,7 +88,7 @@ void CDialog_Animations::UpdateTilesImage(void)
  std::vector<CTile> *cTile_Sequence_Ptr=cTilesSequence.GetItemPtr();
  size_t size=cTile_Sequence_Ptr->size();
 
- QPixmap &qPixmap_Tiles=CImageStorage::GetPtr()->GetTiles();
+ QPixmap &qPixmap_Tiles=CImageStorage::GetInstance()->GetTiles();
 
  QImage qImage_Sequence(CImageStorage::TILE_WITH_BORDER_WIDTH,CImageStorage::TILE_WITH_BORDER_HEIGHT*size,QImage::Format_RGB32);
 

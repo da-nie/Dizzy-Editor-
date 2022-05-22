@@ -419,7 +419,7 @@ void CMapEditor::DrawGrid(QPainter &qPainter,int32_t w_width,int32_t w_height)
 //----------------------------------------------------------------------------------------------------
 void CMapEditor::DrawMap(QPainter &qPainter)
 {
- QPixmap &qPixmap_Tiles=CImageStorage::GetPtr()->GetTiles();
+ QPixmap &qPixmap_Tiles=CImageStorage::GetInstance()->GetTiles();
 
  int32_t tw=CImageStorage::TILE_WIDTH;
  int32_t th=CImageStorage::TILE_HEIGHT;
@@ -462,7 +462,7 @@ void CMapEditor::DrawMap(QPainter &qPainter)
 //----------------------------------------------------------------------------------------------------
 void CMapEditor::DrawFrameSelectedPartAndBarrierAndFirstPlane(QPainter &qPainter)
 {
- QPixmap &qPixmap_Tiles=CImageStorage::GetPtr()->GetTiles();
+ QPixmap &qPixmap_Tiles=CImageStorage::GetInstance()->GetTiles();
 
  int32_t tw=CImageStorage::TILE_WIDTH;
  int32_t th=CImageStorage::TILE_HEIGHT;
@@ -568,7 +568,7 @@ void CMapEditor::DrawFrameSelectedPartAndBarrierAndFirstPlane(QPainter &qPainter
 //----------------------------------------------------------------------------------------------------
 void CMapEditor::DrawCursor(QPainter &qPainter,std::shared_ptr<IPart> MousePart_Ptr)
 {
- QPixmap &qPixmap_Tiles=CImageStorage::GetPtr()->GetTiles();
+ QPixmap &qPixmap_Tiles=CImageStorage::GetInstance()->GetTiles();
 
  int32_t tw=CImageStorage::TILE_WIDTH;
  int32_t th=CImageStorage::TILE_HEIGHT;
@@ -825,18 +825,6 @@ void CMapEditor::UnselectTiles(void)
 
 
  ResetTilesFrame();
-}
-//----------------------------------------------------------------------------------------------------
-//удалить выбранные тайлы
-//----------------------------------------------------------------------------------------------------
-void CMapEditor::DeleteSelectedTiles(void)
-{
- //удаляем все выделенные тайлы
- auto if_function=[](std::shared_ptr<IPart> iPart_Ptr)->bool
- {
-  return(iPart_Ptr->Selected);
- };
- Map_Ptr->RemovePart(if_function);
 }
 //----------------------------------------------------------------------------------------------------
 //проверить, что по данным координатам мышки тайл выбран
@@ -1315,46 +1303,7 @@ void CMapEditor::PressKey(QKeyEvent *pe)
  }
  if (pe->key()==Qt::Key_Insert)
  {
-/*  QMessageBox *qMessageBox=new QMessageBox(QMessageBox::Information,"1","2",QMessageBox::Yes);
-  qMessageBox->exec();
-  delete(qMessageBox);*/
-
-  std::shared_ptr<IPart> iPart_ptr(NULL);
-  if (Mode==MODE_SET) iPart_ptr=CursorPart_Ptr;
-  if (Mode==MODE_SELECT)
-  {
-   iPart_ptr.reset(new CPartUnion());
-   //собираем выбранные блоки
-   auto add_selected_function=[this,&iPart_ptr](std::shared_ptr<IPart> iPart_Local_Ptr)
-   {
-    if (iPart_Local_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
-    if (iPart_Local_Ptr->Selected==true)
-    {
-     iPart_ptr->GetItemPtr()->push_back(iPart_Local_Ptr);
-    }
-   };
-   Map_Ptr->Visit(add_selected_function);
-  }
-  if (iPart_ptr.get()!=NULL)
-  {
-   std::list<std::shared_ptr<IPart> > *list_ptr=iPart_ptr->GetItemPtr();
-   if (list_ptr!=NULL)
-   {
-    size_t size=list_ptr->size();
-    if (size==1)//допустимо редактирование только одного элемента
-    {
-     std::shared_ptr<IPart> iPart_Ptr=*list_ptr->begin();
-     CTilesSequence &cTilesSequence=iPart_Ptr->cTilesSequence;
-     CDialog_Animations *cDialog_Animations_Ptr=new CDialog_Animations(this,cTilesSequence);
-     cDialog_Animations_Ptr->setModal(true);
-     if (cDialog_Animations_Ptr->exec()==QDialog::Accepted)//диалог завершился успешно
-     {
-      //заменяем последовательность
-      cTilesSequence=cDialog_Animations_Ptr->GetTilesSequence();
-     }
-    }
-   }
-  }
+  SetTileAnimation();
  }
 }
 //----------------------------------------------------------------------------------------------------
@@ -1399,4 +1348,58 @@ void CMapEditor::SetDrawArea(bool state)
 {
  EnabledDrawArea=state;
  update();
+}
+//----------------------------------------------------------------------------------------------------
+//задать анимацию тайла
+//----------------------------------------------------------------------------------------------------
+void CMapEditor::SetTileAnimation(void)
+{
+ std::shared_ptr<IPart> iPart_ptr(NULL);
+ if (Mode==MODE_SET) iPart_ptr=CursorPart_Ptr;
+ if (Mode==MODE_SELECT)
+ {
+  iPart_ptr.reset(new CPartUnion());
+  //собираем выбранные блоки
+  auto add_selected_function=[this,&iPart_ptr](std::shared_ptr<IPart> iPart_Local_Ptr)
+  {
+   if (iPart_Local_Ptr->GetItemPtr()!=NULL) return;//это объединение элементов, а не один элемент
+   if (iPart_Local_Ptr->Selected==true)
+   {
+    iPart_ptr->GetItemPtr()->push_back(iPart_Local_Ptr);
+   }
+  };
+  Map_Ptr->Visit(add_selected_function);
+ }
+ if (iPart_ptr.get()!=NULL)
+ {
+  std::list<std::shared_ptr<IPart> > *list_ptr=iPart_ptr->GetItemPtr();
+  if (list_ptr!=NULL)
+  {
+   size_t size=list_ptr->size();
+   if (size==1)//допустимо редактирование только одного элемента
+   {
+    std::shared_ptr<IPart> iPart_Ptr=*list_ptr->begin();
+    CTilesSequence &cTilesSequence=iPart_Ptr->cTilesSequence;
+    CDialog_Animations *cDialog_Animations_Ptr=new CDialog_Animations(this,cTilesSequence);
+    cDialog_Animations_Ptr->setModal(true);
+    if (cDialog_Animations_Ptr->exec()==QDialog::Accepted)//диалог завершился успешно
+    {
+     //заменяем последовательность
+     cTilesSequence=cDialog_Animations_Ptr->GetTilesSequence();
+    }
+   }
+  }
+ }
+}
+//----------------------------------------------------------------------------------------------------
+//удалить выбранные тайлы
+//----------------------------------------------------------------------------------------------------
+void CMapEditor::DeleteSelectedTiles(void)
+{
+ //удаляем все выделенные тайлы
+ auto if_function=[](std::shared_ptr<IPart> iPart_Ptr)->bool
+ {
+  return(iPart_Ptr->Selected);
+ };
+ Map_Ptr->RemovePart(if_function);
 }

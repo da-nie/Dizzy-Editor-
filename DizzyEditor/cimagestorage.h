@@ -43,14 +43,15 @@ class CImageStorage
   //-переменные-----------------------------------------------------------------------------------------
   QPixmap qPixmap_Tiles;//набор тайлов
   static std::shared_ptr<CImageStorage> cImageStorage_Ptr;//указатель на класс CImageStorage
- public:
+ private:
   //-конструктор----------------------------------------------------------------------------------------
   CImageStorage(void);
+ public:
   //-деструктор-----------------------------------------------------------------------------------------
   ~CImageStorage();
  public:
   //-открытые функции-----------------------------------------------------------------------------------
-  static std::shared_ptr<CImageStorage> GetPtr(void);//получить указатель на класс CImageStorage
+  static std::shared_ptr<CImageStorage> GetInstance(void);//получить указатель на класс CImageStorage
   QPixmap& GetTiles(void);//получить набор тайлов
  private:
   //-закрытые функции-----------------------------------------------------------------------------------

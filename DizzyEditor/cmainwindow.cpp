@@ -85,9 +85,9 @@ CMainWindow::~CMainWindow()
 void CMainWindow::UpdateTilesImage(void)
 {
  QPainter qPainter;
- uint32_t width=CImageStorage::GetPtr()->GetTiles().width();
- uint32_t height=CImageStorage::GetPtr()->GetTiles().height();
- QPixmap qPixmap_Local=CImageStorage::GetPtr()->GetTiles().scaled(width*TilesScale,height*TilesScale);;
+ uint32_t width=CImageStorage::GetInstance()->GetTiles().width();
+ uint32_t height=CImageStorage::GetInstance()->GetTiles().height();
+ QPixmap qPixmap_Local=CImageStorage::GetInstance()->GetTiles().scaled(width*TilesScale,height*TilesScale);;
 
  qPainter.begin(&qPixmap_Local);
  qPainter.setPen(QPen(Qt::yellow,1,Qt::SolidLine));
@@ -397,8 +397,24 @@ void CMainWindow::on_cPushButton_MapGridArea_toggled(bool checked)
 {
  ui->cMapEditor->SetDrawArea(checked);
 }
+//----------------------------------------------------------------------------------------------------
+//слот удаления выбранных тайлов
+//----------------------------------------------------------------------------------------------------
+void CMainWindow::on_cPushButton_Delete_clicked()
+{
+ ui->cMapEditor->DeleteSelectedTiles();
+}
+//----------------------------------------------------------------------------------------------------
+//слот задания анимации
+//----------------------------------------------------------------------------------------------------
+void CMainWindow::on_cPushButton_SetAnimation_clicked()
+{
+ ui->cMapEditor->SetTileAnimation();
+}
 //****************************************************************************************************
 //открытые функции
 //****************************************************************************************************
+
+
 
 

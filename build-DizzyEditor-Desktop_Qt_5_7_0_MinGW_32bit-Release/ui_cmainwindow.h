@@ -69,6 +69,8 @@ public:
     QPushButton *cPushButton_ImageX3;
     QPushButton *cPushButton_ImageX2;
     QPushButton *cPushButton_ImageX1;
+    QPushButton *cPushButton_Delete;
+    QPushButton *cPushButton_SetAnimation;
     QMenuBar *menuBar;
     QMenu *menu;
     QStatusBar *statusBar;
@@ -183,7 +185,7 @@ public:
         cScrollArea_Tiles->setWidgetResizable(true);
         cScrollAreaWidgetContents_Tiles = new QWidget();
         cScrollAreaWidgetContents_Tiles->setObjectName(QStringLiteral("cScrollAreaWidgetContents_Tiles"));
-        cScrollAreaWidgetContents_Tiles->setGeometry(QRect(0, 0, 322, 404));
+        cScrollAreaWidgetContents_Tiles->setGeometry(QRect(0, 0, 323, 404));
         cScrollArea_Tiles->setWidget(cScrollAreaWidgetContents_Tiles);
 
         gridLayout_basic->addWidget(cScrollArea_Tiles, 0, 0, 2, 1);
@@ -213,6 +215,12 @@ public:
         cPushButton_ImageX1->setGeometry(QRect(10, 20, 31, 31));
         cPushButton_ImageX1->setCheckable(true);
         cPushButton_ImageX1->setChecked(false);
+        cPushButton_Delete = new QPushButton(frame_2);
+        cPushButton_Delete->setObjectName(QStringLiteral("cPushButton_Delete"));
+        cPushButton_Delete->setGeometry(QRect(190, 10, 141, 23));
+        cPushButton_SetAnimation = new QPushButton(frame_2);
+        cPushButton_SetAnimation->setObjectName(QStringLiteral("cPushButton_SetAnimation"));
+        cPushButton_SetAnimation->setGeometry(QRect(190, 50, 141, 23));
 
         gridLayout_basic->addWidget(frame_2, 2, 0, 1, 1);
 
@@ -230,7 +238,7 @@ public:
         CMainWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(CMainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 1052, 18));
+        menuBar->setGeometry(QRect(0, 0, 1052, 21));
         menu = new QMenu(menuBar);
         menu->setObjectName(QStringLiteral("menu"));
         CMainWindow->setMenuBar(menuBar);
@@ -284,6 +292,8 @@ public:
         cPushButton_ImageX3->setText(QApplication::translate("CMainWindow", "X3", 0));
         cPushButton_ImageX2->setText(QApplication::translate("CMainWindow", "X2", 0));
         cPushButton_ImageX1->setText(QApplication::translate("CMainWindow", "X1", 0));
+        cPushButton_Delete->setText(QApplication::translate("CMainWindow", "\320\243\320\264\320\260\320\273\320\270\321\202\321\214 \320\262\321\213\320\261\321\200\320\260\320\275\320\275\321\213\320\265", 0));
+        cPushButton_SetAnimation->setText(QApplication::translate("CMainWindow", "\320\227\320\260\320\264\320\260\321\202\321\214 \320\260\320\275\320\270\320\274\320\260\321\206\320\270\321\216", 0));
         menu->setTitle(QApplication::translate("CMainWindow", "\320\244\320\260\320\271\320\273", 0));
         cToolBar_Main->setWindowTitle(QApplication::translate("CMainWindow", "toolBar", 0));
     } // retranslateUi

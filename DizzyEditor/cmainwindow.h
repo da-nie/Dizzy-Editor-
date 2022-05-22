@@ -97,6 +97,8 @@ class CMainWindow:public QMainWindow
   void on_cPushButton_MapX5_released();//слот выбора режима масштабирования поля карты x5
   void on_cPushButton_MapGrid_toggled(bool checked);//слот включения/отключения сетки на карте
   void on_cPushButton_MapGridArea_toggled(bool checked);//слот включения/отключения областей на карте
+  void on_cPushButton_Delete_clicked();//слот удаления выбранных тайлов
+  void on_cPushButton_SetAnimation_clicked();//слот задания анимации
 };
 
 #endif

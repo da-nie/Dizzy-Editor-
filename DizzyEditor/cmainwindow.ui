@@ -268,7 +268,7 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>322</width>
+           <width>323</width>
            <height>404</height>
           </rect>
          </property>
@@ -366,6 +366,32 @@
           </property>
          </widget>
         </widget>
+        <widget class="QPushButton" name="cPushButton_Delete">
+         <property name="geometry">
+          <rect>
+           <x>190</x>
+           <y>10</y>
+           <width>141</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Удалить выбранные</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="cPushButton_SetAnimation">
+         <property name="geometry">
+          <rect>
+           <x>190</x>
+           <y>50</y>
+           <width>141</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Задать анимацию</string>
+         </property>
+        </widget>
        </widget>
       </item>
      </layout>
@@ -378,7 +404,7 @@
      <x>0</x>
      <y>0</y>
      <width>1052</width>
-     <height>18</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
