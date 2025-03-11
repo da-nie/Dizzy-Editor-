@@ -1318,8 +1318,32 @@ void CMapEditor::ReleaseKey(QKeyEvent *pe)
 //----------------------------------------------------------------------------------------------------
 void CMapEditor::SetScale(double scale)
 {
- qPoint_LeftTop.setX(qPoint_LeftTop.x()/Scale*scale);
- qPoint_LeftTop.setY(qPoint_LeftTop.y()/Scale*scale);
+ int32_t mouse_x=(qPoint_MousePos.x()+qPoint_LeftTop.x())/Scale;
+ int32_t mouse_y=(qPoint_MousePos.y()+qPoint_LeftTop.y())/Scale;
+
+ int32_t left_x=(qPoint_LeftTop.x())/Scale;
+ int32_t right_x=(qPoint_LeftTop.x()+width()-1)/Scale;
+
+ int32_t top_y=(qPoint_LeftTop.y())/Scale;
+ int32_t bottom_y=(qPoint_LeftTop.y()+height()-1)/Scale;
+
+ int32_t map_width=right_x-left_x;
+ int32_t map_height=bottom_y-top_y;
+
+ double kx=(double)(qPoint_MousePos.x())/(double)width();
+ double ky=(double)(qPoint_MousePos.y())/(double)height();
+
+ double k=Scale/scale;
+
+ int32_t new_left_x=(mouse_x-map_width*kx*k)*scale;
+ int32_t new_top_y=(mouse_y-map_height*ky*k)*scale;
+
+ if (new_left_x<0) new_left_x=0;
+ if (new_top_y<0) new_top_y=0;
+
+ qPoint_LeftTop.setX(new_left_x);
+ qPoint_LeftTop.setY(new_top_y);
+
  Scale=scale;
  update();
 }

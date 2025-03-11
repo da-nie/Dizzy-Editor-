@@ -224,9 +224,10 @@ void CMainWindow::on_cAction_LoadMap_triggered(void)
 {
  QString file_name=QFileDialog::getOpenFileName(this,tr("Укажите загружаемый файл карты"),".","*.bin");
  if (file_name.isEmpty()) return;
- CurrentFileName=file_name.toStdString();
+ std::string new_name=file_name.toStdString();
  if (ui->cMapEditor->LoadMap(CurrentFileName)==true)
  {
+  CurrentFileName=new_name;
   setWindowTitle(tr((CaptionName+" "+CurrentFileName).c_str()));
  }
 }
@@ -257,6 +258,7 @@ void CMainWindow::on_cAction_ClearMap_triggered()
  QMessageBox *qMessageBox=new QMessageBox(QMessageBox::Question,"Сообщение","Очистить карту?",QMessageBox::Yes|QMessageBox::No);
  int reply=qMessageBox->exec();
  if (reply==QMessageBox::Yes) ui->cMapEditor->ClearMap();
+ delete(qMessageBox);
 }
 
 //----------------------------------------------------------------------------------------------------
